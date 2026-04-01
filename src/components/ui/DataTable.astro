@@ -1,0 +1,43 @@
+---
+export interface Props {
+  data: Record<string, { buy: number; sell: number }>;
+  limit?: number;
+}
+
+const { data, limit = 30 } = Astro.props;
+const { formatDateShort } = await import('../../lib/formatters.ts');
+
+const sortedDates = Object.keys(data).sort();
+const recentDates = sortedDates.slice(-limit).reverse();
+---
+
+<div class="overflow-x-auto">
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="border-b border-white/5 text-gray-400 text-xs uppercase tracking-wider">
+        <th class="text-left py-3 px-4 font-medium">Tarih</th>
+        <th class="text-right py-3 px-4 font-medium">Alış</th>
+        <th class="text-right py-3 px-4 font-medium">Satış</th>
+        <th class="text-right py-3 px-4 font-medium">Değişim</th>
+      </tr>
+    </thead>
+    <tbody>
+      {recentDates.map((date, i) => {
+        const today = data[date];
+        const yesterday = i < recentDates.length - 1 ? data[recentDates[i + 1]] : null;
+        const change = yesterday ? ((today.sell - yesterday.sell) / yesterday.sell) * 100 : 0;
+        const isUp = change >= 0;
+        return (
+          <tr class="border-b border-white/5 hover:bg-bg-hover transition">
+            <td class="py-3 px-4 font-mono text-gray-300">{formatDateShort(date)}</td>
+            <td class="py-3 px-4 text-right font-mono number text-gray-300">₺{today.buy.toFixed(4)}</td>
+            <td class="py-3 px-4 text-right font-mono number text-white font-medium">₺{today.sell.toFixed(4)}</td>
+            <td class={`py-3 px-4 text-right font-mono number ${isUp ? 'text-up' : 'text-down'}`}>
+              {isUp ? '+' : ''}{change.toFixed(2).replace('.', ',')}%
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
+</div>

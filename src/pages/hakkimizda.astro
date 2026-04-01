@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base title="Hakkımızda | Döviz Arşiv">
+  <div class="max-w-3xl space-y-8">
+    <div>
+      <h1 class="text-3xl font-mono font-bold text-white mb-6">Hakkımızda</h1>
+      <div class="text-gray-400 space-y-4 leading-relaxed">
+        <p>
+          <strong class="text-white">dovizarsiv.net</strong>, Türkiye Cumhuriyet Merkez Bankası'nın
+          (TCMB) resmi günlük kur verilerini kullanarak hazırlanmış kapsamlı bir tarihsel kur
+          arşividir.
+        </p>
+        <p>
+          Amacımız, döviz kurları, altın fiyatları ve kripto para verilerine kolay erişilebilir
+          bir platform sunmaktır. Sitemizde geçmişe dönük kur verilerini inceleyebilir, grafikler
+          üzerinden trendleri analiz edebilir ve Zaman Makinesi hesaplayıcımız ile yatırım
+          senaryoları oluşturabilirsiniz.
+        </p>
+        <p>
+          Tüm veriler TCMB'nin resmi XML kaynaklarından otomatik olarak çekilmekte ve her iş günü
+          güncellenmektedir. Bu süreç GitHub Actions ile otomatize edilmiştir.
+        </p>
+        <h2 class="text-xl font-mono font-bold text-white mt-8 mb-4">Veri Kaynakları</h2>
+        <ul class="list-disc list-inside space-y-2">
+          <li>Döviz kurları: <a href="https://www.tcmb.gov.tr" class="text-accent hover:underline" target="_blank" rel="noopener">TCMB Resmi Web Sitesi</a></li>
+          <li>Kripto para verileri: <a href="https://github.com/fawazahmed0/currency-api" class="text-accent hover:underline" target="_blank" rel="noopener">fawazahmed0/currency-api</a></li>
+        </ul>
+        <p class="text-sm text-gray-500 mt-6">
+          Bu sitede yer alan bilgiler yatırım tavsiyesi niteliği taşımamaktadır. Tüm veriler
+          bilgilendirme amaçlıdır.
+        </p>
+      </div>
+    </div>
+  </div>
+</Base>

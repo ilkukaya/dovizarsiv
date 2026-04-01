@@ -1,0 +1,41 @@
+---
+---
+
+<header class="sticky top-0 z-50 bg-bg-primary/90 backdrop-blur-md border-b border-white/5">
+  <nav class="max-w-7xl mx-auto flex items-center justify-between h-16 px-4">
+    <a href="/" class="font-mono font-bold text-xl text-white flex items-center gap-1">
+      <span>döviz</span><span class="text-accent">arşiv</span>
+    </a>
+
+    <button id="menu-btn" class="md:hidden text-gray-400 hover:text-white p-2" aria-label="Menü">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+    <div id="nav-links" class="hidden md:flex items-center gap-6">
+      <a href="/doviz" class="text-gray-400 hover:text-white transition text-sm">Döviz</a>
+      <a href="/altin/gram" class="text-gray-400 hover:text-white transition text-sm">Altın</a>
+      <a href="/kripto/btc" class="text-gray-400 hover:text-white transition text-sm">Kripto</a>
+      <a href="/hesaplayicilar/zaman-makinesi" class="text-gray-400 hover:text-white transition text-sm">Hesaplayıcılar</a>
+      <span class="text-xs text-gray-500 border border-white/10 rounded-full px-2 py-0.5">TCMB Verileri</span>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="hidden md:hidden border-t border-white/5 bg-bg-primary/95 backdrop-blur-md">
+    <div class="flex flex-col gap-1 px-4 py-3">
+      <a href="/doviz" class="text-gray-400 hover:text-white transition py-2 text-sm">Döviz</a>
+      <a href="/altin/gram" class="text-gray-400 hover:text-white transition py-2 text-sm">Altın</a>
+      <a href="/kripto/btc" class="text-gray-400 hover:text-white transition py-2 text-sm">Kripto</a>
+      <a href="/hesaplayicilar/zaman-makinesi" class="text-gray-400 hover:text-white transition py-2 text-sm">Hesaplayıcılar</a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const menuBtn = document.getElementById('menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  menuBtn?.addEventListener('click', () => {
+    mobileMenu?.classList.toggle('hidden');
+  });
+</script>

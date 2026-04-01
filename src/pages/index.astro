@@ -1,0 +1,190 @@
+---
+import Base from '../layouts/Base.astro';
+import CurrencyCard from '../components/ui/CurrencyCard.astro';
+import { fiatCurrencies } from '../lib/currencies';
+import { formatDate } from '../lib/formatters';
+
+import usdData from '../data/tcmb/usd-try.json';
+import eurData from '../data/tcmb/eur-try.json';
+import gbpData from '../data/tcmb/gbp-try.json';
+import chfData from '../data/tcmb/chf-try.json';
+import goldData from '../data/gold/gram-try.json';
+import btcData from '../data/crypto/btc-try.json';
+import meta from '../data/meta.json';
+
+function getLastTwo(data: Record<string, any>) {
+  const dates = Object.keys(data).sort();
+  if (dates.length < 2) return null;
+  const prev = data[dates[dates.length - 2]];
+  const curr = data[dates[dates.length - 1]];
+  const currSell = curr.sell ?? curr.price;
+  const prevSell = prev.sell ?? prev.price;
+  const change = ((currSell - prevSell) / prevSell) * 100;
+  return { price: currSell, change, date: dates[dates.length - 1] };
+}
+
+const usd = getLastTwo(usdData)!;
+const eur = getLastTwo(eurData)!;
+const gbp = getLastTwo(gbpData)!;
+const chf = getLastTwo(chfData)!;
+const gold = getLastTwo(goldData)!;
+const btc = getLastTwo(btcData)!;
+
+const allTcmbData: Record<string, any> = {
+  usd: usdData, eur: eurData, gbp: gbpData, chf: chfData,
+};
+
+const tcmbFiles = import.meta.glob('../data/tcmb/*.json', { eager: true });
+for (const [path, mod] of Object.entries(tcmbFiles)) {
+  const slug = path.split('/').pop()?.replace('-try.json', '') ?? '';
+  if (!allTcmbData[slug]) {
+    allTcmbData[slug] = (mod as any).default;
+  }
+}
+
+const usdDates = Object.keys(usdData).sort();
+const eurDates = Object.keys(eurData).sort();
+const gbpDates = Object.keys(gbpData).sort();
+const chfDates = Object.keys(chfData).sort();
+
+const usdLatestBuy = (usdData as Record<string, {buy: number; sell: number}>)[usdDates[usdDates.length - 1]].buy;
+const eurLatestBuy = (eurData as Record<string, {buy: number; sell: number}>)[eurDates[eurDates.length - 1]].buy;
+const gbpLatestBuy = (gbpData as Record<string, {buy: number; sell: number}>)[gbpDates[gbpDates.length - 1]].buy;
+const chfLatestBuy = (chfData as Record<string, {buy: number; sell: number}>)[chfDates[chfDates.length - 1]].buy;
+
+const tcmbRows = fiatCurrencies.map(currency => {
+  const data = allTcmbData[currency.slug];
+  if (!data) return null;
+  const info = getLastTwo(data);
+  if (!info) return null;
+  const dates = Object.keys(data).sort();
+  const latest = data[dates[dates.length - 1]];
+  return {
+    currency,
+    buy: latest.buy ?? 0,
+    sell: info.price,
+    change: info.change,
+  };
+}).filter(Boolean);
+---
+
+<Base title="Döviz Arşiv — Dolar, Euro, Altın Tarihsel Kur Verileri">
+  <div class="space-y-16">
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="space-y-6">
+        <h1 class="text-4xl md:text-5xl font-mono font-bold text-white leading-tight">
+          Döviz Kurları, Altın ve<br /><span class="text-accent">Kripto Arşivi</span>
+        </h1>
+        <p class="text-gray-400 text-lg">
+          TCMB resmi verileriyle günlük güncellenen tarihsel veriler. Geçmiş kurları inceleyin, hesaplamalar yapın.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a
+            href="/hesaplayicilar/zaman-makinesi"
+            class="bg-accent text-black font-bold px-8 py-4 rounded-xl text-lg hover:bg-accent-hover transition text-center"
+          >
+            ⏰ Zaman Makinesi — Geçmişte Alsaydım?
+          </a>
+        </div>
+        <div class="text-xs text-gray-500">
+          Son güncelleme: {formatDate(meta.lastUpdated.split('T')[0])}
+        </div>
+      </div>
+      <div class="hidden lg:block">
+        <div class="card p-6 space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400 font-mono text-sm">USD/TRY</span>
+            <span class="text-white font-mono font-bold">₺{usd.price.toFixed(4)}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400 font-mono text-sm">EUR/TRY</span>
+            <span class="text-white font-mono font-bold">₺{eur.price.toFixed(4)}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400 font-mono text-sm">GBP/TRY</span>
+            <span class="text-white font-mono font-bold">₺{gbp.price.toFixed(4)}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400 font-mono text-sm">Gram Altın</span>
+            <span class="text-white font-mono font-bold">₺{gold.price.toFixed(2)}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-400 font-mono text-sm">BTC/TRY</span>
+            <span class="text-white font-mono font-bold">₺{btc.price.toLocaleString('tr-TR')}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-mono font-bold text-white mb-6">Popüler Kurlar</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <CurrencyCard code="USD" name="ABD Doları" flag="🇺🇸" price={usd.price} change={usd.change} href="/doviz/usd" subtitle={`Alış: ₺${usdLatestBuy.toFixed(4)}`} />
+        <CurrencyCard code="EUR" name="Euro" flag="🇪🇺" price={eur.price} change={eur.change} href="/doviz/eur" subtitle={`Alış: ₺${eurLatestBuy.toFixed(4)}`} />
+        <CurrencyCard code="GBP" name="İngiliz Sterlini" flag="🇬🇧" price={gbp.price} change={gbp.change} href="/doviz/gbp" subtitle={`Alış: ₺${gbpLatestBuy.toFixed(4)}`} />
+        <CurrencyCard code="CHF" name="İsviçre Frangı" flag="🇨🇭" price={chf.price} change={chf.change} href="/doviz/chf" subtitle={`Alış: ₺${chfLatestBuy.toFixed(4)}`} />
+        <CurrencyCard code="XAU" name="Gram Altın" flag="🥇" price={gold.price} change={gold.change} href="/altin/gram" subtitle={`Son: ${formatDate(gold.date)}`} />
+        <CurrencyCard code="BTC" name="Bitcoin" flag="🪙" price={btc.price} change={btc.change} href="/kripto/btc" subtitle={`Son: ${formatDate(btc.date)}`} />
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-mono font-bold text-white mb-6">Tüm Kurlar</h2>
+      <div class="card overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/5 text-gray-400 text-xs uppercase tracking-wider">
+              <th class="text-left py-3 px-4 font-medium">Kod</th>
+              <th class="text-left py-3 px-4 font-medium">İsim</th>
+              <th class="text-right py-3 px-4 font-medium">Alış</th>
+              <th class="text-right py-3 px-4 font-medium">Satış</th>
+              <th class="text-right py-3 px-4 font-medium">Değişim</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tcmbRows.map(row => {
+              const r = row as any;
+              const isUp = r.change >= 0;
+              return (
+                <tr class="border-b border-white/5 hover:bg-bg-hover transition cursor-pointer">
+                  <td class="py-3 px-4">
+                    <a href={`/doviz/${r.currency.slug}`} class="font-mono text-accent hover:underline">
+                      {r.currency.flag} {r.currency.code}
+                    </a>
+                  </td>
+                  <td class="py-3 px-4 text-gray-300">{r.currency.nameTr}</td>
+                  <td class="py-3 px-4 text-right font-mono number text-gray-300">₺{r.buy.toFixed(4)}</td>
+                  <td class="py-3 px-4 text-right font-mono number text-white font-medium">₺{r.sell.toFixed(4)}</td>
+                  <td class={`py-3 px-4 text-right font-mono number ${isUp ? 'text-up' : 'text-down'}`}>
+                    {isUp ? '+' : ''}{r.change.toFixed(2).replace('.', ',')}%
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="max-w-3xl">
+      <h2 class="text-2xl font-mono font-bold text-white mb-4">Döviz Arşiv Nedir?</h2>
+      <div class="text-gray-400 space-y-4 leading-relaxed">
+        <p>
+          Döviz Arşiv, Türkiye Cumhuriyet Merkez Bankası'nın (TCMB) resmi günlük kur verilerini
+          kullanarak hazırlanmış kapsamlı bir tarihsel kur arşividir. Sitemizde Dolar, Euro, İngiliz
+          Sterlini, İsviçre Frangı gibi major para birimlerinin yanı sıra 20'den fazla farklı döviz
+          kuru, gram altın fiyatları ve kripto para verilerine ulaşabilirsiniz.
+        </p>
+        <p>
+          Zaman Makinesi hesaplayıcımız ile geçmiş bir tarihte belirli bir tutarla döviz, altın
+          veya kripto alsaydınız bugün ne kadar olacağını hesaplayabilirsiniz. Bileşik yıllık getiri
+          (CAGR) hesaplamaları ile yatırımlarınızın gerçek performansını görebilirsiniz.
+        </p>
+        <p>
+          Tüm veriler TCMB'nin resmi XML kaynaklarından otomatik olarak çekilmekte ve günlük olarak
+          güncellenmektedir. Yatırım tavsiyesi niteliği taşımamaktadır.
+        </p>
+      </div>
+    </section>
+  </div>
+</Base>

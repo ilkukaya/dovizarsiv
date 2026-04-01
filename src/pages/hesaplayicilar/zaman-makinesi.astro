@@ -1,0 +1,52 @@
+---
+import Base from '../../layouts/Base.astro';
+import TimeMachine from '../../components/calculators/TimeMachine.tsx';
+
+import usdData from '../../data/tcmb/usd-try.json';
+import eurData from '../../data/tcmb/eur-try.json';
+import gbpData from '../../data/tcmb/gbp-try.json';
+import chfData from '../../data/tcmb/chf-try.json';
+import goldData from '../../data/gold/gram-try.json';
+import btcData from '../../data/crypto/btc-try.json';
+
+const allData = {
+  usd: usdData,
+  eur: eurData,
+  gbp: gbpData,
+  chf: chfData,
+  gold: goldData,
+  btc: btcData,
+};
+---
+
+<Base title="Zaman Makinesi — Geçmişte Alsaydım Kaç TL Olurdu? | Döviz Arşiv">
+  <div class="space-y-12">
+    <div>
+      <h1 class="text-3xl md:text-4xl font-mono font-bold text-white mb-2">
+        ⏰ Zaman Makinesi
+      </h1>
+      <p class="text-gray-400 text-lg">
+        Geçmişte belirli bir tarihte döviz, altın veya kripto alsaydınız bugün ne kadar olurdu?
+      </p>
+    </div>
+
+    <TimeMachine client:load allData={allData} />
+
+    <section class="max-w-3xl text-gray-400 space-y-4 leading-relaxed">
+      <h2 class="text-xl font-mono font-bold text-white">Zaman Makinesi Nedir?</h2>
+      <p>
+        Zaman Makinesi, geçmiş bir tarihte belirli bir tutarla döviz, altın veya kripto para
+        alsaydınız bugünkü değerinin ne olacağını hesaplamanızı sağlayan interaktif bir araçtır.
+      </p>
+      <p>
+        Hesaplama, TCMB resmi verileri üzerinden yapılmaktadır. Seçtiğiniz tarihteki alış fiyatı
+        üzerinden ne kadar birim alabileceğiniz hesaplanır ve bugünkü satış fiyatı üzerinden
+        güncel değeri bulunur. Ayrıca bileşik yıllık getiri (CAGR) oranı da gösterilmektedir.
+      </p>
+      <p>
+        Sonuçları paylaşmak için "Sonucu Paylaş" butonunu kullanabilirsiniz. Paylaşım linki,
+        seçtiğiniz parametreleri URL'de taşır.
+      </p>
+    </section>
+  </div>
+</Base>

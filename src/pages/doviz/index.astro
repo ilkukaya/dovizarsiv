@@ -1,0 +1,70 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fiatCurrencies } from '../../lib/currencies';
+
+const tcmbFiles = import.meta.glob('../../data/tcmb/*.json', { eager: true });
+
+function getLastTwo(data: Record<string, any>) {
+  const dates = Object.keys(data).sort();
+  if (dates.length < 2) return null;
+  const prev = data[dates[dates.length - 2]];
+  const curr = data[dates[dates.length - 1]];
+  const currSell = curr.sell ?? curr.price;
+  const prevSell = prev.sell ?? prev.price;
+  const change = ((currSell - prevSell) / prevSell) * 100;
+  return { buy: curr.buy ?? 0, sell: currSell, change };
+}
+
+const rows = fiatCurrencies.map(currency => {
+  const mod = tcmbFiles[`../../data/tcmb/${currency.slug}-try.json`];
+  if (!mod) return null;
+  const data = (mod as any).default;
+  const info = getLastTwo(data);
+  if (!info) return null;
+  return { currency, ...info };
+}).filter(Boolean);
+---
+
+<Base title="Döviz Kurları — Tüm Para Birimleri | Döviz Arşiv">
+  <div class="space-y-8">
+    <div>
+      <h1 class="text-3xl font-mono font-bold text-white mb-2">Döviz Kurları</h1>
+      <p class="text-gray-400">TCMB resmi kurları — tüm para birimleri</p>
+    </div>
+
+    <div class="card overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-white/5 text-gray-400 text-xs uppercase tracking-wider">
+            <th class="text-left py-3 px-4 font-medium">Kod</th>
+            <th class="text-left py-3 px-4 font-medium">İsim</th>
+            <th class="text-right py-3 px-4 font-medium">Alış</th>
+            <th class="text-right py-3 px-4 font-medium">Satış</th>
+            <th class="text-right py-3 px-4 font-medium">Değişim</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(row => {
+            const r = row as any;
+            const isUp = r.change >= 0;
+            return (
+              <tr class="border-b border-white/5 hover:bg-bg-hover transition">
+                <td class="py-3 px-4">
+                  <a href={`/doviz/${r.currency.slug}`} class="font-mono text-accent hover:underline">
+                    {r.currency.flag} {r.currency.code}
+                  </a>
+                </td>
+                <td class="py-3 px-4 text-gray-300">{r.currency.nameTr}</td>
+                <td class="py-3 px-4 text-right font-mono number text-gray-300">₺{r.buy.toFixed(4)}</td>
+                <td class="py-3 px-4 text-right font-mono number text-white font-medium">₺{r.sell.toFixed(4)}</td>
+                <td class={`py-3 px-4 text-right font-mono number ${isUp ? 'text-up' : 'text-down'}`}>
+                  {isUp ? '+' : ''}{r.change.toFixed(2).replace('.', ',')}%
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</Base>

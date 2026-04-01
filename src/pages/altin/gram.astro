@@ -1,0 +1,106 @@
+---
+import Base from '../../layouts/Base.astro';
+import PriceChart from '../../components/charts/PriceChart.tsx';
+import DataTable from '../../components/ui/DataTable.astro';
+import { formatDateShort } from '../../lib/formatters';
+
+import goldData from '../../data/gold/gram-try.json';
+
+const dates = Object.keys(goldData).sort();
+const latestDate = dates[dates.length - 1];
+const prevDate = dates[dates.length - 2];
+const latest = goldData[latestDate as keyof typeof goldData];
+const prev = goldData[prevDate as keyof typeof goldData];
+
+const change = prev ? ((latest.sell - prev.sell) / prev.sell) * 100 : 0;
+
+const allPrices = dates.map(d => goldData[d as keyof typeof goldData].sell);
+const minPrice = Math.min(...allPrices);
+const maxPrice = Math.max(...allPrices);
+const avgPrice = allPrices.reduce((a: number, b: number) => a + b, 0) / allPrices.length;
+
+const last30Data: Record<string, { buy: number; sell: number }> = {};
+dates.slice(-30).forEach(d => {
+  last30Data[d] = { buy: goldData[d as keyof typeof goldData].buy, sell: goldData[d as keyof typeof goldData].sell };
+});
+
+const gramPrice = latest.sell;
+const ceyrek = gramPrice * 1.75;
+const yaris = gramPrice * 3.50;
+const tam = gramPrice * 7.00;
+---
+
+<Base title="Gram Altın Fiyatı ve Tarihsel Veriler | Döviz Arşiv">
+  <div class="space-y-8">
+    <div class="flex items-center gap-3">
+      <span class="text-4xl">🥇</span>
+      <div>
+        <h1 class="text-3xl font-mono font-bold text-white">Gram Altın / Türk Lirası</h1>
+        <p class="text-gray-400 font-mono text-sm">XAU/TRY</p>
+      </div>
+    </div>
+
+    <div class="card p-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div>
+          <div class="text-gray-400 text-sm mb-1">Alış</div>
+          <div class="text-2xl font-mono font-bold text-white number">₺{latest.buy.toFixed(2)}</div>
+        </div>
+        <div>
+          <div class="text-gray-400 text-sm mb-1">Satış</div>
+          <div class="text-2xl font-mono font-bold text-white number">₺{latest.sell.toFixed(2)}</div>
+        </div>
+        <div>
+          <div class="text-gray-400 text-sm mb-1">Değişim</div>
+          <div class={`text-2xl font-mono font-bold number ${change >= 0 ? 'text-up' : 'text-down'}`}>
+            {change >= 0 ? '+' : ''}{change.toFixed(2).replace('.', ',')}%
+          </div>
+        </div>
+        <div>
+          <div class="text-gray-400 text-sm mb-1">Tarih</div>
+          <div class="text-lg font-mono text-white">{formatDateShort(latestDate)}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="card p-5 text-center">
+        <div class="text-gray-400 text-sm mb-1">Çeyrek Altın</div>
+        <div class="text-2xl font-mono font-bold text-accent number">₺{ceyrek.toFixed(2)}</div>
+        <div class="text-xs text-gray-500 mt-1">1.75 × gram</div>
+      </div>
+      <div class="card p-5 text-center">
+        <div class="text-gray-400 text-sm mb-1">Yarım Altın</div>
+        <div class="text-2xl font-mono font-bold text-accent number">₺{yaris.toFixed(2)}</div>
+        <div class="text-xs text-gray-500 mt-1">3.50 × gram</div>
+      </div>
+      <div class="card p-5 text-center">
+        <div class="text-gray-400 text-sm mb-1">Tam Altın</div>
+        <div class="text-2xl font-mono font-bold text-accent number">₺{tam.toFixed(2)}</div>
+        <div class="text-xs text-gray-500 mt-1">7.00 × gram</div>
+      </div>
+    </div>
+
+    <PriceChart client:load data={goldData} title="Gram Altın / TL Grafiği" />
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm mb-1">En Düşük</div>
+        <div class="text-xl font-mono font-bold text-down number">₺{minPrice.toFixed(2)}</div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm mb-1">En Yüksek</div>
+        <div class="text-xl font-mono font-bold text-up number">₺{maxPrice.toFixed(2)}</div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm mb-1">Ortalama</div>
+        <div class="text-xl font-mono font-bold text-white number">₺{avgPrice.toFixed(2)}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="text-lg font-mono font-bold text-white p-6 pb-0">Son 30 Gün Verileri</h3>
+      <DataTable data={last30Data} />
+    </div>
+  </div>
+</Base>

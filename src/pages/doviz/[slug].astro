@@ -1,0 +1,112 @@
+---
+import Base from '../../layouts/Base.astro';
+import PriceChart from '../../components/charts/PriceChart.tsx';
+import DataTable from '../../components/ui/DataTable.astro';
+import { fiatCurrencies, getCurrency } from '../../lib/currencies';
+import { formatDateShort } from '../../lib/formatters';
+
+export async function getStaticPaths() {
+  return fiatCurrencies.map(currency => ({
+    params: { slug: currency.slug },
+    props: { currency },
+  }));
+}
+
+const { slug } = Astro.params;
+const { currency } = Astro.props as { currency: ReturnType<typeof getCurrency> };
+
+const tcmbFiles = import.meta.glob('../../data/tcmb/*.json', { eager: true });
+const mod = tcmbFiles[`../../data/tcmb/${slug}-try.json`];
+const allData = mod ? (mod as any).default : {};
+
+const dates = Object.keys(allData).sort();
+const latestDate = dates[dates.length - 1];
+const prevDate = dates[dates.length - 2];
+const latest = allData[latestDate];
+const prev = allData[prevDate];
+
+const change = prev ? ((latest.sell - prev.sell) / prev.sell) * 100 : 0;
+
+const allPrices = dates.map(d => allData[d].sell);
+const minPrice = Math.min(...allPrices);
+const maxPrice = Math.max(...allPrices);
+const avgPrice = allPrices.reduce((a: number, b: number) => a + b, 0) / allPrices.length;
+
+const last30Data: Record<string, { buy: number; sell: number }> = {};
+dates.slice(-30).forEach(d => {
+  last30Data[d] = { buy: allData[d].buy, sell: allData[d].sell };
+});
+---
+
+<Base title={`${currency?.flag} ${currency?.nameTr} / TL Kuru ve Tarihsel Veriler | Döviz Arşiv`}>
+  <div class="space-y-8">
+    <div class="flex items-center gap-3">
+      <span class="text-4xl">{currency?.flag}</span>
+      <div>
+        <h1 class="text-3xl font-mono font-bold text-white">
+          {currency?.nameTr} / Türk Lirası
+        </h1>
+        <p class="text-gray-400 font-mono text-sm">{currency?.code}/TRY</p>
+      </div>
+    </div>
+
+    <div class="card p-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div>
+          <div class="text-gray-400 text-sm mb-1">Alış</div>
+          <div class="text-2xl font-mono font-bold text-white number">₺{latest.buy.toFixed(4)}</div>
+        </div>
+        <div>
+          <div class="text-gray-400 text-sm mb-1">Satış</div>
+          <div class="text-2xl font-mono font-bold text-white number">₺{latest.sell.toFixed(4)}</div>
+        </div>
+        <div>
+          <div class="text-gray-400 text-sm mb-1">Değişim</div>
+          <div class={`text-2xl font-mono font-bold number ${change >= 0 ? 'text-up' : 'text-down'}`}>
+            {change >= 0 ? '+' : ''}{change.toFixed(2).replace('.', ',')}%
+          </div>
+        </div>
+        <div>
+          <div class="text-gray-400 text-sm mb-1">Tarih</div>
+          <div class="text-lg font-mono text-white">{formatDateShort(latestDate)}</div>
+        </div>
+      </div>
+    </div>
+
+    <PriceChart client:load data={allData} title={`${currency?.nameTr} / TL Grafiği`} />
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm mb-1">En Düşük</div>
+        <div class="text-xl font-mono font-bold text-down number">₺{minPrice.toFixed(4)}</div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm mb-1">En Yüksek</div>
+        <div class="text-xl font-mono font-bold text-up number">₺{maxPrice.toFixed(4)}</div>
+      </div>
+      <div class="card p-5">
+        <div class="text-gray-400 text-sm mb-1">Ortalama</div>
+        <div class="text-xl font-mono font-bold text-white number">₺{avgPrice.toFixed(4)}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="text-lg font-mono font-bold text-white p-6 pb-0">Son 30 Gün Verileri</h3>
+      <DataTable data={last30Data} />
+    </div>
+
+    <section class="card p-6 max-w-3xl">
+      <h2 class="text-xl font-mono font-bold text-white mb-4">Sıkça Sorulan Sorular</h2>
+      <div class="space-y-4 text-gray-400">
+        <div>
+          <h3 class="text-white font-medium mb-1">1 {currency?.code} kaç TL?</h3>
+          <p>Güncel satış kuru: ₺{latest.sell.toFixed(4)} ({formatDateShort(latestDate)})</p>
+        </div>
+        <div>
+          <h3 class="text-white font-medium mb-1">{currency?.code} kuru neden değişir?</h3>
+          <p>Döviz kurları; faiz oranları, enflasyon, ticaret dengesi, siyasi gelişmeler ve küresel piyasa koşullarına göre değişiklik gösterir. TCMB her iş günü güncel kurları yayımlar.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>

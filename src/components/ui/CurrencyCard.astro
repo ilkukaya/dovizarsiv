@@ -1,0 +1,33 @@
+---
+export interface Props {
+  code: string;
+  name: string;
+  flag: string;
+  price: number;
+  change: number;
+  href: string;
+  subtitle?: string;
+}
+
+const { code, name, flag, price, change, href, subtitle } = Astro.props;
+const isUp = change >= 0;
+---
+
+<a href={href} class="card block p-5 group">
+  <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center gap-2">
+      <span class="text-2xl">{flag}</span>
+      <div>
+        <span class="text-gray-400 text-sm">{name}</span>
+        <span class="text-gray-500 text-xs ml-1 font-mono">{code}/TRY</span>
+      </div>
+    </div>
+    <span class={isUp ? 'badge-up' : 'badge-down'}>
+      {isUp ? '▲' : '▼'} {isUp ? '+' : ''}{change.toFixed(2).replace('.', ',')}%
+    </span>
+  </div>
+  <div class="text-2xl font-mono font-bold text-white mb-1 number">
+    ₺{price.toFixed(4).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+  </div>
+  {subtitle && <div class="text-gray-500 text-xs">{subtitle}</div>}
+</a>
