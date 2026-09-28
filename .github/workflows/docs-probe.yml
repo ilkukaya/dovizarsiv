@@ -1,0 +1,40 @@
+name: Doküman doğrulama (geçici)
+
+# Geliştirme ortamının erişemediği resmî dokümanları (Google AdSense/CMP) çekip loga basar. Ölçüm aracıdır; işi bitince silinir.
+on:
+  push:
+    branches: ['claude/**']
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: contains(github.event.head_commit.message, '[probe]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Sayfaları çek ve metne çevir
+        run: |
+          fetch() {
+            url="$1"
+            echo "================ $url"
+            code=$(curl -sL -m 40 -A 'Mozilla/5.0 (X11; Linux x86_64)' -o /tmp/page.html -w '%{http_code}' "$url")
+            echo "HTTP $code"
+            python3 - <<'PY'
+          import re, html
+          t = open('/tmp/page.html', encoding='utf-8', errors='ignore').read()
+          m = re.search(r'<title>(.*?)</title>', t, re.S)
+          print('TITLE:', html.unescape(m.group(1).strip()) if m else '-')
+          t = re.sub(r'<(script|style|noscript)[^>]*>.*?</\1>', ' ', t, flags=re.S)
+          t = re.sub(r'<(br|/p|/li|/h\d|/tr|/div|/pre|/code)[^>]*>', '\n', t)
+          t = re.sub(r'<[^>]+>', ' ', t)
+          t = html.unescape(t)
+          lines = [re.sub(r'\s+', ' ', l).strip() for l in t.split('\n')]
+          lines = [l for l in lines if len(l) > 2]
+          print('\n'.join(lines[:220]))
+          PY
+          }
+          fetch https://developers.google.com/publisher-tag/guides/content-security-policy
+          fetch https://developers.google.com/tag-platform/security/guides/consent
+          fetch https://support.google.com/adsense/answer/7532444
