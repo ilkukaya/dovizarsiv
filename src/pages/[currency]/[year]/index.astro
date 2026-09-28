@@ -4,6 +4,7 @@
  * en sert 5 yükseliş ve 5 düşüş günü, önceki/sonraki yıl. Dataset schema.
  */
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import AdSlot from '../../../components/AdSlot.astro';
 import ShareButton from '../../../components/ShareButton.astro';
 import SourceDisclosure from '../../../components/SourceDisclosure.astro';
 import RateStatGrid from '../../../components/RateStatGrid.astro';
@@ -116,6 +117,8 @@ const schema = dataset({
     tableNote="Aylık özet aşağıdaki tabloda."
   />
 
+  <AdSlot placement="primary" />
+
   <div class="table-scroll" tabindex="0" role="region" aria-label={`${year} aylık ${info.lower} kuru tablosu`}>
     <table class="data-table">
       <caption>{year} aylık TCMB {info.lower} kuru özeti (TL; ortalama, en düşük, en yüksek ve değişim Döviz Arşiv hesaplamasıdır)</caption>
@@ -195,6 +198,8 @@ const schema = dataset({
     <a href={paths.hub(code)}>{info.short} Kuru Arşivi</a>
     {nextYear ? <a href={paths.year(code, nextYear)} rel="next">{nextYear} →</a> : <span />}
   </nav>
+
+  <AdSlot placement="secondary" />
 
   <section aria-labelledby="diger">
     <h2 id="diger">{year} Diğer Kurlar</h2>

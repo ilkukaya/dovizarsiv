@@ -4,6 +4,7 @@
  * Sabit kurlu ve tek gözlemli aylar noindex,follow (isIndexablePage).
  */
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import AdSlot from '../../../components/AdSlot.astro';
 import ShareButton from '../../../components/ShareButton.astro';
 import SourceDisclosure from '../../../components/SourceDisclosure.astro';
 import RateStatGrid from '../../../components/RateStatGrid.astro';
@@ -107,6 +108,8 @@ const crumbs = [
     tableNote="Günlük değerler aşağıdaki tabloda."
   />
 
+  <AdSlot placement="primary" />
+
   <div class="table-scroll" tabindex="0" role="region" aria-label={`${formatMonth(ym)} günlük ${info.lower} kuru`}>
     <table class="data-table">
       <caption>{formatMonth(ym)} günlük TCMB {info.lower} kuru (TL, belirlendiği güne göre)</caption>
@@ -160,6 +163,8 @@ const crumbs = [
     <a href={paths.year(code, year)}>{year} {info.lower} kuru arşivi</a>
     {nextMonth ? <a href={paths.month(code, nextMonth)} rel="next">{formatMonth(nextMonth)} →</a> : <span />}
   </nav>
+
+  <AdSlot placement="secondary" />
 
   <section aria-labelledby="diger-para">
     <h2 id="diger-para">{formatMonth(ym)} Diğer Kurlar</h2>

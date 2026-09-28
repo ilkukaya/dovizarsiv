@@ -471,6 +471,39 @@ büyüklüğüne göre değil); 2004-12-31 gün sayfasında eski TL karşılığ
 - **Yasal sayfalar (6):** bugünkü gerçek durumu anlatır: çerez yok, analitik ve reklam kapalı, tarayıcıda yalnızca tercih (localStorage), barındırma sağlayıcısı kayıtları. Yayıncı/e-posta yalnızca `site.ts`'den; boşsa satır basılmaz. Reklam/analitik açıldığında gizlilik, çerez ve reklam politikası sayfalarının güncellenmesi zorunlu (LAUNCH-CHECKLIST).
 - **Menü/footer:** `FEATURES.guides` ve `FEATURES.legalPages` açıldı; 17 yeni rota `STATIC_ROUTES` ile sitemap'te (`guides` grubu ayrı).
 
+## D-018 Faz C: reklam altyapısı, onay yönetimi, CSP, kolaylıklar (Sonnet, 2026-09-28)
+
+**Resmî kaynaklardan doğrulananlar** (GitHub Actions üzerinden çekildi; 2026-09-28):
+
+| Konu | Kaynak | Bulgu ve uygulamamız |
+|---|---|---|
+| ads.txt | AdSense Help "Ads.txt guide" (answer/7532444) | Satır: `google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0`, sitenin kök dizininde. `/ads.txt` yalnızca canlı kipte ve geçerli ID ile üretilir |
+| Reklam birimi kodu | AdSense Help "Where to place ad unit code in your HTML" (answer/9190028) | `adsbygoogle.js?client=ca-pub-…` (`crossorigin="anonymous"`), `<ins class="adsbygoogle" data-ad-client data-ad-slot>`, `(adsbygoogle = window.adsbygoogle \|\| []).push({})`. Aynı biçim |
+| Consent Mode v2 | Google "Set up consent mode on websites" | Varsayılan `ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage` = `denied`; CMP yavaş yüklenirse `wait_for_update` (500 ms); güncelleme `gtag('consent','update',…)`. `/ads/runtime.js` bunu AdSense'ten ÖNCE çalıştırır (testli) |
+| CSP | AdSense Help answer/16283098; Publisher Tag CSP rehberi | Yalnızca strict CSP (nonce) desteklenir; "daha gevşek politika seçebilirsiniz", "CSP zorunlu değil". Statik hostingte nonce yok → reklam açıkken gevşek politika (aşağıda) |
+| Yerleşim | Google Publisher Policies (answer/10502938) | Reklamlar "gezinme veya diğer eylem öğelerinin üstüne binmemeli ya da bitişik olmamalı, istem dışı tıklamaya yol açmamalı". Yerleşim kuralımız (SPEC §10) bununla uyumlu |
+| Onay | aynı politika | AEA/UK kullanıcıları için "EU user consent policy"ye uyum gerekir → Google sertifikalı CMP zorunlu; Funding Choices artık AdSense'in "Privacy & messaging" sekmesine taşınmış |
+
+**Kararlar**
+- **Varsayılan KAPALI.** `PUBLIC_ADSENSE_ENABLED != "true"` iken çıktıda reklam kutusu, script, `/ads.txt`, `/ads/runtime.js` yoktur (smoke testi doğrular; stil dosyasında yalnızca etkisiz `.ad-slot` kuralları vardır).
+- **Kipler** (`src/config/ads.ts`): `off` / `test` (sabit yükseklikli "Reklam alanı (test modu)", harici script yok; production'da build'i düşürür) / `live` (geçerli `ca-pub-` + 16 rakam, birincil slot; **production'da onay yönetimi `PUBLIC_CMP_SRC` zorunlu**, aksi hâlde build düşer).
+- **Onay:** site kendi banner'ını çizmez ve onay kararı vermez. Varsayılan `denied` (Türkiye/KVKK için de). Google sertifikalı CMP `gtag('consent','update',…)` çağırır; özel CMP için `window.dovizarsivConsent.update(...)`.
+- **CSP:** reklam kapalıyken `script-src 'self'` (sıkı). Canlı kipte `npm run build` sonrası `scripts/ads/apply-csp.ts`, `dist/_headers` içindeki CSP'yi Google'ın desteklediği daha gevşek biçime çevirir (`script-src 'self' 'unsafe-inline' 'unsafe-eval' https:`, `frame-src https:`, `img/connect-src https:`; `object-src 'none'`, `frame-ancestors 'self'`). Alan adı listesi TUTULMAZ (Google değişeceğini söylüyor).
+- **Yerleşim:** birincil slot ana veri bölümünden sonra (gün, ay, yıl, hub, rehber), ikincil slot yalnızca ≥ 900 px'te alt bölümde. Tarih seçici, hesaplayıcı formları, önceki/sonraki gezinme yakınında, araç, 404, arşiv ve yasal sayfalarda reklam yok. Sağ kolon yerleşimi kurulmadı (sayfa düzeninde kolon yok).
+- **Bug notu:** Astro'da `slot` özel bir öznitelik adıdır (üst bileşenin adlandırılmış yuvası). `<AdSlot slot="…">` `<BaseLayout>` içinde sessizce siliniyordu; prop `placement` yapıldı.
+
+**Doğrulanamayanlar (owner/lansman öncesi kontrol):**
+- **CMP script adresi:** AdSense hesabında "Privacy & messaging" sekmesinden alınacak snippet'in tam biçimi doğrulanamadı. `PUBLIC_CMP_SRC` tek script adresi bekler; snippet ek satır içi kod içeriyorsa `src/lib/ads/runtime.ts` genişletilmelidir.
+- `data-ad-format="auto"` / `data-full-width-responsive="true"` (duyarlı birim öznitelikleri) bu çekimde doğrulanmadı; AdSense'te oluşturulan birimin kodundaki değerlerle karşılaştırın.
+- AdSense script'i `<head>` yerine çalışma zamanında dinamik eklenir. İşlevsel olarak eşdeğerdir ama Google'ın "kodu `<head>` içine yapıştırın" tarifiyle birebir aynı değildir; site doğrulama/onay sürecinde sorun çıkarsa kod sayfaya doğrudan konur.
+- Ad Manager/GPT kullanılmıyor; yalnızca AdSense.
+
+**Kolaylıklar**
+- **localStorage** (`src/lib/tools/prefs.ts`): yalnızca son seçilen para birimi, kur türü ve son 5 bakılan tarih/sayfa. Tutar, tarih girdisi ya da sonuç saklanmaz; okunan her değer doğrulanır (yalnızca `/tarih/…` ve `/{para}/{yıl}/{ay}/` adresleri kabul edilir); depolama engelliyse sessizce atlanır ve araçlar aynı çalışır (smoke ve birim testleri).
+- **Paylaş:** Web Share API, yoksa canonical adresi panoya kopyalar (`?istenen=` paylaşılmaz).
+- **Baskı CSS'i:** başlık, kurlar, hesap sonucu, kaynak kutusu ve sayfa adresi kalır; menü, footer, formlar, reklam ve paylaş gizlenir; koyu tema tarayıcılarda da beyaz zemin.
+- **Ölçümler:** reklam açık simülasyonunda (test kipi, sabit 280 px rezerve) gün/ay/yıl/hub/rehber sayfalarında **CLS 0,000**, Lighthouse 100/100/100/100; mobilde ikincil slot gizli. Bu, gerçek reklam yüklenmesini değil rezerve alan davranışını ölçer; canlı CLS lansman sonrası alan verisiyle izlenmelidir.
+
 ## Owner kararları (Faz 0 sonrası, 2026-09-28)
 
 Faz 0'daki açık soruların hepsi cevaplandı:

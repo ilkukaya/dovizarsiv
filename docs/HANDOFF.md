@@ -18,7 +18,8 @@ Bu belge, Opus'un bitirdiği temeli (Faz 0–2) ve Sonnet'in yapacağı işleri 
 | QA (SPEC §9, §11.5) | ✅ 360–1440 px taşma yok; Lighthouse 7 sayfa × 2 profil = 100/100/100/100 (D-015) |
 | Araçlar (D-1…D-4) | ✅ Faz A: 3 araç + gün sayfası mini hesaplayıcı; mantık `src/lib/tools/`, 21 birim testi, smoke senaryoları |
 | Rehber (10 yazı) ve yasal sayfalar (D-5, D-6) | ✅ Faz B: `src/content/guides/`, 6 yasal sayfa; insan incelemesi: `docs/guides-review.md` |
-| Reklam, paylaş/baskı/localStorage, E2E, README, lansman listesi | ⏳ **Sonnet — §D (D-7…D-10)** |
+| Reklam altyapısı, paylaş/baskı/localStorage (D-7, D-8) | ✅ Faz C: varsayılan KAPALI; `src/config/ads.ts`, `AdSlot`, `/ads/runtime.js`, `ads.txt`, CSP dönüşümü; DECISIONS D-018 |
+| E2E, a11y/perf turu, README, lansman listesi | ⏳ **Sonnet — §D (D-9, D-10)** |
 
 ### Komutlar
 
@@ -192,7 +193,7 @@ Commit başına bir görev. Veri, SEO çekirdeği ve metin motoru değişmez (§
   (D-8). Reklam açılınca güncellenecek bölümler işaretlenir.
 - **Kabul:** `FEATURES.legalPages = true`, footer linkleri görünür, `links:check` temiz. `organization()` şeması publisher doluysa basılır.
 
-### D-7 Reklam altyapısı: AdSlot, CMP/Consent Mode v2, ads.txt (SPEC §10)
+### D-7 Reklam altyapısı: AdSlot, CMP/Consent Mode v2, ads.txt (SPEC §10) ✅ TAMAMLANDI (Faz C; ayrıntı ve doğrulanamayanlar: DECISIONS D-018)
 - `AdSlot` bileşeni: `PUBLIC_ADSENSE_ENABLED !== 'true'` ise **hiçbir şey basmaz** (boş kutu, yer tutucu, script yok).
   Açıkken sabit yükseklikli rezerv alan (CLS < 0,05). Gün, ay, yıl ve hub sayfalarında SPEC'teki yerlere; 404'te yok.
 - CMP ve Consent Mode v2: varsayılan `denied`. Yalnızca reklam açıkken yüklenir.
@@ -202,7 +203,7 @@ Commit başına bir görev. Veri, SEO çekirdeği ve metin motoru değişmez (§
   `*.doubleclick.net`, `www.google.com`, `*.adtrafficquality.google`, `fundingchoicesmessages.google.com`. Liste DECISIONS'a kaydedilir.
 - **Kabul:** env kapalıyken build çıktısı bugünküyle bayt bayt aynı HTML iskeletine sahip (reklam izi yok). Açıkken Lighthouse CLS < 0,05.
 
-### D-8 Paylaş, yazdırma CSS'i, localStorage (SPEC §9)
+### D-8 Paylaş, yazdırma CSS'i, localStorage (SPEC §9) ✅ TAMAMLANDI (Faz C)
 - Paylaş: `navigator.share` varsa, yoksa "linki kopyala". Canonical URL paylaşılır (`?istenen=` değil).
 - Yazdırma CSS'i: header/nav/reklam gizli, tablolar tam genişlik, kaynak kutusu görünür, URL basılı.
 - localStorage yalnızca kullanıcı tercihi için (ör. son seçilen para birimi / kur türü). try/catch ile sarılır, veri önbelleği tutulmaz.

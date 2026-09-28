@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "tsx scripts/validation/build-guard.ts --pre && astro build && tsx scripts/validation/build-guard.ts --post && npm run seo:validate && npm run links:check",
+    "build": "tsx scripts/validation/build-guard.ts --pre && astro build && tsx scripts/ads/apply-csp.ts && tsx scripts/validation/build-guard.ts --post && npm run seo:validate && npm run links:check",
     "preview": "astro preview",
     "check": "astro check",
     "typecheck": "tsc --noEmit",

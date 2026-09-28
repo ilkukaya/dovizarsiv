@@ -146,6 +146,9 @@ const meanCell = usd2020.split(/\s+/).find((t) => /^\d,\d{4}$/.test(t));
 check(usd2020.startsWith('2020') && !!meanCell && yearPageText.includes(meanCell), `karşılaştırma: 2020 ortalaması (${meanCell}) yıl sayfasıyla aynı`);
 
 await openTool('/tarih/2020-01-15/');
+// Önceki senaryolar tercih kaydetti (localStorage); mini hesaplayıcı beklenen değeri tercihlerden bağımsız denensin.
+await page.evaluate(() => localStorage.clear());
+await page.reload();
 await page.fill('#mh-tutar', '250');
 await page.selectOption('#mh-para', 'EUR');
 await page.click('[data-tool=mini] button[type=submit]');
@@ -165,6 +168,56 @@ for (const path of ['/hakkimizda/', '/iletisim/', '/gizlilik/', '/cerez-politika
 }
 await page.goto(`${BASE}/`);
 check((await page.locator('footer a[href="/gizlilik/"]').count()) === 1 && (await page.locator('footer a[href="/rehber/"]').count()) === 1, 'footer: yasal sayfa ve rehber linkleri');
+
+// ---- Faz C: reklam kapalıyken iz yok, paylaş, tercihler, son bakılanlar, baskı ----
+await page.goto(`${BASE}/tarih/2020-01-15/`);
+check((await page.locator('.ad-slot, ins.adsbygoogle, script[src*="googlesyndication"], script[src*="/ads/"]').count()) === 0, 'reklam kapalı: sayfada reklam kutusu ya da script yok');
+check((await page.goto(`${BASE}/ads.txt`))?.status() === 404 && (await page.goto(`${BASE}/ads/runtime.js`))?.status() === 404, 'reklam kapalı: ads.txt ve reklam script dosyası üretilmez');
+
+await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: BASE });
+await page.goto(`${BASE}/tarih/2020-01-15/?istenen=2020-01-12`);
+await page.click('.share__button');
+await page.waitForFunction(() => document.querySelector('[data-share-status]')?.textContent?.includes('kopyalandı'));
+check((await page.evaluate(() => navigator.clipboard.readText())) === 'https://dovizarsiv.net/tarih/2020-01-15/', 'paylaş: canonical adres (parametresiz) panoya kopyalanır');
+
+await openTool('/hesaplama/gecmis-doviz/');
+await page.selectOption('#gd-kaynak', 'EUR');
+await page.selectOption('#gd-kur', 'cashSelling');
+await page.selectOption('#gd-hedef', 'TRY');
+await page.fill('#gd-tarih', '2020-01-15');
+await page.click('.tool button[type=submit]');
+await resultText(page);
+await page.reload();
+check((await page.inputValue('#gd-kaynak')) === 'EUR' && (await page.inputValue('#gd-kur')) === 'cashSelling', 'localStorage: son seçilen para birimi ve kur türü hatırlanır');
+const stored = await page.evaluate(() => localStorage.getItem('dovizarsiv:tercihler:v1') ?? '');
+check(!/\d{4}-\d{2}-\d{2}|tutar/i.test(stored.replace(/"recent":\[[^\]]*\]/, '')) && !stored.includes('100'), 'localStorage: tutar gibi kişisel/gereksiz veri saklanmaz');
+
+const blocked = await browser.newPage();
+await blocked.addInitScript(() => {
+  Object.defineProperty(window, 'localStorage', { get() { throw new Error('engelli'); } });
+});
+await blocked.goto(`${BASE}/hesaplama/gecmis-doviz/`);
+await blocked.fill('#gd-tarih', '2020-01-15');
+await blocked.fill('#gd-tutar', '100');
+await blocked.selectOption('#gd-kaynak', 'USD');
+await blocked.selectOption('#gd-hedef', 'TRY');
+await blocked.click('.tool button[type=submit]');
+await blocked.waitForFunction(() => document.querySelector('[data-result]')?.textContent?.includes('588,27'));
+check(true, 'localStorage erişilemezken araç aynı çalışır');
+await blocked.close();
+
+await page.goto(`${BASE}/`);
+await findDate(page, '2020-01-15');
+await page.goto(`${BASE}/`);
+await page.waitForSelector('.date-finder__recent');
+check(((await page.textContent('.date-finder__recent')) ?? '').includes('15 Ocak 2020'), 'tarih bulucu: son bakılan tarih listelenir');
+
+await page.goto(`${BASE}/tarih/2020-01-15/`);
+await page.emulateMedia({ media: 'print' });
+check(!(await page.isVisible('.site-header')) && !(await page.isVisible('.site-footer')), 'baskı: menü ve footer gizli');
+check((await page.isVisible('[data-source-disclosure]')) && (await page.isVisible('.print-only')), 'baskı: kaynak kutusu ve sayfa adresi görünür');
+check(!(await page.isVisible('.tool__form')), 'baskı: hesaplama formu gizli');
+await page.emulateMedia({ media: 'screen' });
 
 await browser.close();
 server.close();

@@ -3,6 +3,7 @@
  * Para birimi hub'ı (SPEC §6.4): /dolar/, /euro/, /sterlin/. Sitenin en güçlü sayfalarından biri.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdSlot from '../../components/AdSlot.astro';
 import ShareButton from '../../components/ShareButton.astro';
 import SourceDisclosure from '../../components/SourceDisclosure.astro';
 import RateStatGrid from '../../components/RateStatGrid.astro';
@@ -93,6 +94,8 @@ const schema = dataset({
     tableNote="Yıllık özet aşağıdaki tabloda."
   />
 
+  <AdSlot placement="primary" />
+
   <h2>Yıllık Özet</h2>
   <div class="table-scroll" tabindex="0" role="region" aria-label={`${info.short} kuru yıllık özet`}>
     <table class="data-table">
@@ -172,6 +175,8 @@ const schema = dataset({
     <p><a class="button button--secondary" href={paths.csv(code)} download>{info.short} kuru arşivi (CSV)</a></p>
     <p class="small muted">CSV dosyası kaynak gösterimini içerir. Veriyi kullanırken kaynak olarak TCMB EVDS'yi belirtin. {FEATURES.tools && <a href={paths.historicalCalculator()}>Geçmiş döviz hesaplama aracı</a>} <a href={paths.methodology()}>Metodoloji</a></p>
   </section>
+
+  <AdSlot placement="secondary" />
 
   <section aria-labelledby="diger-hub">
     <h2 id="diger-hub">Diğer Arşivler</h2>

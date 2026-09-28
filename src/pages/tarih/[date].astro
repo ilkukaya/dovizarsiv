@@ -5,6 +5,7 @@
  * Geçersiz ya da gözlemsiz tarih için sayfa üretilmez → gerçek 404.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdSlot from '../../components/AdSlot.astro';
 import ShareButton from '../../components/ShareButton.astro';
 import ExchangeRateTable from '../../components/ExchangeRateTable.astro';
 import MiniCalculator from '../../components/tools/MiniCalculator.astro';
@@ -108,6 +109,8 @@ const validDates = [...new Set(view.currencies.map((c) => c.validRate?.date).fil
     )
   }
 
+  <AdSlot placement="primary" />
+
   {
     view.currencies.map((c) => (
       <section aria-labelledby={`h-${c.currency}`}>
@@ -121,6 +124,8 @@ const validDates = [...new Set(view.currencies.map((c) => c.validRate?.date).fil
       </section>
     ))
   }
+
+  <AdSlot placement="secondary" />
 
   <section aria-labelledby="hazir-hesaplar">
     <h2 id="hazir-hesaplar">Hazır Hesaplar</h2>

@@ -856,3 +856,39 @@ span.calendar__day {
     height: auto;
   }
 }
+
+/* ---------- Reklam alanı (yalnızca reklam açıkken basılır; sabit yükseklik → CLS yok) ---------- */
+.ad-slot {
+  margin: var(--space-5) 0;
+  contain: layout;
+}
+
+.ad-slot__label {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ad-slot__box {
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: var(--border-width) dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-muted);
+}
+
+.ad-slot__test {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 899px) {
+  .ad-slot--secondary {
+    display: none;
+  }
+}
