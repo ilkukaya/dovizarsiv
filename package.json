@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "tsx scripts/validation/build-guard.ts --pre && astro build && tsx scripts/validation/build-guard.ts --post && npm run seo:validate && npm run links:check",
     "preview": "astro preview",
     "check": "astro check",
     "typecheck": "tsc --noEmit",
@@ -18,7 +18,14 @@
     "data:validate": "tsx scripts/data/validate.ts",
     "data:stats": "tsx scripts/data/stats.ts",
     "verify:bulletins": "tsx scripts/validation/verify-bulletins.ts",
-    "verify:evds-spot": "tsx scripts/validation/spot-check-evds.ts"
+    "verify:evds-spot": "tsx scripts/validation/spot-check-evds.ts",
+    "build:site": "astro build",
+    "seo:validate": "tsx scripts/seo/validate.ts",
+    "links:check": "tsx scripts/seo/links-check.ts",
+    "qa:layout": "tsx scripts/qa/layout-check.ts",
+    "qa:smoke": "tsx scripts/qa/smoke.ts",
+    "qa:lighthouse": "node scripts/qa/lighthouse.mjs",
+    "assets:images": "tsx scripts/assets/generate-images.ts"
   },
   "dependencies": {
     "astro": "^7.3.5"
@@ -26,6 +33,8 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@types/node": "^22.19.0",
+    "lighthouse": "^13.5.0",
+    "playwright": "^1.63.0",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "vitest": "^5.0.2"

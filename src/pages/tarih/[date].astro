@@ -1,0 +1,202 @@
+---
+/**
+ * Gün sayfası (SPEC §6.7). Yalnızca TCMB'nin kur belirlediği günler için üretilir (DAY_PAGES_START ve sonrası).
+ * Tarih konvansiyonu B: ana değer o gün 15.30'da belirlenen kur; ikinci satır o gün geçerli olan kur (DECISIONS D-012).
+ * Geçersiz ya da gözlemsiz tarih için sayfa üretilmez → gerçek 404.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ExchangeRateTable from '../../components/ExchangeRateTable.astro';
+import SourceDisclosure from '../../components/SourceDisclosure.astro';
+import RelatedDates from '../../components/RelatedDates.astro';
+import Move from '../../components/Move.astro';
+import { CURRENCY_INFO, FIELD_LABELS } from '../../config/currencies.ts';
+import { FEATURES, SITE } from '../../config/site.ts';
+import { dayPageDates, hasDayPage } from '../../lib/data/store.ts';
+import { buildDayView } from '../../lib/pages/day.ts';
+import { dayCurrencySection, dayIntro } from '../../lib/text/engine.ts';
+import { formatDate, formatDateLong, formatMonth, formatNumber, formatRate } from '../../lib/formatting/format.ts';
+import { paths } from '../../lib/seo/urls.ts';
+
+export function getStaticPaths() {
+  return dayPageDates().map((date) => ({ params: { date } }));
+}
+
+const { date } = Astro.params as { date: string };
+const view = buildDayView(date);
+const title = `${formatDate(date)} Döviz Kurları`;
+const intro = dayIntro(view.facts);
+const sellText = view.currencies.map((c) => `${CURRENCY_INFO[c.currency].lower} ${formatRate(c.facts.selling)} TL`).join(', ');
+const description = `${formatDate(date)} TCMB döviz satış kurları: ${sellText}. Önceki gözleme göre değişim, efektif kurlar ve hazır hesaplar.`;
+const year = date.slice(0, 4);
+const month = date.slice(0, 7);
+const crumbs = [
+  { name: 'Tarih Arşivi', path: paths.archive() },
+  { name: year, path: paths.archiveYear(year) },
+  { name: formatDate(date), path: paths.day(date) },
+];
+const validDates = [...new Set(view.currencies.map((c) => c.validRate?.date).filter(Boolean))] as string[];
+---
+
+<BaseLayout title={title} description={description} path={paths.day(date)} page={{ kind: 'day', observationCount: view.currencies.length, hasSourceDisclosure: true }} crumbs={crumbs}>
+  <h1>{title}</h1>
+  <p class="muted"><time datetime={date}>{formatDateLong(date)}</time> · TCMB'nin 15.30'da belirlediği gösterge kurlar</p>
+
+  <div class="requested-band" data-requested-band hidden aria-live="polite"></div>
+
+  <div class="lead">
+    {intro.map((s) => <p>{s}</p>)}
+  </div>
+
+  <ExchangeRateTable
+    caption={`${formatDate(date)} tarihinde belirlenen TCMB döviz kurları (TL)`}
+    firstHeader="Para birimi"
+    valueHeaders={[FIELD_LABELS.forexBuying, FIELD_LABELS.forexSelling]}
+    showChange
+    changeHeader="Önceki gözleme göre (satış)"
+    rows={view.currencies.map((c) => ({
+      label: `1 ${c.currency}`,
+      sub: CURRENCY_INFO[c.currency].name,
+      href: paths.hub(c.currency),
+      values: [c.obs.forexBuying ?? null, c.obs.forexSelling ?? null],
+      changePct: c.changeSelling,
+    }))}
+  />
+
+  <div class="note">
+    <p>
+      <strong>Bu tarihte geçerli olan kur</strong> (bir önceki iş günü belirlenen):{' '}
+      {view.currencies.map((c, i) => (
+        <>
+          {i > 0 && ', '}
+          {c.currency} {c.validRate?.forexSelling ? `${formatRate(c.validRate.forexSelling)} TL` : '—'}
+        </>
+      ))}
+      {validDates.length === 1 && <> (TCMB'nin <a href={hasDayPage(validDates[0]!) ? paths.day(validDates[0]!) : paths.month('USD', validDates[0]!.slice(0, 7))}><time datetime={validDates[0]}>{formatDate(validDates[0]!)}</time></a> tarihinde belirlediği döviz satış kuru).</>}
+    </p>
+    <p class="muted">TCMB kurları 15.30'da belirler; bu kurlar ertesi iş günü geçerlidir ve Resmî Gazete'de yayımlanır. Hangi günün kurunun kullanılacağı işlemin türüne göre değişebilir; ilgili mevzuatı kontrol edin. <a href={paths.methodology() + '#tarih-konvansiyonu'}>Ayrıntı</a></p>
+  </div>
+
+  {
+    view.preRedenomination && (
+      <div class="note">
+        <p>
+          Değerler 2005 para reformuna göre yeni TL'ye {SITE.name} tarafından çevrilmiştir (1 YTL = 1.000.000 TL). Orijinal değerler:
+          {view.currencies.map((c, i) => (
+            <>
+              {i > 0 && '; '}
+              {c.currency} döviz alış {formatNumber(c.oldTl?.forexBuying ?? '0', 0, 4)} TL, döviz satış {formatNumber(c.oldTl?.forexSelling ?? '0', 0, 4)} TL
+              {c.oldTl?.calculated && ' (EVDS bu kuru yeni TL olarak veriyor; eski TL karşılığı Döviz Arşiv hesaplaması)'}
+            </>
+          ))}
+          . <a href={paths.methodology() + '#para-reformu-2005'}>Metodoloji</a>
+        </p>
+      </div>
+    )
+  }
+
+  {
+    view.hasCash && (
+      <ExchangeRateTable
+        caption={`${formatDate(date)} efektif kurları (TL)`}
+        firstHeader="Para birimi"
+        valueHeaders={[FIELD_LABELS.cashBuying, FIELD_LABELS.cashSelling]}
+        rows={view.currencies.map((c) => ({ label: `1 ${c.currency}`, values: [c.obs.cashBuying ?? null, c.obs.cashSelling ?? null] }))}
+      />
+    )
+  }
+
+  {
+    view.currencies.map((c) => (
+      <section aria-labelledby={`h-${c.currency}`}>
+        <h2 id={`h-${c.currency}`}>{formatDate(date)} {CURRENCY_INFO[c.currency].short} Kuru</h2>
+        {dayCurrencySection(c.facts, date).map((s) => <p>{s}</p>)}
+        <p class="small">
+          Önceki gözleme göre döviz alış: <Move pct={c.changeBuying} />, döviz satış: <Move pct={c.changeSelling} />.{' '}
+          <a href={paths.month(c.currency, month)}>{formatMonth(month)} {CURRENCY_INFO[c.currency].lower} kuru</a> ·{' '}
+          <a href={paths.year(c.currency, year)}>{year} {CURRENCY_INFO[c.currency].lower} kuru arşivi</a>
+        </p>
+      </section>
+    ))
+  }
+
+  <section aria-labelledby="hazir-hesaplar">
+    <h2 id="hazir-hesaplar">Hazır Hesaplar</h2>
+    <p class="small muted">TL'den dövize çevirmede Döviz Satış, dövizden TL'ye çevirmede Döviz Alış kuru kullanılmıştır ({formatDate(date)} tarihinde belirlenen kur). {SITE.name} hesaplamasıdır; banka ve döviz bürosu fiyatları farklı olabilir.</p>
+    <div class="grid grid--2">
+      <div class="table-scroll" tabindex="0" role="region" aria-label="TL kaç döviz eder">
+        <table class="data-table">
+          <caption>TL kaç döviz eder (Döviz Satış)</caption>
+          <thead>
+            <tr>
+              <th scope="col">Tutar</th>
+              {view.currencies.map((c) => <th scope="col" class="num">{c.currency}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {['100', '1000', '10000'].map((amount) => (
+              <tr>
+                <th scope="row" class="num">{formatNumber(amount, 0, 0)} TL</th>
+                {view.tryToForeign.filter((r) => r.amount === amount).map((r) => <td class="num">{formatNumber(r.result.round(2), 2, 2)}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Döviz kaç TL eder">
+        <table class="data-table">
+          <caption>Döviz kaç TL eder (Döviz Alış)</caption>
+          <thead>
+            <tr>
+              <th scope="col">Tutar</th>
+              {view.currencies.map((c) => <th scope="col" class="num">{c.currency}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {['1', '100', '1000'].map((amount) => (
+              <tr>
+                <th scope="row" class="num">{formatNumber(amount, 0, 0)} birim</th>
+                {view.foreignToTry.filter((r) => r.amount === amount).map((r) => <td class="num">{amount === '1' ? formatRate(r.result) : formatNumber(r.result.round(2), 2, 2)} TL</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div data-mini-calculator-slot hidden></div>
+  </section>
+
+  <RelatedDates date={date} />
+
+  <section aria-labelledby="ilgili">
+    <h2 id="ilgili">Arşivde Gezin</h2>
+    <ul class="link-list">
+      {view.currencies.map((c) => <li><a href={paths.month(c.currency, month)}>{formatMonth(month)} {CURRENCY_INFO[c.currency].short}</a></li>)}
+      {view.currencies.map((c) => <li><a href={paths.hub(c.currency)}>{CURRENCY_INFO[c.currency].short} Kuru Arşivi</a></li>)}
+      <li><a href={paths.archiveYear(year)}>{year} tarih arşivi</a></li>
+      {FEATURES.tools && <li><a href={paths.historicalCalculator()}>Geçmiş döviz hesaplama</a></li>}
+    </ul>
+  </section>
+
+  <SourceDisclosure dataDate={date} preRedenomination={view.preRedenomination} />
+
+</BaseLayout>
+
+<script>
+  // ?istenen=YYYY-MM-DD: kullanıcı kur belirlenmemiş bir gün seçtiyse bilgi bandı (canonical parametresizdir).
+  const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+  const fmt = (iso: string) => {
+    const [y, m, d] = iso.split('-').map(Number);
+    return `${d} ${MONTHS[(m ?? 1) - 1]} ${y}`;
+  };
+  const requested = new URLSearchParams(location.search).get('istenen');
+  const band = document.querySelector<HTMLElement>('[data-requested-band]');
+  const pageDate = location.pathname.match(/\/tarih\/(\d{4}-\d{2}-\d{2})\//)?.[1];
+  if (band && requested && pageDate && /^\d{4}-\d{2}-\d{2}$/.test(requested) && requested !== pageDate) {
+    const [y, m, d] = requested.split('-').map(Number);
+    const dt = new Date(Date.UTC(y!, m! - 1, d!));
+    if (dt.getUTCFullYear() === y && dt.getUTCMonth() === m! - 1 && dt.getUTCDate() === d) {
+      band.textContent = `Seçtiğiniz ${fmt(requested)} tarihinde TCMB yeni kur belirlemedi (hafta sonu, resmî tatil ya da arife). Önceki belirlenen kur: ${fmt(pageDate)}.`;
+      band.hidden = false;
+    }
+  }
+</script>

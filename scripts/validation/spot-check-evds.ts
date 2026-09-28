@@ -75,7 +75,13 @@ async function main(): Promise<void> {
         if (evdsRaw === null && siteRaw === null) continue;
         compared++;
         const rawOk = evdsRaw === siteRaw;
-        const ytlOk = evdsYtl === null || (siteTry !== null && Decimal.parse(evdsYtl).eq(Decimal.parse(siteTry)));
+        // .YTL, EVDS'de 8 basamağa yuvarlanmış karşılıktır (DECISIONS D-005); yuvarlama farkı eşleşme sayılır.
+        const ytlOk =
+          evdsYtl === null ||
+          (siteTry !== null &&
+            (Decimal.parse(evdsYtl).eq(Decimal.parse(siteTry)) ||
+              Decimal.parse(siteTry).roundHalfUp(8).eq(Decimal.parse(evdsYtl)) ||
+              Decimal.parse(siteTry).round(8).eq(Decimal.parse(evdsYtl))));
         if (rawOk && ytlOk) matched++;
         else console.error(`  ${sourceDate} ${currency}.${field}: EVDS ham=${evdsRaw} ytl=${evdsYtl} / site ham=${siteRaw} try=${siteTry}`);
       }

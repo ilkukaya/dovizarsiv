@@ -267,6 +267,138 @@ Teknik tercihler (öneri):
 - Mevcut `.github/workflows/daily-data-fetch.yml` (`main`) son 43 çalışmasının tamamında başarısız; Faz 1'de silinip yerine
   `data-update.yml` gelecek.
 
+## D-011 Sayısal hassasiyet ve yuvarlama — UYGULANDI (Faz 1)
+
+- Kaynak değerler string olarak saklanır (`raw`, EVDS'nin 8 ondalıklı metni birebir). Normalize değer, sondaki sıfırları atılmış
+  kanonik ondalık string'dir (`5.88270000` → `5.8827`); kaynaktan fazla hassasiyet uydurulmaz.
+- Aritmetik `src/lib/calculations/decimal.ts` (BigInt tabanlı). Toplama/çıkarma/çarpma ve 2005 dönüşümü (÷10⁶) TAMDIR.
+  Bölme (ortalama, yüzde, TL→döviz) 12 ondalıkta half-even yuvarlanır. Float yalnızca grafik çiziminde kullanılır.
+- Gösterim yuvarlaması yalnızca `src/lib/formatting/format.ts`'te: kur 4, yüzde 2, tutar 2 ondalık (tr-TR, half-even).
+- EVDS `.YTL` serisi 1950–1980 döneminde değerleri 8 basamağa **half-up** yuvarlıyor (ör. 9,045 eski TL → 0,00000905).
+  Bu nedenle ham kaynak olarak arşiv serisi (tam hassasiyet) kullanılıyor; `.YTL` yalnızca çapraz kontrol.
+
+## D-012 Tarih konvansiyonu "B" — UYGULANDI VE DOĞRULANDI (Faz 1)
+
+**Kural (tek fonksiyon: `src/lib/data/convention.ts` → `buildDeterminationIndex`):**
+- Sitenin tarihi = TCMB'nin kuru 15.30'da belirlediği gün. EVDS'de D tarihli satır = D'den önceki son TCMB iş gününde belirlenen kur.
+- EVDS, kur belirlenmeyen günlerde (arife, bayram, bazı resmî tatiller) bir önceki kuru **tekrarlayan satırlar** içeriyor
+  (ör. her yıl 28 Ekim satırı, 2018-01-01, 2018-04-23, 2018-05-01 satırları). 1990-01-01'den itibaren bir satır önceki satırla
+  birebir aynı değerleri taşıyorsa "taşınan kur" satırıdır ve belirlenme günü üretmez. Yeni kur taşıyan satırın kuru, önceki
+  satırın gününde belirlenmiştir.
+- 1990 öncesinde (sabit kur dönemleri; aynı değerler aylarca sürer) her satır ayrı belirlenme sayılır. Ölçüm: 1990 sonrası tüm
+  aynı-değer dizileri 2–3 satırlık ve tatillere denk geliyor; 1950–1989'da 4–13+ satırlık diziler var.
+- Taşınan-kur satırları ve serinin ilk satırı `data/metadata/source-extra.json`'da saklanır (ham kaynak eksiksiz; 88 satır).
+- Arşivde olmayıp yalnızca `.YTL`'de bulunan satırlar her güncellemede sınıflanır. Yeni kur taşıyıp arşivde karşılığı yoksa hata
+  verilir. Tek not: **2017-08-30** satırı (kur 3,4410) arşivde yok, arşivde bu kur 2017-08-31 satırında başlıyor. Belirlenme günü
+  (2017-08-29) iki durumda da aynı; yalnızca "ilk geçerlilik günü" arşivde bir satır geç görünüyor.
+
+**Doğrulama:** TCMB günlük bülten XML'leri (yalnızca GitHub Actions'ta, üretim verisine girmeden) ile 73 tarih:
+hafta sonu geçişleri, yılbaşları, resmî tatiller, 28 Ekim arifesi, bayram arifeleri ve uzun (9 günlük) bayram tatilleri,
+2005 geçişi, 2001 krizi. Kur belirlenmeyen günlerde (XML 404) sitede gözlem yok; belirlenen günlerde 3 para birimi ×
+4 alanın tamamı birebir eşleşiyor (2001 öncesi EUR efektif olmadığı için 10/10).
+
+| # | Tarih | Gün | Senaryo | TCMB bülteni | Sitede gözlem | Kaynak EVDS satırı | USD döviz alış (bülten / site) | Alan eşleşmesi | Sonuç |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 2000-01-07 | Cuma | hafta sonu öncesi (Cuma) | yok (404) | yok | — | — | — | ✅ |
+| 2 | 2000-01-10 | Pazartesi | hafta sonu sonrası (Pazartesi) | yok (404) | yok | — | — | — | ✅ |
+| 3 | 2008-06-06 | Cuma | hafta sonu öncesi (Cuma) | 2008/111 | var | 2008-06-09 | 1.2335 / 1.2335 | 12/12 | ✅ |
+| 4 | 2008-06-07 | Cumartesi | Cumartesi | yok (404) | yok | — | — | — | ✅ |
+| 5 | 2008-06-09 | Pazartesi | hafta sonu sonrası (Pazartesi) | 2008/112 | var | 2008-06-10 | 1.2405 / 1.2405 | 12/12 | ✅ |
+| 6 | 2020-01-10 | Cuma | hafta sonu öncesi (Cuma) | 2020/7 | var | 2020-01-13 | 5.8713 / 5.8713 | 12/12 | ✅ |
+| 7 | 2020-01-11 | Cumartesi | Cumartesi | yok (404) | yok | — | — | — | ✅ |
+| 8 | 2020-01-13 | Pazartesi | hafta sonu sonrası (Pazartesi) | 2020/8 | var | 2020-01-14 | 5.8529 / 5.8529 | 12/12 | ✅ |
+| 9 | 2020-01-15 | Çarşamba | referans gün (SPEC §11.5) | 2020/10 | var | 2020-01-16 | 5.8827 / 5.8827 | 12/12 | ✅ |
+| 10 | 2024-03-29 | Cuma | hafta sonu öncesi (Cuma) | 2024/64 | var | 2024-04-01 | 32.2854 / 32.2854 | 12/12 | ✅ |
+| 11 | 2024-04-01 | Pazartesi | hafta sonu sonrası (Pazartesi) | 2024/65 | var | 2024-04-02 | 32.3568 / 32.3568 | 12/12 | ✅ |
+| 12 | 1999-12-31 | Cuma | yılbaşı öncesi | yok (404) | yok | — | — | — | ✅ |
+| 13 | 2000-01-03 | Pazartesi | yılbaşı sonrası | (no'suz) 2000-01-03 | var | 2000-01-04 | 0.540793 / 0.540793 | 10/10 | ✅ |
+| 14 | 2004-12-31 | Cuma | yılbaşı öncesi + 2005 para reformu | 2004/251 | var | 2005-01-03 | 1.3363 / 1.3363 | 12/12 | ✅ |
+| 15 | 2005-01-03 | Pazartesi | yılbaşı sonrası + 2005 para reformu | 2005/1 | var | 2005-01-04 | 1.3383 / 1.3383 | 12/12 | ✅ |
+| 16 | 2008-12-31 | Çarşamba | yılbaşı öncesi | 2008/249 | var | 2009-01-02 | 1.5218 / 1.5218 | 12/12 | ✅ |
+| 17 | 2009-01-01 | Perşembe | yılbaşı tatili | yok (404) | yok | — | — | — | ✅ |
+| 18 | 2009-01-02 | Cuma | yılbaşı sonrası | 2009/1 | var | 2009-01-05 | 1.5293 / 1.5293 | 12/12 | ✅ |
+| 19 | 2019-12-31 | Salı | yılbaşı öncesi | 2019/247 | var | 2020-01-02 | 5.94 / 5.94 | 12/12 | ✅ |
+| 20 | 2020-01-01 | Çarşamba | yılbaşı tatili | yok (404) | yok | — | — | — | ✅ |
+| 21 | 2020-01-02 | Perşembe | yılbaşı sonrası | 2020/1 | var | 2020-01-03 | 5.9478 / 5.9478 | 12/12 | ✅ |
+| 22 | 2023-12-29 | Cuma | yılbaşı öncesi (Cuma) | 2023/251 | var | 2024-01-02 | 29.4382 / 29.4382 | 12/12 | ✅ |
+| 23 | 2024-01-01 | Pazartesi | yılbaşı tatili (Pazartesi) | yok (404) | yok | — | — | — | ✅ |
+| 24 | 2024-01-02 | Salı | yılbaşı sonrası | 2024/1 | var | 2024-01-03 | 29.6675 / 29.6675 | 12/12 | ✅ |
+| 25 | 2024-04-22 | Pazartesi | 23 Nisan öncesi | 2024/76 | var | 2024-04-24 | 32.5 / 32.5 | 12/12 | ✅ |
+| 26 | 2024-04-23 | Salı | 23 Nisan tatili | yok (404) | yok | — | — | — | ✅ |
+| 27 | 2024-04-24 | Çarşamba | 23 Nisan sonrası | 2024/77 | var | 2024-04-25 | 32.4742 / 32.4742 | 12/12 | ✅ |
+| 28 | 2023-05-01 | Pazartesi | 1 Mayıs tatili | yok (404) | yok | — | — | — | ✅ |
+| 29 | 2023-05-02 | Salı | 1 Mayıs sonrası | 2023/84 | var | 2023-05-03 | 19.4417 / 19.4417 | 12/12 | ✅ |
+| 30 | 2023-05-18 | Perşembe | 19 Mayıs öncesi | 2023/96 | var | 2023-05-22 | 19.7607 / 19.7607 | 12/12 | ✅ |
+| 31 | 2023-05-19 | Cuma | 19 Mayıs tatili | yok (404) | yok | — | — | — | ✅ |
+| 32 | 2016-07-15 | Cuma | 15 Temmuz (2016: henüz tatil değil) | 2016/135 | var | 2016-07-18 | 2.8834 / 2.8834 | 12/12 | ✅ |
+| 33 | 2019-07-15 | Pazartesi | 15 Temmuz tatili | yok (404) | yok | — | — | — | ✅ |
+| 34 | 2022-08-30 | Salı | 30 Ağustos tatili | yok (404) | yok | — | — | — | ✅ |
+| 35 | 2019-10-28 | Pazartesi | 29 Ekim arifesi (yarım gün) | yok (404) | yok | — | — | — | ✅ |
+| 36 | 2019-10-29 | Salı | Cumhuriyet Bayramı | yok (404) | yok | — | — | — | ✅ |
+| 37 | 2019-10-30 | Çarşamba | Cumhuriyet Bayramı sonrası | 2019/203 | var | 2019-10-31 | 5.7363 / 5.7363 | 12/12 | ✅ |
+| 38 | 2024-04-08 | Pazartesi | Ramazan Bayramı 2024 öncesi | 2024/70 | var | 2024-04-09 | 32.006 / 32.006 | 12/12 | ✅ |
+| 39 | 2024-04-09 | Salı | Ramazan Bayramı 2024 arifesi | yok (404) | yok | — | — | — | ✅ |
+| 40 | 2024-04-10 | Çarşamba | Ramazan Bayramı 2024 1. gün | yok (404) | yok | — | — | — | ✅ |
+| 41 | 2024-04-12 | Cuma | Ramazan Bayramı 2024 3. gün | yok (404) | yok | — | — | — | ✅ |
+| 42 | 2024-04-15 | Pazartesi | Ramazan Bayramı 2024 sonrası | 2024/71 | var | 2024-04-16 | 32.3271 / 32.3271 | 12/12 | ✅ |
+| 43 | 2023-04-19 | Çarşamba | Ramazan Bayramı 2023 öncesi | 2023/78 | var | 2023-04-20 | 19.3806 / 19.3806 | 12/12 | ✅ |
+| 44 | 2023-04-20 | Perşembe | Ramazan Bayramı 2023 arifesi | yok (404) | yok | — | — | — | ✅ |
+| 45 | 2023-04-21 | Cuma | Ramazan Bayramı 2023 1. gün | yok (404) | yok | — | — | — | ✅ |
+| 46 | 2023-04-24 | Pazartesi | Ramazan Bayramı 2023 sonrası | 2023/79 | var | 2023-04-25 | 19.3853 / 19.3853 | 12/12 | ✅ |
+| 47 | 2023-06-26 | Pazartesi | Kurban Bayramı 2023 öncesi | 2023/122 | var | 2023-06-27 | 25.8231 / 25.8231 | 12/12 | ✅ |
+| 48 | 2023-06-27 | Salı | Kurban Bayramı 2023 arifesi | yok (404) | yok | — | — | — | ✅ |
+| 49 | 2023-06-28 | Çarşamba | Kurban Bayramı 2023 1. gün | yok (404) | yok | — | — | — | ✅ |
+| 50 | 2023-07-03 | Pazartesi | Kurban Bayramı 2023 sonrası | 2023/123 | var | 2023-07-04 | 26.0312 / 26.0312 | 12/12 | ✅ |
+| 51 | 2025-06-04 | Çarşamba | Kurban Bayramı 2025 öncesi | 2025/105 | var | 2025-06-05 | 39.0575 / 39.0575 | 12/12 | ✅ |
+| 52 | 2025-06-05 | Perşembe | Kurban Bayramı 2025 arifesi | yok (404) | yok | — | — | — | ✅ |
+| 53 | 2025-06-06 | Cuma | Kurban Bayramı 2025 1. gün | yok (404) | yok | — | — | — | ✅ |
+| 54 | 2025-06-09 | Pazartesi | Kurban Bayramı 2025 4. gün | yok (404) | yok | — | — | — | ✅ |
+| 55 | 2025-06-10 | Salı | Kurban Bayramı 2025 sonrası | 2025/106 | var | 2025-06-11 | 39.1385 / 39.1385 | 12/12 | ✅ |
+| 56 | 2018-08-17 | Cuma | Kurban 2018 uzun tatil öncesi (Cuma) | 2018/160 | var | 2018-08-20 | 5.9944 / 5.9944 | 12/12 | ✅ |
+| 57 | 2018-08-20 | Pazartesi | Kurban 2018 arifesi / idari izin | yok (404) | yok | — | — | — | ✅ |
+| 58 | 2018-08-24 | Cuma | Kurban 2018 bayram / tatil | yok (404) | yok | — | — | — | ✅ |
+| 59 | 2018-08-27 | Pazartesi | Kurban 2018 uzun tatil sonrası | 2018/161 | var | 2018-08-28 | 6.1901 / 6.1901 | 12/12 | ✅ |
+| 60 | 2019-05-31 | Cuma | Ramazan 2019 uzun tatil öncesi (Cuma) | 2019/106 | var | 2019-06-03 | 5.8613 / 5.8613 | 12/12 | ✅ |
+| 61 | 2019-06-03 | Pazartesi | Ramazan 2019 arifesi / idari izin | yok (404) | yok | — | — | — | ✅ |
+| 62 | 2019-06-07 | Cuma | Ramazan 2019 idari izin | 2019/107 | var | 2019-06-10 | 5.8354 / 5.8354 | 12/12 | ✅ |
+| 63 | 2019-06-10 | Pazartesi | Ramazan 2019 uzun tatil sonrası | 2019/108 | var | 2019-06-11 | 5.807 / 5.807 | 12/12 | ✅ |
+| 64 | 2024-06-14 | Cuma | Kurban 2024 öncesi (Cuma) | 2024/113 | var | 2024-06-20 | 32.4579 / 32.4579 | 12/12 | ✅ |
+| 65 | 2024-06-17 | Pazartesi | Kurban 2024 bayram | yok (404) | yok | — | — | — | ✅ |
+| 66 | 2024-06-20 | Perşembe | Kurban 2024 bayram sonrası | 2024/114 | var | 2024-06-21 | 32.5711 / 32.5711 | 12/12 | ✅ |
+| 67 | 2024-06-21 | Cuma | Kurban 2024 (idari izin değil) | 2024/115 | var | 2024-06-24 | 32.781 / 32.781 | 12/12 | ✅ |
+| 68 | 2024-06-24 | Pazartesi | Kurban 2024 sonrası | 2024/116 | var | 2024-06-25 | 32.8078 / 32.8078 | 12/12 | ✅ |
+| 69 | 2001-02-21 | Çarşamba | 2001 krizi | (no'suz) 2001-02-21 | var | 2001-02-22 | 0.685391 / 0.685391 | 10/10 | ✅ |
+| 70 | 2001-02-22 | Perşembe | 2001 krizi: dalgalı kur | (no'suz) 2001-02-22 | var | 2001-02-23 | 0.957879 / 0.957879 | 10/10 | ✅ |
+| 71 | 2001-02-23 | Cuma | 2001 krizi | (no'suz) 2001-02-23 | var | 2001-02-26 | 1.072988 / 1.072988 | 10/10 | ✅ |
+| 72 | 2026-09-24 | Perşembe | yakın tarih | 2026/180 | var | 2026-09-25 | 48.7671 / 48.7671 | 12/12 | ✅ |
+| 73 | 2026-09-25 | Cuma | yakın tarih (Cuma) | 2026/181 | var | 2026-09-28 | 48.7901 / 48.7901 | 12/12 | ✅ |
+
+**Sonuç: 73 tarih, 73 başarılı, 0 başarısız** (GitHub Actions run 36393290372, 2026-09-28).
+
+Not: 2000–2001 bültenlerinde `Bulten_No` alanı yok; tarih alanı eşleşiyor.
+
+**2005 kenar durumu:** 31.12.2004'te belirlenen kur, EVDS'de 03.01.2005 satırında (arşiv serisinde bile) zaten yeni TL
+(1,3363). TCMB bülteni aynı kuru eski TL ile (1.336.300) veriyor. Normalizasyon KAYNAK satır tarihine göre yapılır (değer
+büyüklüğüne göre değil); 2004-12-31 gün sayfasında eski TL karşılığı "Döviz Arşiv hesaplaması" olarak gösterilir.
+
+## D-014 Faz 1 veri bulguları
+
+- **Kapsam:** 45.437 gözlem, 19.262 belirlenme günü. USD/GBP döviz 1950-01-02, EUR döviz 1998-12-31 (EVDS 04.01.1999 satırı),
+  USD/GBP efektif 1989-12-29, EUR efektif 2001-12-31 → son belirlenme günü 2026-09-25 (EVDS 28.09.2026 satırı).
+- **Çapraz kontrol (arşiv ↔ .YTL, tam geçmiş):** 140.782 karşılaştırma; 131.290 tam eşleşme, 9.492 yalnızca 8 basamak
+  yuvarlama (1950–1980), **0 uyuşmazlık**.
+- **EVDS birebir kontrol (rastgele 10 tarih, katmanlı: 3 × <1990, 3 × 1990–2004, 4 × 2005+):** ham değerler 10/10 birebir.
+  (İlk çalıştırmada 1954, 1960, 1972 tarihleri `.YTL`'nin 8 basamak yuvarlaması yüzünden kontrol betiği tarafından hatalı
+  "fark" sayıldı; betik düzeltildi, ham değerler bu tarihlerde de birebir aynı.)
+- **Kaynak tutarsızlığı (tamir edilmedi):** 1991-10-11 (EVDS 1991-10-14) GBP efektif alış 0,00839229 > efektif satış 0,00834217.
+  Gün sayfası kapsamı dışında; `data:validate` uyarı verir.
+- **Anomali raporu (`data/metadata/anomalies.json`, eşik %5, döviz alış+satış):** 290 gözlem. En büyükleri bilinen olaylar:
+  1960-08-19 (devalüasyon, +%221), 1980-01-24 (+%100), 1970-08-07 (+%66), 1979-06-11, 1994-04-05 (+%39), 2001-02-22 (dalgalı
+  kura geçiş, +%40), 2021-12-21 (−%25). Otomatik silme yok.
+- **Sabit kurlu aylar (döviz alış ve satış ay boyunca değişmemiş; `data/metadata/flat-months.json`):** USD 349 / 921,
+  GBP 337 / 921, EUR 1 / 334 (1998-12, tek gözlem). Tamamı 1950-01 … 1980-09 arasında; 2000 sonrasında yok.
+  Bu aylar ve tek gözlemli aylar `isIndexablePage` ile `noindex,follow` alır ve sitemap'e girmez.
+
 ## Açık sorular (owner)
 
 1. **Gün sayfalarının alt sınır yılı** (D-002): 1950'den tüm günler 20.000 dosya limitini aşıyor. Önerim: gün sayfaları **1990**'dan,

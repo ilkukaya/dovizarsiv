@@ -1,0 +1,87 @@
+---
+/**
+ * Metodoloji (SPEC §6.11). Faz 0–1 bulgularına dayanır (docs/DECISIONS.md D-003…D-014).
+ * Hukuki/vergisel iddia KURULMAZ.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SourceDisclosure from '../components/SourceDisclosure.astro';
+import { SITE } from '../config/site.ts';
+import { CARRY_OVER_RULE_FROM } from '../lib/data/convention.ts';
+import { DAY_PAGES_START } from '../config/evds-series.ts';
+import { coverageOf } from '../lib/data/store.ts';
+import { formatDate } from '../lib/formatting/format.ts';
+import { paths } from '../lib/seo/urls.ts';
+
+const usd = coverageOf('USD')!;
+const eur = coverageOf('EUR')!;
+const cash = coverageOf('USD', 'cashBuying')!;
+const eurCash = coverageOf('EUR', 'cashBuying')!;
+---
+
+<BaseLayout title="Metodoloji" description="Verinin kaynağı, TCMB kurunun belirlendiği gün ile geçerli olduğu gün farkı, 2005 para reformu dönüşümü, ortalama ve yüzde formülleri, yuvarlama ve sınırlılıklar." path={paths.methodology()} page={{ kind: 'info' }} crumbs={[{ name: 'Metodoloji', path: paths.methodology() }]}>
+  <article class="prose">
+    <h1>Metodoloji</h1>
+    <p class="lead">Bu sayfa, {SITE.name}'deki her sayının nereden geldiğini ve nasıl hesaplandığını açıklar.</p>
+
+    <h2 id="veri-kaynagi">Veri kaynağı</h2>
+    <p>Tüm kurlar Türkiye Cumhuriyet Merkez Bankası'nın (TCMB) Elektronik Veri Dağıtım Sistemi'nden (EVDS) alınır. Veriler her iş günü EVDS web servisinden çekilir, doğrulanır ve arşive eklenir. Ziyaretçi sayfayı açtığında EVDS'ye istek gönderilmez; sayfalar önceden üretilir. Kaynak ve seri listesi için <a href={paths.sources()}>Veri Kaynakları</a> sayfasına bakın.</p>
+
+    <h2 id="kur-turleri">Döviz alış, döviz satış, efektif alış, efektif satış</h2>
+    <ul>
+      <li><strong>Döviz Alış / Döviz Satış:</strong> TCMB'nin kaydi (hesaben) döviz için belirlediği gösterge alış ve satış kurları.</li>
+      <li><strong>Efektif Alış / Efektif Satış:</strong> nakit (banknot) döviz için belirlenen gösterge kurlar.</li>
+    </ul>
+    <p>Bu dört değer birbirinden ayrı serilerdir; hiçbir hesaplamada birleştirilmez. Efektif kurların kapsamı döviz kurlarından kısadır (USD ve GBP için {formatDate(cash.first)}, EUR için {formatDate(eurCash.first)} itibarıyla).</p>
+    <p>TCMB kurları <strong>gösterge niteliğindedir</strong>. Bankaların, döviz bürolarının veya kart işlemlerinin uyguladığı kurlar farklı olabilir.</p>
+
+    <h2 id="tarih-konvansiyonu">Kurun belirlendiği gün ve geçerli olduğu gün</h2>
+    <p>TCMB gösterge kurları her iş günü saat 15.30'da belirler. Bu kurlar bir sonraki iş günü geçerlidir ve Resmî Gazete'de yayımlanır. Bu yüzden iki farklı tarih vardır:</p>
+    <ul>
+      <li><strong>Belirlendiği gün:</strong> TCMB'nin kuru belirleyip ilan ettiği gün. TCMB'nin günlük kur bülteni de bu tarihi taşır.</li>
+      <li><strong>Geçerli olduğu gün:</strong> kurun uygulandığı gün, yani belirlendiği günden sonraki iş günü. EVDS, kurları bu tarihle listeler.</li>
+    </ul>
+    <p>{SITE.name}'de sayfa tarihi, ay ve yıl istatistikleri ve tüm hesaplamalar <strong>belirlendiği güne</strong> göredir. Örneğin <a href={paths.day('2020-01-15')}>15 Ocak 2020 sayfası</a>, TCMB'nin 15 Ocak 2020 saat 15.30'da belirlediği kurları gösterir (EVDS'de bu kur 16 Ocak 2020 tarihiyle yer alır). Her gün sayfasında ayrıca o gün geçerli olan kur, yani bir önceki iş günü belirlenen kur da gösterilir.</p>
+    <p>Bu eşleme, TCMB'nin günlük bültenleriyle 73 tarihte (hafta sonları, yılbaşları, resmî tatiller, arife günleri ve uzun bayram tatilleri dahil) karşılaştırılarak doğrulanmıştır; tüm değerler birebir eşleşmiştir.</p>
+    <p>Muhasebe, vergi, gümrük veya sözleşme işlemlerinde hangi günün kurunun kullanılacağı ilgili mevzuata ve sözleşmeye göre değişir. {SITE.name} bu konuda bir belirleme yapmaz; işleminiz için geçerli kuralları kontrol edin.</p>
+
+    <h2 id="hafta-sonu-tatil">Hafta sonu, resmî tatil ve arife</h2>
+    <p>TCMB hafta sonları, resmî tatillerde ve yarım iş günü olan arifelerde gösterge kur belirlemez. Bu günler için gün sayfası yoktur; ay sayfalarında "TCMB kur belirlemedi" olarak görünür. Tarih seçicide böyle bir gün seçerseniz bir önceki belirlenme gününün sayfası açılır ve seçtiğiniz tarih ayrıca belirtilir.</p>
+    <p>EVDS bazı tatil ve arife günleri için bir önceki kuru tekrarlayan satırlar içerir. {formatDate(CARRY_OVER_RULE_FROM)} sonrasında önceki satırla birebir aynı değerleri taşıyan satırlar yeni bir belirlenme sayılmaz. Bu tarihten önceki sabit kur dönemlerinde kurlar aylarca değişmediği için her satır ayrı bir gözlem kabul edilir.</p>
+    <p>Gözlem olmayan günler interpolasyonla doldurulmaz ve hiçbir hesaplamada sıfır sayılmaz.</p>
+
+    <h2 id="kapsam">Kapsam</h2>
+    <p>Dolar ve sterlin döviz kurları {formatDate(usd.first)}, euro döviz kuru {formatDate(eur.first)} tarihinden itibaren arşivdedir (EVDS'deki kapsam). Gün sayfaları {formatDate(DAY_PAGES_START)} tarihinden itibaren üretilir. Daha eski dönemler ay ve yıl sayfalarında tablo olarak yer alır. Kurun ay boyunca hiç değişmediği aylar (sabit kur dönemleri) ve tek gözlemli aylar arama motorlarına kapalıdır; sayfaları erişilebilir kalır.</p>
+
+    <h2 id="para-reformu-2005">2005 para reformu ve eski TL</h2>
+    <p>1 Ocak 2005'te 1.000.000 TL = 1 YTL oldu. TCMB 2005 öncesi kurları eski TL ile yayımlamıştır (ör. 31 Aralık 2004: 1 ABD doları = 1.336.300 TL). {SITE.name} ham değeri aynen saklar ve karşılaştırılabilirlik için yeni TL karşılığını hesaplar (1.336.300 ÷ 1.000.000 = 1,3363). Dönüşüm değerin büyüklüğüne göre değil, kaynak satırın tarihine göre yapılır. 2005 öncesi sayfalarda eski TL değeri ve yeni TL karşılığı birlikte gösterilir; yeni TL karşılığı {SITE.name} hesaplamasıdır.</p>
+    <p>EVDS'de aynı kurlar için ayrıca yeni TL'ye çevrilmiş (".YTL") seriler bulunur. Bu seriler her güncellemede ham seriyle karşılaştırılır. Tam geçmişte 140.782 karşılaştırmada fark yalnızca EVDS'nin 8 ondalık basamak yuvarlamasından kaynaklanmıştır.</p>
+
+    <h2 id="formuller">Ortalama, en düşük, en yüksek ve yüzde değişim</h2>
+    <ul>
+      <li><strong>Ortalama:</strong> dönemdeki TCMB gözlemlerinin aritmetik ortalaması. Gözlem olmayan günler ortalamaya katılmaz.</li>
+      <li><strong>En düşük / en yüksek:</strong> dönemdeki gözlemlerin en küçüğü ve en büyüğü; eşitlikte en erken tarih.</li>
+      <li><strong>Yüzde değişim:</strong> ((yeni − eski) ÷ eski) × 100. Önceki değer yoksa değişim gösterilmez.</li>
+      <li><strong>Günlük değişim:</strong> bir önceki gerçek gözleme göre (takvim gününe göre değil). Tatil sonrası ilk gözlem, tatil öncesi son gözlemle karşılaştırılır.</li>
+      <li><strong>Aylık/yıllık değişim:</strong> dönem sonu döviz satış kurunun bir önceki dönem sonuna göre değişimi.</li>
+    </ul>
+    <p>Bu değerlerin tamamı {SITE.name} hesaplamasıdır; TCMB tarafından yayımlanmamıştır.</p>
+
+    <h2 id="yuvarlama">Hassasiyet ve yuvarlama</h2>
+    <p>Kaynak değerler EVDS'den geldiği hassasiyetle saklanır. Hesaplamalar ondalık aritmetikle yapılır; bölme içeren işlemler 12 ondalık basamakta tutulur. Yuvarlama yalnızca gösterimde yapılır: kurlar 4, yüzdeler ve tutarlar 2 ondalık basamakla (yarım değerler çift basamağa yuvarlanır). 2005 öncesi yeni TL karşılıkları küçük sayılar olduğu için daha fazla basamakla gösterilir.</p>
+
+    <h2 id="hesaplayici">Hazır hesaplar ve hesaplayıcı</h2>
+    <p>TL'den dövize çevirmede varsayılan olarak <strong>Döviz Satış</strong>, dövizden TL'ye çevirmede <strong>Döviz Alış</strong> kuru kullanılır. Kullanılan kur ve tarih her sonuçta belirtilir. Sonuçlar bilgi amaçlıdır.</p>
+
+    <h2 id="revizyon">Revizyonlar ve veri kalitesi</h2>
+    <p>Her güncellemede son üç haftanın verisi yeniden alınır. Daha önce saklanmış bir değer kaynakta değişmişse eski değer, yeni değer ve tespit zamanı kaydedilir; sessizce üzerine yazılmaz. Kaynakta kaybolan değer silinmez. Sayısal olmayan, negatif veya sıfır değerler reddedilir ve raporlanır. Şüpheli değerler otomatik olarak düzeltilmez; örneğin EVDS'de 11 Ekim 1991 tarihli sterlin efektif alış kuru efektif satıştan yüksektir ve kaynaktaki haliyle bırakılmıştır.</p>
+
+    <h2 id="sinirliliklar">Sınırlılıklar</h2>
+    <ul>
+      <li>Kurlar gösterge niteliğindedir; gerçek işlem fiyatı değildir ve canlı değildir.</li>
+      <li>En güncel veri, TCMB'nin son belirlediği kurdur; gün içi hareketleri içermez.</li>
+      <li>Sebep yorumu ve tahmin yapılmaz. Bu site yatırım tavsiyesi vermez.</li>
+      <li>EVDS verileri kaynak kuruluşça revize edilebilir; bu durumda arşiv güncellenir ve değişiklik kaydedilir.</li>
+    </ul>
+  </article>
+  <SourceDisclosure calculated />
+</BaseLayout>

@@ -232,6 +232,7 @@
 
 .date-finder .field {
   flex: 1 1 12rem;
+  max-width: 22rem;
 }
 
 .date-finder__input {
@@ -248,6 +249,8 @@
 
 /* ---------- Tablolar: kendi kapsayıcısında kayar, ilk sütun sabit ---------- */
 .table-scroll {
+  /* position: relative → içerideki mutlak konumlu (ekran okuyucu) öğeler kapsayıcıdan kaçıp sayfayı genişletmez */
+  position: relative;
   overflow-x: auto;
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-md);

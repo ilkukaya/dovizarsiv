@@ -1,0 +1,206 @@
+---
+/**
+ * Yıl sayfası (SPEC §6.5): /dolar/2020/. Açılış özeti (alış ve satış ayrı), 12 aylık tablo, grafik,
+ * en sert 5 yükseliş ve 5 düşüş günü, önceki/sonraki yıl. Dataset schema.
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SourceDisclosure from '../../../components/SourceDisclosure.astro';
+import RateStatGrid from '../../../components/RateStatGrid.astro';
+import HistoricalChart from '../../../components/HistoricalChart.astro';
+import Move from '../../../components/Move.astro';
+import { CURRENCY_INFO, CURRENCY_ORDER, FIELD_LABELS } from '../../../config/currencies.ts';
+import { REDENOMINATION } from '../../../config/evds-series.ts';
+import { SITE } from '../../../config/site.ts';
+import { percentChange } from '../../../lib/calculations/decimal.ts';
+import { lastDate, isFlatPeriod, monthsOf, periodObservations, periodSummary, sharpestMoves, yearsOf, hasDayPage } from '../../../lib/data/store.ts';
+import { formatChange, formatDate, formatMonth, formatRate, MONTHS_TR } from '../../../lib/formatting/format.ts';
+import { periodIntro } from '../../../lib/text/engine.ts';
+import { dataset } from '../../../lib/seo/schema.ts';
+import { paths } from '../../../lib/seo/urls.ts';
+
+export function getStaticPaths() {
+  return CURRENCY_ORDER.flatMap((code) =>
+    yearsOf(code).map((year) => ({ params: { currency: CURRENCY_INFO[code].slug, year: String(year) }, props: { code } })),
+  );
+}
+
+const { code } = Astro.props as { code: 'USD' | 'EUR' | 'GBP' };
+const { year } = Astro.params as { year: string };
+const info = CURRENCY_INFO[code];
+const obs = periodObservations(code, year);
+const summary = periodSummary(code, year);
+const selling = summary.forexSelling!;
+const buying = summary.forexBuying ?? null;
+const flat = isFlatPeriod(code, year);
+const complete = year < lastDate().slice(0, 4);
+const years = yearsOf(code);
+const idx = years.indexOf(Number(year));
+const prevYear = years[idx - 1];
+const nextYear = years[idx + 1];
+const prevMean = prevYear ? periodSummary(code, String(prevYear)).forexSelling?.mean : undefined;
+const moves = sharpestMoves(code, year, 5);
+const intro = periodIntro({
+  currency: code,
+  period: year,
+  selling,
+  buying,
+  complete,
+  prevMean: prevYear && prevMean ? { period: String(prevYear), value: prevMean } : null,
+  endsAtAllTimeHigh: false,
+  flat,
+  sharpestRise: moves.rises[0] ? { date: moves.rises[0].date, pct: moves.rises[0].changePct! } : null,
+  sharpestFall: moves.falls[0] ? { date: moves.falls[0].date, pct: moves.falls[0].changePct! } : null,
+});
+const months = monthsOf(code, Number(year));
+let prevClosing = prevYear ? periodSummary(code, String(prevYear)).forexSelling?.last.value ?? null : null;
+const monthRows = months.map((ym) => {
+  const s = periodSummary(code, ym);
+  const closing = s.forexSelling?.last.value ?? null;
+  const change = closing && prevClosing ? percentChange(prevClosing, closing) : null;
+  if (closing) prevClosing = closing;
+  return { ym, s, closing, change };
+});
+const title = `${year} ${info.short} Kuru Arşivi`;
+const description = `${year} TCMB ${info.lower} kuru: döviz satış ortalaması ${formatRate(selling.mean.round(4))} TL, en düşük ${formatRate(selling.min.value)} TL, en yüksek ${formatRate(selling.max.value)} TL. Aylık tablo, grafik ve en sert günler.`;
+const pre2005 = `${year}-01-01` < REDENOMINATION.effectiveSourceDate;
+const dayLink = (d: string) => (hasDayPage(d) ? paths.day(d) : paths.month(code, d.slice(0, 7)));
+const crumbs = [
+  { name: `${info.short} Kuru Arşivi`, path: paths.hub(code) },
+  { name: year, path: paths.year(code, year) },
+];
+const schema = dataset({
+  name: `${year} ${info.name} (${code}) TCMB döviz kurları`,
+  description: `TCMB'nin ${year} yılında belirlediği günlük ${info.name} döviz alış, döviz satış ve (varsa) efektif kurları; ${SITE.name} tarafından yeniden düzenlenmiş aylık özetler.`,
+  path: paths.year(code, year),
+  temporalCoverage: `${selling.first.date}/${selling.last.date}`,
+  csvPath: paths.csv(code),
+  keywords: [`${year} ${info.lower} kuru`, 'TCMB', 'döviz kuru', code],
+});
+---
+
+<BaseLayout title={title} description={description} path={paths.year(code, year)} page={{ kind: 'year', observationCount: obs.length, flat, hasSourceDisclosure: true }} crumbs={crumbs} schema={[schema]} navCurrent={paths.hub(code)}>
+  <h1>{title}</h1>
+  <div class="lead">{intro.map((s) => <p>{s}</p>)}</div>
+
+  {
+    [
+      { label: FIELD_LABELS.forexSelling, s: selling },
+      ...(buying ? [{ label: FIELD_LABELS.forexBuying, s: buying }] : []),
+    ].map(({ label, s }) => (
+      <>
+        <h2>{year} {label} Özeti</h2>
+        <RateStatGrid
+          label={`${year} ${label} özeti`}
+          stats={[
+            { label: 'İlk gözlem', value: `${formatRate(s.first.value)} TL`, meta: formatDate(s.first.date) },
+            { label: 'Son gözlem', value: `${formatRate(s.last.value)} TL`, meta: formatDate(s.last.date) },
+            { label: 'Ortalama', value: `${formatRate(s.mean.round(4))} TL`, meta: 'Döviz Arşiv hesaplaması' },
+            { label: 'İlk → son değişim', value: formatChange(s.changePct), meta: 'Döviz Arşiv hesaplaması' },
+            { label: 'En düşük', value: `${formatRate(s.min.value)} TL`, meta: formatDate(s.min.date) },
+            { label: 'En yüksek', value: `${formatRate(s.max.value)} TL`, meta: formatDate(s.max.date) },
+            { label: 'Kur belirlenen gün', value: String(s.count), meta: complete ? 'yıl tamamlandı' : 'yıl devam ediyor' },
+          ]}
+        />
+      </>
+    ))
+  }
+
+  <HistoricalChart
+    id="yil-grafik"
+    title={`${year} ${info.lower} döviz satış kuru`}
+    summary={`${formatDate(selling.first.date)} ile ${formatDate(selling.last.date)} arası günlük değerler; en düşük ${formatRate(selling.min.value)} TL, en yüksek ${formatRate(selling.max.value)} TL.`}
+    points={obs.filter((o) => o.forexSelling).map((o) => ({ date: o.date, value: Number(o.forexSelling) }))}
+    xLabel={(d) => MONTHS_TR[Number(d.slice(5, 7)) - 1]!.slice(0, 3)}
+    tableNote="Aylık özet aşağıdaki tabloda."
+  />
+
+  <div class="table-scroll" tabindex="0" role="region" aria-label={`${year} aylık ${info.lower} kuru tablosu`}>
+    <table class="data-table">
+      <caption>{year} aylık TCMB {info.lower} kuru özeti (TL; ortalama, en düşük, en yüksek ve değişim Döviz Arşiv hesaplamasıdır)</caption>
+      <thead>
+        <tr>
+          <th scope="col">Ay</th>
+          <th scope="col" class="num">Ortalama Alış</th>
+          <th scope="col" class="num">Ortalama Satış</th>
+          <th scope="col" class="num">En Düşük (satış)</th>
+          <th scope="col" class="num">En Yüksek (satış)</th>
+          <th scope="col" class="num">Ay Sonu Satış</th>
+          <th scope="col" class="num">Aylık Değişim</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          monthRows.map((r) => (
+            <tr>
+              <th scope="row"><a href={paths.month(code, r.ym)}>{formatMonth(r.ym)}</a></th>
+              <td class="num">{r.s.forexBuying ? formatRate(r.s.forexBuying.mean.round(4)) : '—'}</td>
+              <td class="num">{r.s.forexSelling ? formatRate(r.s.forexSelling.mean.round(4)) : '—'}</td>
+              <td class="num">{r.s.forexSelling ? formatRate(r.s.forexSelling.min.value) : '—'}</td>
+              <td class="num">{r.s.forexSelling ? formatRate(r.s.forexSelling.max.value) : '—'}</td>
+              <td class="num">{r.closing ? formatRate(r.closing) : '—'}</td>
+              <td class="num"><Move pct={r.change} /></td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="small muted">Aylık değişim: ay sonu döviz satış kurunun bir önceki ay sonuna göre değişimi.</p>
+
+  {
+    !flat && (moves.rises.length > 0 || moves.falls.length > 0) && (
+      <section aria-labelledby="sert-gunler">
+        <h2 id="sert-gunler">{year} En Sert Günlük Hareketler</h2>
+        <p class="small muted">Bir önceki gözleme göre döviz satış kuru değişimi (Döviz Arşiv hesaplaması). Sebep yorumu yapılmaz.</p>
+        <div class="grid grid--2">
+          {[
+            { label: 'En sert 5 yükseliş', list: moves.rises },
+            { label: 'En sert 5 düşüş', list: moves.falls },
+          ].map(({ label, list }) => (
+            <div class="table-scroll" tabindex="0" role="region" aria-label={label}>
+              <table class="data-table">
+                <caption>{label}</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Tarih</th>
+                    <th scope="col" class="num">Önceki</th>
+                    <th scope="col" class="num">Değer</th>
+                    <th scope="col" class="num">Değişim</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {list.map((m) => (
+                    <tr>
+                      <th scope="row"><a href={dayLink(m.date)}>{formatDate(m.date)}</a></th>
+                      <td class="num">{formatRate(m.prev)}</td>
+                      <td class="num">{formatRate(m.value)}</td>
+                      <td class="num"><Move pct={m.changePct} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {pre2005 && <div class="note"><p>Değerler 2005 para reformuna göre yeni TL'ye {SITE.name} tarafından çevrilmiştir (1 YTL = 1.000.000 TL). <a href={paths.methodology() + '#para-reformu-2005'}>Metodoloji</a></p></div>}
+
+  <nav class="pager" aria-label="Önceki ve sonraki yıl">
+    {prevYear ? <a href={paths.year(code, prevYear)} rel="prev">← {prevYear}</a> : <span />}
+    <a href={paths.hub(code)}>{info.short} Kuru Arşivi</a>
+    {nextYear ? <a href={paths.year(code, nextYear)} rel="next">{nextYear} →</a> : <span />}
+  </nav>
+
+  <section aria-labelledby="diger">
+    <h2 id="diger">{year} Diğer Kurlar</h2>
+    <ul class="link-list">
+      {CURRENCY_ORDER.filter((c) => c !== code && yearsOf(c).includes(Number(year))).map((c) => <li><a href={paths.year(c, year)}>{year} {CURRENCY_INFO[c].short} Kuru</a></li>)}
+      {Number(year) >= 2000 && <li><a href={paths.archiveYear(year)}>{year} tarih arşivi</a></li>}
+    </ul>
+  </section>
+
+  <SourceDisclosure dataDate={selling.last.date} preRedenomination={pre2005} />
+</BaseLayout>

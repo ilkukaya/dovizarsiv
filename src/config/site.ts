@@ -31,3 +31,9 @@ export const FEATURES = {
   guides: false, // /rehber/
   legalPages: false, // /hakkimizda/, /iletisim/, /gizlilik/, /cerez-politikasi/, /kullanim-kosullari/, /reklam-politikasi/
 } as const;
+
+/**
+ * Veriye bağlı ücretli özellikler. SPEC §4.2: site tamamen ücretsizdir; bu liste boş olmak ZORUNDADIR.
+ * Boş değilse build başarısız olur (scripts/validation/build-guard.ts).
+ */
+export const PAID_FEATURES: readonly string[] = [];

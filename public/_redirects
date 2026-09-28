@@ -1,0 +1,19 @@
+# Cloudflare Pages yönlendirmeleri (SPEC §3.3, §8). www → apex yönlendirmesi Cloudflare panelinden yapılır (README).
+# Kısa ve İngilizce para birimi yolları → canonical Türkçe hub'lar
+/usd              /dolar/     301
+/usd/             /dolar/     301
+/eur              /euro/      301
+/eur/             /euro/      301
+/gbp              /sterlin/   301
+/gbp/             /sterlin/   301
+/dolar-kuru-arsivi/    /dolar/     301
+/euro-kuru-arsivi/     /euro/      301
+/sterlin-kuru-arsivi/  /sterlin/   301
+# Eski deneme sitesinin yolları (kaldırıldı)
+/doviz/usd        /dolar/     301
+/doviz/eur        /euro/      301
+/doviz/gbp        /sterlin/   301
+/doviz/*          /           301
+/kripto/*         /           301
+/altin/*          /           301
+/hesaplayicilar/* /           301

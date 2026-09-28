@@ -1,0 +1,73 @@
+---
+/** Veri kaynakları (SPEC §6.11): TCMB EVDS, aktif seriler, kapsam, kullanım şartlarına link. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SourceDisclosure from '../components/SourceDisclosure.astro';
+import { CURRENCY_INFO, CURRENCY_ORDER, FIELD_LABELS } from '../config/currencies.ts';
+import { EVDS_SERIES } from '../config/evds-series.ts';
+import { EVDS_URL, SITE } from '../config/site.ts';
+import { RATE_FIELDS } from '../lib/providers/types.ts';
+import { coverageOf } from '../lib/data/store.ts';
+import { formatDate } from '../lib/formatting/format.ts';
+import { paths } from '../lib/seo/urls.ts';
+---
+
+<BaseLayout title="Veri Kaynakları" description="Döviz Arşiv'in kullandığı TCMB EVDS serileri, kapsamları ve kullanım şartları. Hesaplanan değerler TCMB tarafından yayımlanmamıştır." path={paths.sources()} page={{ kind: 'info' }} crumbs={[{ name: 'Veri Kaynakları', path: paths.sources() }]}>
+  <article class="prose">
+    <h1>Veri Kaynakları</h1>
+    <p class="lead">{SITE.name}'deki tüm döviz kurları tek bir kaynaktan gelir: Türkiye Cumhuriyet Merkez Bankası (TCMB) <a href={EVDS_URL} rel="noopener">Elektronik Veri Dağıtım Sistemi (EVDS)</a>.</p>
+    <p>{SITE.name} verileri yeniden düzenler ve istatistik hesaplar. Hesaplanan değerleri (ortalama, değişim, yüzde, yeni TL karşılığı, hazır hesaplar) TCMB yayımlamamıştır. {SITE.name}, TCMB ile bağlantılı değildir ve TCMB tarafından onaylanmamıştır.</p>
+
+    <h2>Kullanılan seriler</h2>
+    <p>Ham kaynak olarak EVDS'nin "Kurlar-Döviz Kurları (Arşiv)" ve "Kurlar-Efektif Kurlar (Arşiv)" veri gruplarındaki seriler kullanılır. Bu seriler 2005 öncesini TCMB'nin yayımladığı gibi eski TL ile verir. Kontrol için "Döviz Kurları" ve "Efektif Kurlar" gruplarındaki ".YTL" serileri her güncellemede karşılaştırılır.</p>
+  </article>
+
+  <div class="table-scroll" tabindex="0" role="region" aria-label="EVDS serileri">
+    <table class="data-table">
+      <caption>Aktif EVDS serileri ve kapsam (kapsam: kurun belirlendiği gün)</caption>
+      <thead>
+        <tr>
+          <th scope="col">Seri</th>
+          <th scope="col">Para birimi</th>
+          <th scope="col">Kur türü</th>
+          <th scope="col">Kontrol serisi</th>
+          <th scope="col">Kapsam</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          CURRENCY_ORDER.flatMap((c) =>
+            RATE_FIELDS.map((f) => {
+              const cov = coverageOf(c, f);
+              return (
+                <tr>
+                  <th scope="row"><code>{EVDS_SERIES[c][f].raw}</code></th>
+                  <td>{CURRENCY_INFO[c].name}</td>
+                  <td>{FIELD_LABELS[f]}</td>
+                  <td><code>{EVDS_SERIES[c][f].crosscheck}</code></td>
+                  <td>{cov ? `${formatDate(cov.first)} – ${formatDate(cov.last)}` : '—'}</td>
+                </tr>
+              );
+            }),
+          )
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <article class="prose">
+    <h2>Kullanım şartları</h2>
+    <p>EVDS Kullanım Şartları'na göre EVDS verileri kaynak gösterilmek koşuluyla üçüncü kişiler tarafından kullanılabilir ve yayımlanabilir; ticari bir üründe kullanıldığında bu durum kullanıcılara ek ücret olarak yansıtılamaz. {SITE.name} ücretsizdir ve her veri sayfasında kaynak gösterir. Şartların güncel metni EVDS'nin sayfa altındaki "Kullanım Şartları" bağlantısındadır. Şartlar kaynak kuruluşça değiştirilebilir.</p>
+    <p>Başka bir dile çevrilen EVDS verileri için çevirinin TCMB'nin resmi çevirisi olmadığı belirtilmelidir. EVDS içeriği yatırım tavsiyesi değildir.</p>
+
+    <h2>Güncelleme</h2>
+    <p>Veriler her iş günü EVDS'den otomatik olarak alınır. Kaynaktaki revizyonlar kaydedilir; ayrıntılar <a href={paths.methodology() + '#revizyon'}>metodoloji</a> sayfasında.</p>
+
+    <h2>Verinin indirilmesi</h2>
+    <ul>
+      {CURRENCY_ORDER.map((c) => <li><a href={paths.csv(c)} download>{CURRENCY_INFO[c].short} kuru arşivi (CSV)</a></li>)}
+    </ul>
+    <p class="small muted">CSV dosyaları kaynak gösterimini içerir. Tarih sütunu kurun belirlendiği gündür; ayrı bir sütunda EVDS'deki (geçerlilik) tarihi yer alır.</p>
+  </article>
+
+  <SourceDisclosure calculated={false} />
+</BaseLayout>

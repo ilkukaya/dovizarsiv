@@ -64,3 +64,9 @@ export function formatMonth(yearMonth: string): string {
   const [y, m] = yearMonth.split('-').map(Number) as [number, number];
   return `${MONTHS_TR[m - 1]} ${y}`;
 }
+
+/** "1950'ler", "1960'lar", "2000'ler", "2010'lar" — son iki basamağın okunuşuna göre ünlü uyumu. */
+export function decadeLabel(decade: number): string {
+  const suffix: Record<number, string> = { 0: 'ler', 10: 'lar', 20: 'ler', 30: 'lar', 40: 'lar', 50: 'ler', 60: 'lar', 70: 'ler', 80: 'ler', 90: 'lar' };
+  return `${decade}'${suffix[decade % 100] ?? 'ler'}`;
+}

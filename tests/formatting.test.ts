@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { dec } from '../src/lib/calculations/decimal.ts';
 import { addDays, evdsToIso, isoToEvds, isValidIsoDate, weekday } from '../src/lib/data/dates.ts';
-import { formatChange, formatDate, formatDateLong, formatMonth, formatNumber, formatRate } from '../src/lib/formatting/format.ts';
+import { decadeLabel, formatChange, formatDate, formatDateLong, formatMonth, formatNumber, formatRate } from '../src/lib/formatting/format.ts';
 
 describe('tr-TR sayı biçimleri', () => {
   it('kur: 4 ondalık, virgül ayırıcı', () => {
@@ -45,5 +45,13 @@ describe('tr-TR tarih biçimleri', () => {
     expect(addDays('2020-03-28', 2)).toBe('2020-03-30');
     expect(addDays('2004-12-31', 3)).toBe('2005-01-03');
     expect(weekday('2020-01-15')).toBe(3);
+  });
+});
+
+describe('onluk yıl etiketi', () => {
+  it('ünlü uyumu', () => {
+    expect([1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020].map(decadeLabel)).toEqual([
+      "1950'ler", "1960'lar", "1970'ler", "1980'ler", "1990'lar", "2000'ler", "2010'lar", "2020'ler",
+    ]);
   });
 });

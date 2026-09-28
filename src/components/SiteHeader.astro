@@ -20,7 +20,7 @@ const items = [
 <header class="site-header">
   <div class="container">
     <div class="site-header__bar">
-      <a class="logo" href="/" aria-label={`${SITE.name} ana sayfa`}>
+      <a class="logo" href="/">
         <span class="logo__mark" aria-hidden="true">TL</span>
         <span>{SITE.name}</span>
       </a>
@@ -30,7 +30,7 @@ const items = [
         </ul>
       </nav>
       <details class="mobile-menu">
-        <summary class="menu-toggle" aria-label="Menüyü aç/kapat">Menü</summary>
+        <summary class="menu-toggle">Menü</summary>
         <nav class="mobile-nav" aria-label="Mobil menü">
           <ul>
             {items.map((i) => <li><a href={i.href} aria-current={current === i.href ? 'page' : undefined}>{i.label}</a></li>)}

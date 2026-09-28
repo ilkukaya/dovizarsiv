@@ -1,0 +1,123 @@
+---
+/**
+ * Ana sayfa (SPEC §6.3). İlk mobil ekran: marka, H1, tek cümle, büyük tarih seçici. Dekoratif hero yok.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DateFinder from '../components/DateFinder.astro';
+import ExchangeRateTable from '../components/ExchangeRateTable.astro';
+import SourceDisclosure from '../components/SourceDisclosure.astro';
+import { CURRENCY_INFO, CURRENCY_ORDER, FIELD_LABELS } from '../config/currencies.ts';
+import { DAY_PAGES_START } from '../config/evds-series.ts';
+import { FEATURES, SITE, SOURCE_ATTRIBUTION } from '../config/site.ts';
+import { Decimal, percentChange } from '../lib/calculations/decimal.ts';
+import { addDays, todayIstanbul } from '../lib/data/dates.ts';
+import { resolveDate } from '../lib/data/lookup.ts';
+import { dayObservations, dayPageDates, lastDate, observation, previousObservation, yearsOf, coverageOf } from '../lib/data/store.ts';
+import { formatDate, formatRate } from '../lib/formatting/format.ts';
+import { organization, website } from '../lib/seo/schema.ts';
+import { paths } from '../lib/seo/urls.ts';
+
+const latestDate = lastDate();
+const latest = dayObservations(latestDate);
+const today = todayIstanbul();
+const ago = [1, 5, 10, 20].map((n) => {
+  const target = `${Number(today.slice(0, 4)) - n}${today.slice(4)}`;
+  const safeTarget = /-02-29$/.test(target) ? addDays(target.replace(/-29$/, '-28'), 0) : target;
+  const r = resolveDate(dayPageDates(), safeTarget);
+  return { n, target: safeTarget, r, usd: r ? observation('USD', r.observationDate) : undefined };
+}).filter((a) => a.r && a.r.observationDate >= DAY_PAGES_START);
+const recentYears = yearsOf('USD').filter((y) => y >= 2000).reverse();
+const firstYear = coverageOf('USD')!.first.slice(0, 4);
+const description = `TCMB döviz kurları arşivi: ${firstYear} yılından bugüne dolar, euro ve sterlin kurları; tarihe göre arama, günlük, aylık ve yıllık tablolar. Kaynak: TCMB EVDS.`;
+---
+
+<BaseLayout title={`${SITE.name} — ${SITE.tagline}`} rawTitle description={description} path="/" page={{ kind: 'home' }} schema={[website(), organization()]}>
+  <h1>Geçmiş Döviz Kurlarına Hızlıca Ulaşın</h1>
+  <p class="lead">TCMB'nin belirlediği dolar, euro ve sterlin kurlarını tarihe göre bulun; günlük, aylık ve yıllık arşivde gezinin.</p>
+  <div class="card">
+    <DateFinder id="ana-tarih" label="Hangi tarihin kurunu arıyorsunuz?" />
+  </div>
+
+  <h2>Arşivler</h2>
+  <ul class="link-list">
+    {CURRENCY_ORDER.map((c) => <li><a href={paths.hub(c)}>{CURRENCY_INFO[c].short} Kuru Arşivi</a></li>)}
+    <li><a href={paths.archive()}>Tarih Arşivi</a></li>
+  </ul>
+
+  <h2>Son Belirlenen TCMB Döviz Kurları</h2>
+  <ExchangeRateTable
+    caption={`TCMB'nin ${formatDate(latestDate)} tarihinde belirlediği kurlar (TL)`}
+    firstHeader="Para birimi"
+    valueHeaders={[FIELD_LABELS.forexBuying, FIELD_LABELS.forexSelling]}
+    showChange
+    changeHeader="Önceki gözleme göre (satış)"
+    rows={CURRENCY_ORDER.filter((c) => latest[c]).map((c) => {
+      const o = latest[c]!;
+      const p = previousObservation(c, latestDate);
+      return {
+        label: `1 ${c}`,
+        sub: CURRENCY_INFO[c].name,
+        href: paths.hub(c),
+        values: [o.forexBuying ?? null, o.forexSelling ?? null],
+        changePct: p?.forexSelling && o.forexSelling ? percentChange(Decimal.parse(p.forexSelling), Decimal.parse(o.forexSelling)) : null,
+      };
+    })}
+  />
+  <p class="small muted">Veri tarihi: <a href={paths.day(latestDate)}><time datetime={latestDate}>{formatDate(latestDate)}</time></a>. TCMB kurları her iş günü 15.30'da belirler; bu kurlar ertesi iş günü geçerlidir.</p>
+
+  {
+    ago.length > 0 && (
+      <section aria-labelledby="bugun-tarihte">
+        <h2 id="bugun-tarihte">Bugün Tarihte</h2>
+        <p class="small muted">{formatDate(today)} tarihinden geriye; o gün kur belirlenmediyse bir önceki belirlenme günü gösterilir.</p>
+        <ExchangeRateTable
+          caption="Yıllar önce bu tarihte dolar kuru (TL)"
+          firstHeader="Tarih"
+          valueHeaders={[FIELD_LABELS.forexSelling]}
+          rows={ago.map((a) => ({
+            label: `${a.n} yıl önce: ${formatDate(a.r!.observationDate)}`,
+            href: paths.day(a.r!.observationDate),
+            sub: a.r!.exact ? undefined : `${formatDate(a.target)} tarihinde kur belirlenmedi`,
+            values: [a.usd?.forexSelling ?? null],
+          }))}
+        />
+      </section>
+    )
+  }
+
+  <h2>Yıllar</h2>
+  <ul class="link-list">
+    {recentYears.map((y) => <li><a href={paths.archiveYear(y)}>{y}</a></li>)}
+  </ul>
+  <p class="small">Daha eski yıllar: <a href={paths.hub('USD')}>dolar</a> ve <a href={paths.hub('GBP')}>sterlin</a> arşivi {firstYear} yılından, <a href={paths.hub('EUR')}>euro</a> arşivi 1999 yılından başlar.</p>
+
+  {
+    FEATURES.tools && (
+      <section aria-labelledby="araclar">
+        <h2 id="araclar">Araçlar</h2>
+        <ul class="link-list">
+          <li><a href={paths.historicalCalculator()}>Geçmiş döviz hesaplama</a></li>
+          <li><a href={paths.changeCalculator()}>İki tarih arası kur değişimi</a></li>
+          <li><a href={paths.compare()}>Yılları karşılaştır</a></li>
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    FEATURES.guides && (
+      <section aria-labelledby="rehber">
+        <h2 id="rehber">Rehber</h2>
+        <p><a href={paths.guides()}>Döviz kurları hakkında açıklamalar</a></p>
+      </section>
+    )
+  }
+
+  <section aria-labelledby="kaynak">
+    <h2 id="kaynak">Veri Nereden Geliyor?</h2>
+    <p>{SOURCE_ATTRIBUTION} Veriler günlük olarak EVDS'den alınır, doğrulanır ve arşivlenir. {SITE.name} TCMB ile bağlantılı değildir; değerleri yeniden düzenler ve istatistik hesaplar.</p>
+    <p><a href={paths.methodology()}>Metodoloji</a> · <a href={paths.sources()}>Veri kaynakları</a></p>
+  </section>
+
+  <SourceDisclosure dataDate={latestDate} calculated={false} />
+</BaseLayout>

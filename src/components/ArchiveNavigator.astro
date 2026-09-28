@@ -1,0 +1,41 @@
+---
+/** Onlu yıllara gruplanmış yıl gezinmesi (SPEC §6.4, §6.8). Tüm gezinme HTML anchor ile. */
+import { decadeLabel } from '../lib/formatting/format.ts';
+interface Props {
+  years: number[];
+  hrefFor: (year: number) => string;
+  current?: number;
+  headingLevel?: 'h2' | 'h3';
+  title?: string;
+}
+const { years, hrefFor, current, title } = Astro.props;
+const decades = new Map<number, number[]>();
+for (const y of years) {
+  const d = Math.floor(y / 10) * 10;
+  decades.set(d, [...(decades.get(d) ?? []), y]);
+}
+const sorted = [...decades].sort((a, b) => b[0] - a[0]);
+---
+
+<nav aria-label={title ?? 'Yıllar'}>
+  {
+    sorted.map(([decade, list]) => (
+      <div class="decade">
+        <h3>{decadeLabel(decade)}</h3>
+        <ul class="link-list">
+          {list.map((y) => (
+            <li>
+              {y === current ? (
+                <span class="disabled" aria-current="page">
+                  {y}
+                </span>
+              ) : (
+                <a href={hrefFor(y)}>{y}</a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</nav>

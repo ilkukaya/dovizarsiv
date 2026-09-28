@@ -1,0 +1,46 @@
+---
+/** Tarih arşivi (SPEC §6.8): yıl → ay → gözlem günleri. Tek sayfaya binlerce link dökülmez; yıl alt sayfaları var. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DateFinder from '../../components/DateFinder.astro';
+import SourceDisclosure from '../../components/SourceDisclosure.astro';
+import { DAY_PAGES_START } from '../../config/evds-series.ts';
+import { CURRENCY_INFO, CURRENCY_ORDER } from '../../config/currencies.ts';
+import { dayPageDates, lastDate } from '../../lib/data/store.ts';
+import { decadeLabel, formatDate } from '../../lib/formatting/format.ts';
+import { paths } from '../../lib/seo/urls.ts';
+
+const dates = dayPageDates();
+const counts = new Map<number, number>();
+for (const d of dates) counts.set(Number(d.slice(0, 4)), (counts.get(Number(d.slice(0, 4))) ?? 0) + 1);
+const years = [...counts.keys()].sort((a, b) => b - a);
+const decades = new Map<number, number[]>();
+for (const y of years) decades.set(Math.floor(y / 10) * 10, [...(decades.get(Math.floor(y / 10) * 10) ?? []), y]);
+const description = `TCMB'nin kur belirlediği günlerin arşivi: ${DAY_PAGES_START.slice(0, 4)}–${lastDate().slice(0, 4)} arası ${dates.length.toLocaleString('tr-TR')} gün. Yıl ve ay takvimleriyle günlük döviz kurlarına ulaşın.`;
+---
+
+<BaseLayout title="Tarih Arşivi" description={description} path={paths.archive()} page={{ kind: 'archive' }} crumbs={[{ name: 'Tarih Arşivi', path: paths.archive() }]} navCurrent={paths.archive()}>
+  <h1>Tarih Arşivi</h1>
+  <p class="lead">TCMB'nin gösterge kur belirlediği her gün için bir sayfa bulunur ({formatDate(DAY_PAGES_START)} – {formatDate(lastDate())}). Hafta sonu, resmî tatil ve arife günlerinde kur belirlenmez; bu günler için sayfa yoktur.</p>
+  <DateFinder id="arsiv-tarih" />
+
+  {
+    [...decades].map(([decade, list]) => (
+      <section aria-labelledby={`d-${decade}`}>
+        <h2 id={`d-${decade}`}>{decadeLabel(decade)}</h2>
+        <ul class="link-list">
+          {list.map((y) => (
+            <li>
+              <a href={paths.archiveYear(y)}>
+                {y} <span class="muted small">&nbsp;({counts.get(y)} gün)</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+
+  <p>{DAY_PAGES_START.slice(0, 4)} öncesi için aylık ve yıllık arşivler: {CURRENCY_ORDER.map((c, i) => <>{i > 0 && ', '}<a href={paths.hub(c)}>{CURRENCY_INFO[c].short} Kuru Arşivi</a></>)}.</p>
+
+  <SourceDisclosure dataDate={lastDate()} calculated={false} />
+</BaseLayout>

@@ -1,0 +1,54 @@
+---
+/**
+ * Gün sayfası gezinmesi (SPEC §6.7): önceki/sonraki GERÇEK belirlenme günü, "Yakın Tarihler" (5 önce / 5 sonra),
+ * "Aynı günün diğer yılları" (yalnızca gün sayfası olan tarihler).
+ */
+import { allDates, dayPageDates, hasDayPage } from '../lib/data/store.ts';
+import { neighbours } from '../lib/data/lookup.ts';
+import { formatDate } from '../lib/formatting/format.ts';
+import { paths } from '../lib/seo/urls.ts';
+
+interface Props {
+  date: string;
+}
+const { date } = Astro.props;
+const pageDates = dayPageDates();
+const near = neighbours(pageDates, date, 5, 5);
+const prev = near.before[near.before.length - 1] ?? null;
+const next = near.after[0] ?? null;
+const md = date.slice(5);
+const sameDay = [...new Set(allDates().map((d) => d.slice(0, 4)))]
+  .map((y) => `${y}-${md}`)
+  .filter((d) => d !== date && hasDayPage(d));
+---
+
+<nav class="pager" aria-label="Önceki ve sonraki belirlenme günü">
+  {prev ? <a href={paths.day(prev)} rel="prev">← Önceki gözlem: {formatDate(prev)}</a> : <span />}
+  {next ? <a href={paths.day(next)} rel="next">Sonraki gözlem: {formatDate(next)} →</a> : <span />}
+</nav>
+
+<section aria-labelledby="yakin-tarihler">
+  <h2 id="yakin-tarihler">Yakın Tarihler</h2>
+  <ul class="link-list">
+    {near.before.map((d) => <li><a href={paths.day(d)}><time datetime={d}>{formatDate(d)}</time></a></li>)}
+    {near.after.map((d) => <li><a href={paths.day(d)}><time datetime={d}>{formatDate(d)}</time></a></li>)}
+  </ul>
+</section>
+
+{
+  sameDay.length > 0 && (
+    <section aria-labelledby="ayni-gun">
+      <h2 id="ayni-gun">Aynı Günün Diğer Yılları</h2>
+      <p class="muted small">Yalnızca TCMB'nin o gün kur belirlediği yıllar listelenir.</p>
+      <ul class="link-list">
+        {sameDay.map((d) => (
+          <li>
+            <a href={paths.day(d)}>
+              <time datetime={d}>{d.slice(0, 4)}</time>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
