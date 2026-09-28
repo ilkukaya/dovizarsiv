@@ -208,7 +208,7 @@ Metin kopyaları: `docs/data-usage/` (2026-09-28).
 | `README.md` | **Yeniden yaz** | Astro başlangıç şablonu |
 | `.vscode/` | Koru | Zararsız |
 
-## D-009 Önerilen klasör yapısı (owner onayı bekliyor)
+## D-009 Klasör yapısı — ONAYLANDI (owner, Faz 0 kararı #5)
 
 SPEC §12 ile uyumlu; ek olarak her klasörün sorumluluğu belirtildi.
 
@@ -262,7 +262,9 @@ Teknik tercihler (öneri):
 
 - Kurlar her iş günü 15.30 TSİ'de belirlenir ve EVDS'de **bir sonraki iş gününün tarihiyle** yer alır (D-006).
 - Kanıt: 2026-09-28 (Pazartesi) 06:31 UTC'de EVDS `END_DATE` = 28-09-2026 idi; yani o günün satırı sabah zaten mevcuttu.
-- **Karar:** iş akışı hafta içi **03:40 UTC** (06:40 TSİ) çalışır ve o günün EVDS tarihli satırını alır. Yeni gün yoksa (tatil)
+- **Güncelleme (Faz 1):** konvansiyon B ile günün kuru, TCMB'nin o gün 15.30'da belirlediği kurdur; bu kur EVDS'ye ertesi
+  iş günü tarihli satır olarak girer. Bu yüzden sabah çalışması yerine öğleden sonra çalışması gerekir; kesin saat D-013'te.
+- ~~**Karar:** iş akışı hafta içi **03:40 UTC** (06:40 TSİ) çalışır~~ (D-013 ile değiştirildi) ve o günün EVDS tarihli satırını alır. Yeni gün yoksa (tatil)
   commit atılmaz. Günlük ~1 build → ayda ~22 build (500 limitinin çok altında).
 - Mevcut `.github/workflows/daily-data-fetch.yml` (`main`) son 43 çalışmasının tamamında başarısız; Faz 1'de silinip yerine
   `data-update.yml` gelecek.
@@ -390,6 +392,7 @@ büyüklüğüne göre değil); 2004-12-31 gün sayfasında eski TL karşılığ
 - **EVDS birebir kontrol (rastgele 10 tarih, katmanlı: 3 × <1990, 3 × 1990–2004, 4 × 2005+):** ham değerler 10/10 birebir.
   (İlk çalıştırmada 1954, 1960, 1972 tarihleri `.YTL`'nin 8 basamak yuvarlaması yüzünden kontrol betiği tarafından hatalı
   "fark" sayıldı; betik düzeltildi, ham değerler bu tarihlerde de birebir aynı.)
+  Düzeltilmiş betikle yeniden çalıştırma (Actions run 36396138774, 2026-09-28): **10 tarih, 10 birebir eşleşme, 0 fark.**
 - **Kaynak tutarsızlığı (tamir edilmedi):** 1991-10-11 (EVDS 1991-10-14) GBP efektif alış 0,00839229 > efektif satış 0,00834217.
   Gün sayfası kapsamı dışında; `data:validate` uyarı verir.
 - **Anomali raporu (`data/metadata/anomalies.json`, eşik %5, döviz alış+satış):** 290 gözlem. En büyükleri bilinen olaylar:
@@ -399,15 +402,41 @@ büyüklüğüne göre değil); 2004-12-31 gün sayfasında eski TL karşılığ
   GBP 337 / 921, EUR 1 / 334 (1998-12, tek gözlem). Tamamı 1950-01 … 1980-09 arasında; 2000 sonrasında yok.
   Bu aylar ve tek gözlemli aylar `isIndexablePage` ile `noindex,follow` alır ve sitemap'e girmez.
 
-## Açık sorular (owner)
+## D-015 Faz 2 kalite sonuçları (2026-09-28)
 
-1. **Gün sayfalarının alt sınır yılı** (D-002): 1950'den tüm günler 20.000 dosya limitini aşıyor. Önerim: gün sayfaları **1990**'dan,
-   ay/yıl sayfaları 1950'den.
-2. **Gün sayfasının tarihi** (D-006): `/tarih/2020-01-15/` hangi kuru göstersin?
-   (A) EVDS tarihi = 15 Ocak'ta geçerli olan, **14 Ocak'ta belirlenen** kur (kaynağın kendi tarihi; veri kaydırılmaz), ya da
-   (B) **15 Ocak'ta belirlenen** kur (bülten tarihi; EVDS verisi bir iş günü kaydırılarak eşlenir).
-   Önerim: **(A)**. Kaynak tarihine sadık kalır, kaydırma hatası riski yoktur. Her sayfada "TCMB'nin 14 Ocak 2020 15.30'da
-   belirlediği kur" satırı açıkça yer alır.
-3. **2005 ham kaynağı** (D-005): arşiv serisi ham + kendi tarih bazlı dönüşümümüz + `.YTL` çapraz kontrolü önerisi onaylanıyor mu?
-4. EVDS genel/özel şart gerilimi (D-007) bilgi olarak kabul ediliyor mu? (SPEC kararı değişmiyor.)
-5. Klasör yapısı (D-009) ve silme listesi (D-008) onayı.
+- **Build:** 9.060 HTML sayfası, dist'te 9.179 dosya (Cloudflare Pages 20.000 limitinin %46'sı), yerel derleme ≈66 sn.
+- **seo:validate:** temiz. 8.335 indekslenebilir sayfa, 724 noindex (sabit kurlu ve tek gözlemli ay/yıllar, 404), sitemap
+  index'te 1.669 URL, kademeli indeksleme bekleyen 6.666 gün sayfası (docs/indexing-rollout.md).
+- **links:check:** temiz. 545.550 iç link, kırık link ve yetim sayfa yok.
+- **Negatif testler:** iki doğrulayıcı da kasıtlı bozulan çıktıda (eksik canonical, kırık link, sitemap'te noindex) hata verdi.
+- **Düzen (`npm run qa:layout`):** 13 sayfa × 7 genişlik (360–1440 px); yatay taşma yok.
+- **Smoke (`npm run qa:smoke`):** tarih bulucu (belirlenme günü, hafta sonu → `?istenen=`, bayram, 2000 öncesi → ay sayfası),
+  gerçek 404, mobil menü: tamamı geçti.
+- **Lighthouse 13.5 (`npm run qa:lighthouse`, yerel sunucu, CDN değil):** 7 sayfanın tamamı mobil ve masaüstünde
+  Performans / Erişilebilirlik / En iyi uygulamalar / SEO = 100 / 100 / 100 / 100; CLS 0,000; TBT 0 ms.
+
+| Sayfa | Mobil LCP (sn) | Masaüstü LCP (sn) | Aktarım (KB) |
+|---|---|---|---|
+| / | 0,91 | 0,24 | 26 |
+| /dolar/ | 1,20 | 0,33 | 68 |
+| /dolar/2020/ | 1,05 | 0,28 | 37 |
+| /dolar/2020/01/ | 1,05 | 0,28 | 34 |
+| /tarih/2020-01-15/ | 1,05 | 0,28 | 31 |
+| /tarih-arsivi/2020/ | 1,20 | 0,32 | 59 |
+| /metodoloji/ | 0,90 | 0,24 | 27 |
+
+- **CSP:** `script-src 'self'`. Astro'nun satır içi modül script'leri CSP'yi bozacağı için `vite.build.assetsInlineLimit: 0`
+  ile tüm script'ler harici dosyaya zorlandı. AdSense açılırken gerekli alan adları HANDOFF.md'de listelidir.
+- **Ay sayfası boş gün metni:** SPEC §6.6'daki "TCMB kuru yayımlanmadı (hafta sonu/tatil)" yerine "TCMB kur belirlemedi
+  (hafta sonu, resmî tatil ya da arife)" kullanıldı. Konvansiyon B'de satırın anlamı "o gün kur belirlenmedi"dir; arife
+  günleri de (yarım gün, kur belirlenmez) bu gruba girer.
+
+## Owner kararları (Faz 0 sonrası, 2026-09-28)
+
+Faz 0'daki açık soruların hepsi cevaplandı:
+1. Gün sayfaları 2000-01-01'den, ay/yıl sayfaları 1950'den. Sabit kurlu aylar `noindex,follow` (D-014: USD 349, GBP 337, EUR 1).
+2. Tarih konvansiyonu **B** (D-012).
+3. 2005: ham kaynak arşiv serisi + tarih bazlı dönüşüm + her güncellemede `.YTL` çapraz kontrolü (D-005, D-014).
+4. D-007 riski kabul edildi; SPEC §4.2 kararı değişmedi.
+5. D-008 silme listesi ve D-009 klasör yapısı onaylandı.
+6. `phase0-probe.yml` silindi; keşif `npm run data:discover` oldu.

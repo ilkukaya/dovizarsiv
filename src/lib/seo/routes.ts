@@ -7,6 +7,7 @@
  */
 import { CURRENCY_ORDER } from '../../config/currencies.ts';
 import { DATE_SITEMAP_YEARS, STATIC_CONTENT_UPDATED } from '../../config/indexing.ts';
+import { STATIC_ROUTES } from '../../config/static-routes.ts';
 import type { CurrencyCode } from '../providers/types.ts';
 import type { IsoDate } from '../data/dates.ts';
 import {
@@ -74,6 +75,7 @@ export function allRoutes(): RouteEntry[] {
   routes.push({ path: paths.archive(), kind: 'archive', decision: staticDecision('archive'), lastmod: latest, sitemap: 'pages' });
   routes.push({ path: paths.methodology(), kind: 'info', decision: staticDecision('info'), lastmod: STATIC_CONTENT_UPDATED, sitemap: 'pages' });
   routes.push({ path: paths.sources(), kind: 'info', decision: staticDecision('info'), lastmod: STATIC_CONTENT_UPDATED, sitemap: 'pages' });
+  for (const r of STATIC_ROUTES) routes.push({ path: r.path, kind: r.kind, decision: staticDecision(r.kind), lastmod: r.updated, sitemap: r.sitemap });
 
   const dayYears = [...new Set(dayPageDates().map((d) => Number(d.slice(0, 4))))];
   for (const year of dayYears) {
@@ -132,6 +134,7 @@ export function allRoutes(): RouteEntry[] {
 /** Sitemap index'te yer alan gruplar (kademeli indeksleme). */
 export function activeSitemapGroups(): string[] {
   const groups = ['pages', 'currencies', 'years', 'months'];
+  if (STATIC_ROUTES.some((r) => r.sitemap === 'guides')) groups.splice(1, 0, 'guides');
   const dayYears = new Set(dayPageDates().map((d) => Number(d.slice(0, 4))));
   for (const y of [...DATE_SITEMAP_YEARS].sort((a, b) => b - a)) if (dayYears.has(y)) groups.push(`dates-${y}`);
   return groups;
