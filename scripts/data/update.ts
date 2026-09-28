@@ -51,10 +51,13 @@ function combine(parts: SourceRow[][]): SourceRow[] {
 }
 
 /**
- * .YTL'de olup arşivde olmayan satırlar, arşivdeki bir önceki satırın kurunu taşıyorsa (taşınan kur) zararsızdır.
- * Yeni bir kur taşıyorlarsa arşivde gerçek bir gözlem eksik demektir → hata.
+ * .YTL'de olup arşivde olmayan satırlar:
+ * - arşivdeki ÖNCEKİ satırın kurunu taşıyorsa → taşınan kur, zararsız;
+ * - arşivdeki SONRAKİ satırın kurunu taşıyorsa → belirlenme günü eşlemesi değişmez (aynı kur, aynı öncül satır);
+ *   yalnızca kurun "ilk geçerli olduğu gün" arşivde bir satır geç görünür → not;
+ * - ikisi de değilse arşivde gerçek bir gözlem eksik demektir → hata.
  */
-function ytlOnlyRowsNotCarryOver(check: ReturnType<typeof crosscheck>, rawRows: readonly SourceRow[]): IsoDate[] {
+function classifyYtlOnlyRows(check: ReturnType<typeof crosscheck>, rawRows: readonly SourceRow[]): { notes: IsoDate[]; errors: IsoDate[] } {
   const rawSorted = rawRows.filter((r) => Object.values(r.values).some((v) => v !== null));
   const byDate = new Map<IsoDate, Record<string, string | null>>();
   for (const d of check.missingInRaw) {
@@ -62,21 +65,23 @@ function ytlOnlyRowsNotCarryOver(check: ReturnType<typeof crosscheck>, rawRows: 
     values[`${d.currency}.${d.field}`] = d.crosscheck;
     byDate.set(d.sourceDate, values);
   }
-  const bad: IsoDate[] = [];
-  for (const [date, ytlValues] of byDate) {
-    const prev = [...rawSorted].reverse().find((r) => r.sourceDate < date);
-    if (!prev) {
-      bad.push(date);
-      continue;
-    }
-    const same = Object.entries(ytlValues).every(([key, ytl]) => {
+  const carries = (row: SourceRow | undefined, ytlValues: Record<string, string | null>): boolean =>
+    row !== undefined &&
+    Object.entries(ytlValues).every(([key, ytl]) => {
       const [currency, field] = key.split('.') as [CurrencyCode, RateField];
-      const raw = prev.values[EVDS_SERIES[currency][field].raw];
-      return ytl === null || (raw != null && toTry(Decimal.parse(raw), prev.sourceDate).eq(Decimal.parse(ytl)));
+      const raw = row.values[EVDS_SERIES[currency][field].raw];
+      return ytl === null || (raw != null && toTry(Decimal.parse(raw), row.sourceDate).eq(Decimal.parse(ytl)));
     });
-    if (!same) bad.push(date);
+  const notes: IsoDate[] = [];
+  const errors: IsoDate[] = [];
+  for (const [date, ytlValues] of [...byDate].sort((a, b) => (a[0] < b[0] ? -1 : 1))) {
+    const prev = [...rawSorted].reverse().find((r) => r.sourceDate < date);
+    const next = rawSorted.find((r) => r.sourceDate > date);
+    if (carries(prev, ytlValues)) continue;
+    if (carries(next, ytlValues)) notes.push(date);
+    else errors.push(date);
   }
-  return bad.sort();
+  return { notes, errors };
 }
 
 async function main(): Promise<void> {
@@ -121,9 +126,10 @@ async function main(): Promise<void> {
   console.log(`  eklenen değer: ${merge.added}, değişmeyen: ${merge.unchanged}, revizyon: ${merge.revisions.length}, kaynakta kaybolan: ${merge.disappeared.length}`);
   const carryOvers = normalized.extraRows.filter((r) => r.reason === 'carry_over');
   console.log(`  gözlem: ${normalized.observations.length}, belirlenme günü: ${normalized.index.calendar.length}, reddedilen ham değer: ${normalized.issues.length}, taşınan-kur satırı: ${carryOvers.length}, ilk satır: ${normalized.extraRows.length - carryOvers.length}`);
-  const ytlOnly = ytlOnlyRowsNotCarryOver(check, rawRows);
-  console.log(`  yalnızca .YTL'de bulunan satır: ${new Set(check.missingInRaw.map((d) => d.sourceDate)).size}, bunlardan taşınan-kur OLMAYAN: ${ytlOnly.length}`);
-  for (const d of ytlOnly) console.log(`  ARŞİVDE EKSİK GÖZLEM ${d}`);
+  const ytlOnly = classifyYtlOnlyRows(check, rawRows);
+  console.log(`  yalnızca .YTL'de bulunan satır: ${new Set(check.missingInRaw.map((d) => d.sourceDate)).size}; eşlemeyi değiştirmeyen (sonraki arşiv satırıyla aynı kur): ${ytlOnly.notes.length}; ARŞİVDE EKSİK GÖZLEM: ${ytlOnly.errors.length}`);
+  for (const d of ytlOnly.notes) console.log(`  NOT ${d}: kur arşivde bir sonraki satırda başlıyor (ilk geçerlilik günü arşivde bir satır geç)`);
+  for (const d of ytlOnly.errors) console.log(`  ARŞİVDE EKSİK GÖZLEM ${d}`);
   console.log(`  çapraz kontrol (.YTL): ${check.comparisons} karşılaştırma, ${check.exact} tam eşleşme, ${check.roundingOnly.length} yalnızca 8-basamak yuvarlama, ${check.mismatches.length} UYUŞMAZLIK`);
   for (const r of merge.revisions.slice(0, 50)) console.log(`  REVİZYON ${r.sourceDate} ${r.seriesCode}: ${r.oldRaw} → ${r.newRaw}`);
   for (const d of merge.disappeared.slice(0, 50)) console.log(`  KAYBOLAN ${d.sourceDate} ${d.seriesCode} (saklanan ${d.storedRaw} korunuyor)`);
@@ -146,7 +152,7 @@ async function main(): Promise<void> {
     mismatches: check.mismatches.slice(0, 500),
     missingInCrosscheck: check.missingInCrosscheck.slice(0, 500),
     missingInRaw: check.missingInRaw.slice(0, 500),
-    ytlOnlyNotCarryOver: ytlOnly,
+    ytlOnlyRows: ytlOnly,
     counts: {
       roundingOnly: check.roundingOnly.length,
       mismatches: check.mismatches.length,
@@ -156,8 +162,8 @@ async function main(): Promise<void> {
   });
   console.log(`  değişen yıl dosyaları: ${changedYears.length ? changedYears.join(', ') : 'yok'}`);
 
-  if (ytlOnly.length > 0) {
-    annotate('error', `Arşiv serisinde eksik olup .YTL'de yeni kur taşıyan ${ytlOnly.length} satır: ${ytlOnly.join(', ')}`);
+  if (ytlOnly.errors.length > 0) {
+    annotate('error', `Arşiv serisinde eksik gözlem (.YTL'de yeni kur, arşivde yok): ${ytlOnly.errors.join(', ')}`);
     process.exitCode = 1;
   }
   if (check.mismatches.length > 0) {
