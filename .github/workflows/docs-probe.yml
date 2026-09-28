@@ -14,19 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Aday yardım sayfalarının başlıkları
-        run: |
-          for id in 9274025 9274634 9274019 7183518 10175505 7584263 9183242 9190028 10609033 12252323 9899454 9020116 10600100 9877301 7573973 9188198 7527560 10490138 10502938 12171612; do
-            t=$(curl -sL -m 30 -A 'Mozilla/5.0' "https://support.google.com/adsense/answer/$id" | python3 -c "import re,sys,html; t=sys.stdin.read(); m=re.search(r'<title>(.*?)</title>',t,re.S); print(html.unescape(m.group(1).strip()) if m else '-')")
-            echo "adsense/$id => $t"
-          done
-          for id in 9180084 10601990 9147299 10577399 10309381 9782573; do
-            t=$(curl -sL -m 30 -A 'Mozilla/5.0' "https://support.google.com/fundingchoices/answer/$id" | python3 -c "import re,sys,html; t=sys.stdin.read(); m=re.search(r'<title>(.*?)</title>',t,re.S); print(html.unescape(m.group(1).strip()) if m else '-')")
-            echo "fundingchoices/$id => $t"
-          done
-          echo "--- adsbygoogle.js"
-          curl -sI -m 30 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js' | head -5
-      - name: Ad code ve CMP sayfaları
+      - name: AdSense kod ve yerleşim sayfaları
         run: |
           show() {
             echo "================ $1"
@@ -42,8 +30,24 @@ jobs:
           t = html.unescape(t)
           lines = [re.sub(r'\s+', ' ', l).strip() for l in t.split('\n')]
           lines = [l for l in lines if len(l) > 3]
-          print('\n'.join(lines[10:110]))
+          start = next((i for i, l in enumerate(lines) if 'Notification' in l or 'Stay organized' in l), 0)
+          print('\n'.join(lines[start:start + 75]))
           PY
           }
-          show https://developers.google.com/tag-platform/security/guides/csp
-          show https://developers.google.com/tag-platform/security/guides/consent?consentmode=basic
+          show https://support.google.com/adsense/answer/9274019
+          show https://support.google.com/adsense/answer/9190028
+          show https://support.google.com/fundingchoices/answer/9180084
+          echo "================ Publisher policies: yerleşim kuralları"
+          curl -sL -m 40 -A 'Mozilla/5.0' -o /tmp/pp.html https://support.google.com/adsense/answer/10502938
+          python3 - <<'PY'
+          import re, html
+          t = open('/tmp/pp.html', encoding='utf-8', errors='ignore').read()
+          t = re.sub(r'<(script|style|noscript)[^>]*>.*?</\1>', ' ', t, flags=re.S)
+          t = re.sub(r'<(br|/p|/li|/h\d|/tr|/div)[^>]*>', '\n', t)
+          t = re.sub(r'<[^>]+>', ' ', t)
+          t = html.unescape(t)
+          lines = [re.sub(r'\s+', ' ', l).strip() for l in t.split('\n')]
+          for l in lines:
+              if re.search(r'(?i)navigation|placement|deceptive|misleading|click|interstitial|pop-?up|refresh|consent|EEA|TCF|certified', l) and len(l) > 20:
+                  print('-', l[:300])
+          PY
