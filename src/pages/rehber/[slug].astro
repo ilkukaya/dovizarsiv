@@ -6,6 +6,7 @@
 import { getCollection, render } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ShareButton from '../../components/ShareButton.astro';
 import { formatDate } from '../../lib/formatting/format.ts';
 import { article } from '../../lib/seo/schema.ts';
 import { paths } from '../../lib/seo/urls.ts';
@@ -32,6 +33,7 @@ const path = paths.guide(guide.id);
 >
   <article class="prose guide">
     <h1>{d.title}</h1>
+    <ShareButton />
     <p class="muted small">Son güncelleme: <time datetime={d.updated}>{formatDate(d.updated)}</time></p>
     <Content />
 

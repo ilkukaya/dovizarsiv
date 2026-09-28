@@ -12,18 +12,28 @@ jobs:
   probe:
     if: contains(github.event.head_commit.message, '[probe]')
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
-      - name: Sayfaları çek ve metne çevir
+      - name: Aday yardım sayfalarının başlıkları
         run: |
-          fetch() {
-            url="$1"
-            echo "================ $url"
-            code=$(curl -sL -m 40 -A 'Mozilla/5.0 (X11; Linux x86_64)' -o /tmp/page.html -w '%{http_code}' "$url")
-            echo "HTTP $code"
+          for id in 9274025 9274634 9274019 7183518 10175505 7584263 9183242 9190028 10609033 12252323 9899454 9020116 10600100 9877301 7573973 9188198 7527560 10490138 10502938 12171612; do
+            t=$(curl -sL -m 30 -A 'Mozilla/5.0' "https://support.google.com/adsense/answer/$id" | python3 -c "import re,sys,html; t=sys.stdin.read(); m=re.search(r'<title>(.*?)</title>',t,re.S); print(html.unescape(m.group(1).strip()) if m else '-')")
+            echo "adsense/$id => $t"
+          done
+          for id in 9180084 10601990 9147299 10577399 10309381 9782573; do
+            t=$(curl -sL -m 30 -A 'Mozilla/5.0' "https://support.google.com/fundingchoices/answer/$id" | python3 -c "import re,sys,html; t=sys.stdin.read(); m=re.search(r'<title>(.*?)</title>',t,re.S); print(html.unescape(m.group(1).strip()) if m else '-')")
+            echo "fundingchoices/$id => $t"
+          done
+          echo "--- adsbygoogle.js"
+          curl -sI -m 30 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js' | head -5
+      - name: Ad code ve CMP sayfaları
+        run: |
+          show() {
+            echo "================ $1"
+            curl -sL -m 40 -A 'Mozilla/5.0' -o /tmp/p.html "$1"
             python3 - <<'PY'
           import re, html
-          t = open('/tmp/page.html', encoding='utf-8', errors='ignore').read()
+          t = open('/tmp/p.html', encoding='utf-8', errors='ignore').read()
           m = re.search(r'<title>(.*?)</title>', t, re.S)
           print('TITLE:', html.unescape(m.group(1).strip()) if m else '-')
           t = re.sub(r'<(script|style|noscript)[^>]*>.*?</\1>', ' ', t, flags=re.S)
@@ -31,10 +41,9 @@ jobs:
           t = re.sub(r'<[^>]+>', ' ', t)
           t = html.unescape(t)
           lines = [re.sub(r'\s+', ' ', l).strip() for l in t.split('\n')]
-          lines = [l for l in lines if len(l) > 2]
-          print('\n'.join(lines[:220]))
+          lines = [l for l in lines if len(l) > 3]
+          print('\n'.join(lines[10:110]))
           PY
           }
-          fetch https://developers.google.com/publisher-tag/guides/content-security-policy
-          fetch https://developers.google.com/tag-platform/security/guides/consent
-          fetch https://support.google.com/adsense/answer/7532444
+          show https://developers.google.com/tag-platform/security/guides/csp
+          show https://developers.google.com/tag-platform/security/guides/consent?consentmode=basic

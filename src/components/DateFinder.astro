@@ -33,6 +33,9 @@ const max = lastDate();
 </form>
 
 <script>
+  import { loadPrefs, rememberDate } from '../lib/tools/prefs.ts';
+  import { formatDate } from '../lib/formatting/format.ts';
+
   let cache: Promise<string[]> | null = null;
   const loadDays = (url: string) => (cache ??= fetch(url).then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status))))));
 
@@ -50,7 +53,26 @@ const max = lastDate();
     return found;
   }
 
+  // Son bakılan tarihler (yalnızca bu tarayıcıda; bkz. gizlilik sayfası). Bağlantılar doğrulanmış site içi adreslerdir.
+  function renderRecent(form: HTMLFormElement): void {
+    const recent = loadPrefs().recent ?? [];
+    form.querySelector('.date-finder__recent')?.remove();
+    if (recent.length === 0) return;
+    const box = document.createElement('p');
+    box.className = 'date-finder__recent small';
+    box.append('Son bakılanlar: ');
+    recent.forEach((r, i) => {
+      const a = document.createElement('a');
+      a.href = r.href;
+      a.textContent = formatDate(r.date);
+      if (i > 0) box.append(' · ');
+      box.append(a);
+    });
+    form.append(box);
+  }
+
   for (const form of document.querySelectorAll<HTMLFormElement>('form[data-date-finder]')) {
+    renderRecent(form);
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const input = form.querySelector<HTMLInputElement>('input[type="date"]')!;
@@ -63,7 +85,9 @@ const max = lastDate();
       const { dayStart = '2000-01-01', max = '', index = '', monthSlug = 'dolar' } = form.dataset;
       if (value < dayStart) {
         msg.textContent = 'Bu tarih için aylık arşiv sayfası açılıyor…';
-        location.href = `/${monthSlug}/${value.slice(0, 4)}/${value.slice(5, 7)}/`;
+        const monthHref = `/${monthSlug}/${value.slice(0, 4)}/${value.slice(5, 7)}/`;
+        rememberDate({ date: value, href: monthHref });
+        location.href = monthHref;
         return;
       }
       const target = value > max ? max : value;
@@ -75,6 +99,7 @@ const max = lastDate();
           msg.textContent = 'Bu tarih için kayıt bulunamadı.';
           return;
         }
+        rememberDate({ date: value, href: `/tarih/${found}/` });
         location.href = found === value ? `/tarih/${found}/` : `/tarih/${found}/?istenen=${value}`;
       } catch {
         msg.textContent = 'Tarih listesi yüklenemedi; lütfen Tarih Arşivi sayfasını kullanın.';

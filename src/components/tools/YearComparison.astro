@@ -56,6 +56,7 @@ const firstDates = Object.fromEntries(CURRENCY_ORDER.map((c) => [c, firstDate(c)
   import { createFetchLoader, ensureYears, isCurrency, RateStore } from '../../lib/tools/rates.ts';
   import { panelsOf, showBusy, showError, showResult, LOAD_FAILED } from '../../lib/tools/ui.ts';
   import { renderCompare } from '../../lib/tools/ui-compare.ts';
+  import { loadPrefs, savePrefs } from '../../lib/tools/prefs.ts';
   import { FIELD_LABELS } from '../../config/currencies.ts';
   import type { CurrencyCode, RateField } from '../../lib/providers/types.ts';
 
@@ -65,6 +66,10 @@ const firstDates = Object.fromEntries(CURRENCY_ORDER.map((c) => [c, firstDate(c)
     const panels = panelsOf(root);
     const store = new RateStore();
     const loader = createFetchLoader();
+
+    const kurSelect = form.elements.namedItem('kur') as HTMLSelectElement;
+    const saved = loadPrefs().rateField;
+    if (saved) kurSelect.value = saved;
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -84,6 +89,7 @@ const firstDates = Object.fromEntries(CURRENCY_ORDER.map((c) => [c, firstDate(c)
         return showError(panels, LOAD_FAILED);
       }
       const tables = compareYears(store, currencies, from, to, field);
+      savePrefs({ rateField: field });
       showResult(panels, renderCompare(tables, field), `${from} – ${to} yılları için ${FIELD_LABELS[field].toLowerCase()} kuru karşılaştırması hazır.`);
     });
   }

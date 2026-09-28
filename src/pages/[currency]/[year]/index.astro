@@ -4,6 +4,7 @@
  * en sert 5 yükseliş ve 5 düşüş günü, önceki/sonraki yıl. Dataset schema.
  */
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ShareButton from '../../../components/ShareButton.astro';
 import SourceDisclosure from '../../../components/SourceDisclosure.astro';
 import RateStatGrid from '../../../components/RateStatGrid.astro';
 import HistoricalChart from '../../../components/HistoricalChart.astro';
@@ -80,6 +81,7 @@ const schema = dataset({
 
 <BaseLayout title={title} description={description} path={paths.year(code, year)} page={{ kind: 'year', observationCount: obs.length, flat, hasSourceDisclosure: true }} crumbs={crumbs} schema={[schema]} navCurrent={paths.hub(code)}>
   <h1>{title}</h1>
+  <ShareButton />
   <div class="lead">{intro.map((s) => <p>{s}</p>)}</div>
 
   {

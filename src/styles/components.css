@@ -746,3 +746,113 @@ span.calendar__day {
 .guide th:not(:first-child) {
   text-align: right;
 }
+
+.date-finder__recent {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+/* ---------- Paylaş ---------- */
+.share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-2) 0 var(--space-4);
+}
+
+.share__status {
+  min-height: 1.5em;
+}
+
+.print-only {
+  display: none;
+}
+
+/* ---------- Baskı (SPEC §9): tarih, kurlar, hesap ve kaynak kalır; gezinme, forma ve reklamlar gizlenir ---------- */
+@media print {
+  /* Koyu tema tarayıcılarda da baskı beyaz zemin, siyah metin: tema değişkenleri yerine doğrudan geçersiz kılınır. */
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+
+  body {
+    font-size: 11pt;
+  }
+
+  .chart__line {
+    stroke: #000 !important;
+  }
+
+  .chart__axis {
+    stroke: #999 !important;
+  }
+
+  .chart__label {
+    fill: #000 !important;
+  }
+
+  .site-header,
+  .site-footer,
+  .breadcrumbs,
+  .skip-link,
+  .date-finder,
+  .share__button,
+  .share__status,
+  .tool__form,
+  .tool-message,
+  .ad-slot,
+  .archive-navigator,
+  [data-mini-calculator-slot],
+  [data-consent-settings] {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block;
+    margin: 0 0 0.5rem;
+  }
+
+  .table-scroll {
+    overflow: visible;
+    border: 0;
+  }
+
+  .data-table,
+  .guide table {
+    width: 100%;
+    font-size: 10pt;
+  }
+
+  tr,
+  figure,
+  .source-box {
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+
+  main a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 9pt;
+    word-break: break-all;
+  }
+
+  .chart svg {
+    max-width: 100%;
+    height: auto;
+  }
+}

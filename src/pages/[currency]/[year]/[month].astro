@@ -4,6 +4,7 @@
  * Sabit kurlu ve tek gözlemli aylar noindex,follow (isIndexablePage).
  */
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ShareButton from '../../../components/ShareButton.astro';
 import SourceDisclosure from '../../../components/SourceDisclosure.astro';
 import RateStatGrid from '../../../components/RateStatGrid.astro';
 import HistoricalChart from '../../../components/HistoricalChart.astro';
@@ -80,6 +81,7 @@ const crumbs = [
 
 <BaseLayout title={title} description={description} path={paths.month(code, ym)} page={{ kind: 'month', observationCount: obs.length, flat, hasSourceDisclosure: true }} crumbs={crumbs} navCurrent={paths.hub(code)}>
   <h1>{title}</h1>
+  <ShareButton />
   <div class="lead">{intro.map((s) => <p>{s}</p>)}</div>
 
   <RateStatGrid
