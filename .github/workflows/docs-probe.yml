@@ -14,14 +14,39 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: AdSense kod ve yerleşim sayfaları
+      - name: AdSense CSP makalesini bul ve oku
         run: |
-          show() {
-            echo "================ $1"
-            curl -sL -m 40 -A 'Mozilla/5.0' -o /tmp/p.html "$1"
-            python3 - <<'PY'
+          curl -sL -m 40 -A 'Mozilla/5.0' -o /tmp/nav.html https://support.google.com/adsense/answer/9274019
+          python3 - <<'PY'
           import re, html
-          t = open('/tmp/p.html', encoding='utf-8', errors='ignore').read()
+          t = open('/tmp/nav.html', encoding='utf-8', errors='ignore').read()
+          links = re.findall(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', t, re.S)
+          seen = set()
+          for href, text in links:
+              text = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', html.unescape(text))).strip()
+              if re.search(r'(?i)content security|privacy|messaging|consent|CMP', text) and (href, text) not in seen:
+                  seen.add((href, text))
+                  print('LINK:', text[:120], '=>', html.unescape(href)[:200])
+          PY
+      - name: CSP makalesi
+        run: |
+          curl -sL -m 40 -A 'Mozilla/5.0' -o /tmp/nav.html https://support.google.com/adsense/answer/9274019
+          url=$(python3 - <<'PY'
+          import re, html
+          t = open('/tmp/nav.html', encoding='utf-8', errors='ignore').read()
+          for href, text in re.findall(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', t, re.S):
+              text = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', html.unescape(text))).strip()
+              if 'Content Security Policy' in text:
+                  h = html.unescape(href)
+                  print(h if h.startswith('http') else 'https://support.google.com' + h)
+                  break
+          PY
+          )
+          echo "URL: $url"
+          curl -sL -m 40 -A 'Mozilla/5.0' -o /tmp/csp.html "$url"
+          python3 - <<'PY'
+          import re, html
+          t = open('/tmp/csp.html', encoding='utf-8', errors='ignore').read()
           m = re.search(r'<title>(.*?)</title>', t, re.S)
           print('TITLE:', html.unescape(m.group(1).strip()) if m else '-')
           t = re.sub(r'<(script|style|noscript)[^>]*>.*?</\1>', ' ', t, flags=re.S)
@@ -30,24 +55,6 @@ jobs:
           t = html.unescape(t)
           lines = [re.sub(r'\s+', ' ', l).strip() for l in t.split('\n')]
           lines = [l for l in lines if len(l) > 3]
-          start = next((i for i, l in enumerate(lines) if 'Notification' in l or 'Stay organized' in l), 0)
-          print('\n'.join(lines[start:start + 75]))
-          PY
-          }
-          show https://support.google.com/adsense/answer/9274019
-          show https://support.google.com/adsense/answer/9190028
-          show https://support.google.com/fundingchoices/answer/9180084
-          echo "================ Publisher policies: yerleşim kuralları"
-          curl -sL -m 40 -A 'Mozilla/5.0' -o /tmp/pp.html https://support.google.com/adsense/answer/10502938
-          python3 - <<'PY'
-          import re, html
-          t = open('/tmp/pp.html', encoding='utf-8', errors='ignore').read()
-          t = re.sub(r'<(script|style|noscript)[^>]*>.*?</\1>', ' ', t, flags=re.S)
-          t = re.sub(r'<(br|/p|/li|/h\d|/tr|/div)[^>]*>', '\n', t)
-          t = re.sub(r'<[^>]+>', ' ', t)
-          t = html.unescape(t)
-          lines = [re.sub(r'\s+', ' ', l).strip() for l in t.split('\n')]
-          for l in lines:
-              if re.search(r'(?i)navigation|placement|deceptive|misleading|click|interstitial|pop-?up|refresh|consent|EEA|TCF|certified', l) and len(l) > 20:
-                  print('-', l[:300])
+          start = next((i for i, l in enumerate(lines) if 'Code implementation guide' in l), 0)
+          print('\n'.join(lines[start:start + 60]))
           PY
