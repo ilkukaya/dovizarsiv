@@ -1,0 +1,20 @@
+name: Faz 0 keşif sondası
+on:
+  push:
+    branches: ['claude/**']
+    paths: ['scripts/discovery/**', '.github/workflows/phase0-probe.yml']
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Probe
+        env:
+          EVDS_API_KEY: ${{ secrets.EVDS_API_KEY }}
+        run: node scripts/discovery/phase0-probe.mjs all
