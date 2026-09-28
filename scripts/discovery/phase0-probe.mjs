@@ -45,6 +45,48 @@ async function evds(label, url) {
 
 const MODE = process.argv[2] || 'all';
 
+async function raw(url, max = 3000) {
+  const r = await get(url, { headers: { 'user-agent': 'Mozilla/5.0 dovizarsiv-phase0-probe' } });
+  section(`RAW ${url} -> ${r.status} ${r.ct} len=${r.body.length}`);
+  out(r.body.slice(0, max));
+  return r;
+}
+
+if (MODE === 'r2') {
+  await raw('https://developers.cloudflare.com/pages/functions/pricing/index.md', 5000);
+  await raw('https://developers.cloudflare.com/pages/platform/limits/index.md', 200);
+  await raw('https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits', 0)
+    .then((r) => out(strip(r.body).match(/GitHub Pages limits[\s\S]{0,3000}/)?.[0] || ''));
+  await page('https://www.netlify.com/pricing/', 5000);
+  await page('https://www.tcmb.gov.tr/wps/wcm/connect/tr/tcmb+tr/main+menu/temel+faaliyetler/doviz+efektif/doviz+ve+efektif+piyasalari/gosterge+niteligindeki+kurlar', 5000);
+  // EVDS3 SPA: paketleri tara
+  const home = await raw('https://evds3.tcmb.gov.tr/', 2500);
+  const srcs = [...home.body.matchAll(/(?:src|href)="([^"]+\.(?:js|json)[^"]*)"/g)].map((m) => new URL(m[1], 'https://evds3.tcmb.gov.tr/').href);
+  out('SCRIPTS: ' + srcs.join(' | '));
+  const pats = /igmevdsms[^"'`\s]{0,80}|serieList|datagroups|["'`][^"'`]{0,60}\.pdf["'`]|kullan[ıi]m[^"'`<]{0,200}|headers?:\{[^}]{0,120}key[^}]{0,60}\}|limit[^"'`]{0,80}istek[^"'`]{0,80}/gi;
+  for (const s of srcs.slice(0, 15)) {
+    const r = await get(s);
+    const hits = [...new Set((r.body.match(pats) || []))].slice(0, 80);
+    section(`BUNDLE ${s} ${r.status} len=${r.body.length}`);
+    out(hits.join('\n'));
+  }
+  // Anahtarsız API denemesi: hata biçimini görmek için
+  for (const u of ['https://evds3.tcmb.gov.tr/igmevdsms-dis/categories/type=json',
+                   'https://evds3.tcmb.gov.tr/igmevdsms-dis/serieList/code=bie_dkdovytl&type=json',
+                   'https://evds2.tcmb.gov.tr/service/evds/categories/type=json']) {
+    const r = await get(u);
+    section(`NOKEY ${u} -> ${r.status} ${r.ct}`);
+    out(strip(r.body).slice(0, 800));
+  }
+  // Kurlar arşivinin başlangıcı
+  for (const d of ['1996-04-16','1996-04-17','1996-01-02','1997-01-02','1998-01-02','1999-01-04','2000-01-04']) {
+    const [y, m, dd] = d.split('-');
+    const r = await get(`https://www.tcmb.gov.tr/kurlar/${y}${m}/${dd}${m}${y}.xml`);
+    out(`XML ${d} -> ${r.status} ${(r.body.match(/<Tarih_Date[^>]*>/) || [''])[0]}`);
+  }
+}
+
+
 if (MODE === 'all' || MODE === 'pages') {
   await page('https://developers.cloudflare.com/pages/platform/limits/');
   await page('https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/', 6000);

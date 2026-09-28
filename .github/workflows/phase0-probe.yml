@@ -17,4 +17,4 @@ jobs:
       - name: Probe
         env:
           EVDS_API_KEY: ${{ secrets.EVDS_API_KEY }}
-        run: node scripts/discovery/phase0-probe.mjs all
+        run: node scripts/discovery/phase0-probe.mjs ${{ vars.PROBE_MODE || 'r2' }}
