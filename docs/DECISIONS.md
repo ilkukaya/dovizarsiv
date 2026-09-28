@@ -37,30 +37,26 @@ https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-
 **Dikkat:** Preview (branch) build'leri de 500/ay kotasından düşer. Pages projesinde "Branch deployment controls" ile
 yalnızca `main` için build açılmalı ya da build watch paths ayarlanmalı (owner işi, README'ye yazılacak).
 
-## D-002 Sayfa sayısı ve 20.000 dosya limiti — TAHMİN (EVDS kapsamı doğrulanınca kesinleşecek)
+## D-002 Sayfa sayısı ve 20.000 dosya limiti — EVDS kapsamıyla GÜNCELLENDİ
 
-Varsayım: ~248 TCMB iş günü/yıl, 3 para birimi, `build.format: 'directory'` (sayfa başına 1 `index.html`).
+EVDS kapsamı: USD/GBP döviz **1950**, EUR döviz **1999**, USD/GBP efektif **1990**, EUR efektif **2002** (D-004).
+Varsayım: ~248 iş günü/yıl, sayfa başına 1 `index.html`, sabit dosyalar ~130 (hub, statik, sitemap, JSON, CSV, asset).
 
-| Sayfa türü | Formül | Senaryo A: 1996-04-16 → 2026-09 | Senaryo B: 2005-01 → 2026-09 |
-|---|---|---|---|
-| Gün `/tarih/YYYY-MM-DD/` | iş günü sayısı (para birimleri tek sayfada) | ~7.570 | ~5.440 |
-| Ay `/dolar/YYYY/MM/` | 3 × ay sayısı | ~1.100 | ~783 |
-| Yıl `/dolar/YYYY/` | 3 × yıl sayısı | 93 | 66 |
-| Tarih arşivi yıl alt sayfaları | yıl sayısı + 1 | 32 | 23 |
-| Hub, ana sayfa, araç, rehber (10), güven/yasal, 404 | sabit | ~30 | ~30 |
-| Sitemap dosyaları | index + tür + yıl başına dates | ~40 | ~30 |
-| Araç JSON parçaları (yıl başına 1, tüm para birimleri) | yıl sayısı | 31 | 22 |
-| CSV (para birimi başına) | 3 | 3 | 3 |
-| CSS/JS/ikon/OG/manifest/robots/_headers/_redirects | sabit | ~30 | ~30 |
-| **Toplam** | | **~8.930 (%45)** | **~6.430 (%32)** |
+| Gün sayfası alt sınırı | Gün sayfası | Ay (3 para birimi, EUR 1999'dan) | Yıl | Toplam | Limit |
+|---|---|---|---|---|---|
+| 1950 | ~18.900 | ~2.090 | ~180 | **~21.300** | **AŞAR** |
+| 1990 | ~9.000 | ~1.130 | ~110 | ~10.400 | %52 |
+| 1996 | ~7.570 | ~1.030 | ~100 | ~8.830 | %44 |
+| 2005 | ~5.440 | ~790 | ~66 | ~6.430 | %32 |
 
-Yıllık büyüme ≈ 248 gün + 36 ay + 3 yıl + ~3 dosya ≈ **290 dosya/yıl** → Senaryo A'da limite ~38 yıl var.
+**Sonuç:** 1950'den itibaren tüm günler için sayfa üretmek Cloudflare Pages Free 20.000 dosya limitini aşıyor. Seçenekler:
+(a) gün sayfalarını bir alt sınır yılından başlatmak; daha eski dönem ay/yıl sayfalarında tablo olarak kalır (önerim: **1990**,
+efektif kurların da başladığı yıl; ~%52 doluluk, ~35 yıl büyüme payı), (b) Workers Static Assets'e geçmek (Free planda dosya limiti
+ayrıca doğrulanmalı). Ay ve yıl sayfaları 1950'den itibaren üretilebilir (≈2.300 dosya). Owner kararı (Açık sorular #1).
+Ayrıca: 1950–1980'lerde kurlar uzun süre sabit (sabit kur rejimi) olabilir; bu dönemin gün sayfaları "benzersiz bilgi" testini
+(SPEC §1.1-2) büyük olasılıkla geçmez. Bu da (a) seçeneğini destekliyor.
 
-**Risk:** EVDS günlük döviz serileri 1996'dan çok daha eskiye gidiyorsa (ör. 1950'ler), gün sayfası sayısı 20.000'i
-aşabilir. Bu durumda seçenekler: (a) belirli bir yıldan eski günler için gün sayfası üretmeyip ay tablosunda göstermek,
-(b) Workers Static Assets'e geçmek. EVDS kapsamı doğrulanınca yeniden hesaplanacak.
-
-## D-003 EVDS erişim yöntemi — DOĞRULANDI (resmi kılavuz + sunucu yanıtı)
+## D-003 EVDS erişim yöntemi — DOĞRULANDI (resmi kılavuz + anahtarlı çağrılar)
 
 Resmi kaynak: **"EVDS Web Servis Kılavuzu"**, EVDS3 docId=8, PDF tarihi 2026-02-26
 (`https://evds3.tcmb.gov.tr/igmevdsms-dis/documents/showDocument?docId=8`, 2026-09-28'de çekildi).
@@ -89,56 +85,89 @@ Resmi kaynak: **"EVDS Web Servis Kılavuzu"**, EVDS3 docId=8, PDF tarihi 2026-02
 - Kılavuzdaki `aggregationTypes`/`formulas` ile EVDS'nin hesapladığı ortalama/yüzde değerleri **kullanılmayacak**; tüm
   türetilmiş istatistikler kendi kodumuzla ham günlük gözlemlerden hesaplanacak (SPEC §5 "Döviz Arşiv hesaplaması").
 
-**Engel:** GitHub Secrets'ta `EVDS_API_KEY` tanımlı değil (Actions logu: `EVDS key present: no`), yerel ortamda da yok.
-Anahtarla yapılacak keşif hazır: `phase0-probe.yml` iş akışı `evds-discover` modunda categories → datagroups →
-serieList zincirini çalıştırır ve örnek gözlemleri basar (anahtar yalnızca header'da, log'a yazılmaz).
+**Anahtar:** GitHub Secrets'ta `EVDS_API_KEY` olarak tanımlandı (2026-09-28). Anahtarlı keşif başarılı: categories, datagroups
+(678 grup), serieList ve series çağrıları 200 döndü. Anahtar yalnızca header'da kullanıldı, loglara yazılmadı.
 
-## D-004 EVDS seri kodları — DOĞRULANMADI (aday kodlar kılavuzda görülüyor)
+## D-004 EVDS seri kodları — DOĞRULANDI (EVDS metadata, 2026-09-28)
 
-Resmi kılavuzdaki örnek çağrılarda şu kodlar geçiyor: `TP.DK.USD.A`, `TP.DK.EUR.A`, `TP.DK.GBP.A`, `TP.DK.JPY.A`
-ve ayrıca **`.YTL` sonekli** `TP.DK.USD.A.YTL`, `TP.DK.USD.S.YTL`, `TP.DK.EUR.A.YTL`. Aynı para birimi için iki ayrı kod ailesi
-bulunması, 2005 para reformuyla ilgili ayrı seriler (eski TL / YTL) olabileceğine işaret ediyor. Bu bir **hipotezdir**;
-SPEC §4.1 ve §4.7 gereği metadata (Serie_Name, birim, Start_Date, End_Date) okunmadan hiçbir kod kullanılmayacak ve
-iki aile metodoloji/birim kontrolü yapılmadan birleştirilmeyecek.
+Kaynak: `datagroups/mode=0` + `serieList` (anahtarla, GitHub Actions `phase0-probe.yml` `evds-discover` modu, run 36384904148).
+Döviz kuru için EVDS'de **iki ayrı veri grubu çifti** var:
 
-| Para birimi | Alan | Seri kodu | Etiket | Birim | Frekans | İlk gözlem | Son gözlem |
-|---|---|---|---|---|---|---|---|
-| USD | Döviz Alış | ? | ? | ? | ? | ? | ? |
-| USD | Döviz Satış | ? | ? | ? | ? | ? | ? |
-| USD | Efektif Alış | ? | ? | ? | ? | ? | ? |
-| USD | Efektif Satış | ? | ? | ? | ? | ? | ? |
-| EUR | (aynı 4 alan) | ? | | | | | |
-| GBP | (aynı 4 alan) | ? | | | | | |
+| Veri grubu | Adı | Birim (metadata) | Kapsam | Not |
+|---|---|---|---|---|
+| `bie_dkdovytl` | Döviz Kurları | Türk lirası | 02-01-1950 → güncel | Güncel ana grup |
+| `bie_dkefkytl` | Efektif Kurlar | Türk lirası | 02-01-1990 → güncel | Güncel ana grup |
+| `bie_dkdovizgn` | Kurlar-Döviz Kurları (Arşiv) | (boş) | 02-01-1950 → güncel | Arşiv kategorisi (9993002) |
+| `bie_dkefektif` | Kurlar-Efektif Kurlar (Arşiv) | (boş) | 02-01-1990 → güncel | Arşiv kategorisi |
 
-Anahtar tanımlanınca bu tablo `evds-discover` çıktısından doldurulacak; Faz 1'de `npm run data:discover` aynı kontrolü
-her çalıştırmada yapıp config ile metadata uyuşmazsa hata verecek.
+Ana gruplar (`…YTL`):
 
-## D-005 2005 para reformu — TCMB kaynağında DOĞRULANDI, EVDS tarafı DOĞRULANMADI
+| Para birimi | Alan | Seri kodu | EVDS adı | Frekans | İlk gözlem | Son gözlem |
+|---|---|---|---|---|---|---|
+| USD | Döviz Alış | `TP.DK.USD.A.YTL` | (USD) ABD Doları (Döviz Alış) | GÜNLÜK | 02-01-1950 | 28-09-2026 |
+| USD | Döviz Satış | `TP.DK.USD.S.YTL` | (USD) ABD Doları (Döviz Satış) | GÜNLÜK | 02-01-1950 | 28-09-2026 |
+| USD | Efektif Alış | `TP.DK.USD.A.EF.YTL` | (USD) ABD Doları (Efektif Alış) | GÜNLÜK | 02-01-1990 | 28-09-2026 |
+| USD | Efektif Satış | `TP.DK.USD.S.EF.YTL` | (USD) ABD Doları (Efektif Satış) | GÜNLÜK | 02-01-1990 | 28-09-2026 |
+| EUR | Döviz Alış | `TP.DK.EUR.A.YTL` | (EUR) Euro (Döviz Alış) | GÜNLÜK | 04-01-1999 | 28-09-2026 |
+| EUR | Döviz Satış | `TP.DK.EUR.S.YTL` | (EUR) Euro (Döviz Satış) | GÜNLÜK | 04-01-1999 | 28-09-2026 |
+| EUR | Efektif Alış | `TP.DK.EUR.A.EF.YTL` | (EUR) Euro (Efektif Alış) | GÜNLÜK | 02-01-2002 | 28-09-2026 |
+| EUR | Efektif Satış | `TP.DK.EUR.S.EF.YTL` | (EUR) Euro (Efektif Satış) | GÜNLÜK | 02-01-2002 | 28-09-2026 |
+| GBP | Döviz Alış | `TP.DK.GBP.A.YTL` | (GBP) İngiliz Sterlini (Döviz Alış) | GÜNLÜK | 02-01-1950 | 28-09-2026 |
+| GBP | Döviz Satış | `TP.DK.GBP.S.YTL` | (GBP) İngiliz Sterlini (Döviz Satış) | GÜNLÜK | 02-01-1950 | 28-09-2026 |
+| GBP | Efektif Alış | `TP.DK.GBP.A.EF.YTL` | (GBP) İngiliz Sterlini (Efektif Alış) | GÜNLÜK | 02-01-1990 | 28-09-2026 |
+| GBP | Efektif Satış | `TP.DK.GBP.S.EF.YTL` | (GBP) İngiliz Sterlini (Efektif Satış) | GÜNLÜK | 02-01-1990 | 28-09-2026 |
 
-TCMB'nin resmi günlük kur XML arşivinden (`https://www.tcmb.gov.tr/kurlar/YYYYMM/DDMMYYYY.xml`, anahtarsız):
+Arşiv karşılıkları: `.YTL` soneki olmadan (`TP.DK.USD.A`, `TP.DK.USD.A.EF` …), adlarında "(Arşiv)".
+Ayrıca çapraz kur serileri (`TP.DK.EUR.C.YTL`, `TP.DK.GBP.C.YTL`) var; kapsam dışı.
 
-| Bülten | Tarih | USD Döviz Alış | USD Döviz Satış | EUR Döviz Alış | GBP Döviz Alış |
-|---|---|---|---|---|---|
-| 2004/249 | 29.12.2004 | 1352500 | 1359000 | 1842700 | 2603000 |
-| 2004/250 | 30.12.2004 | 1342100 | 1348600 | 1826800 | 2576500 |
-| 2004/251 | 31.12.2004 | 1336300 | 1342700 | 1823300 | 2579300 |
-| 2005/1 | 03.01.2005 | 1.3383 | 1.3448 | 1.8105 | 2.5561 |
-| 2005/2 | 04.01.2005 | 1.3427 | 1.3492 | 1.7976 | 2.5453 |
+Yanıt biçimi: `{"items":[{"Tarih":"15-01-2020","TP_DK_USD_A_YTL":"5.88110000",…}]}`. Değerler **8 ondalıklı string**.
+Hafta sonu/tatil günleri `null` değerli satır olarak gelir (bazı çoklu sorgularda hiç gelmez) → gözlem yok sayılır.
+"Seri başlangıcı 1950" metadata'dır; ilk gerçek (null olmayan) gözlem `data:discover`da ayrıca ölçülecek.
 
-- TCMB'nin yayımladığı 2005 öncesi değerler **eski TL** cinsinden (ör. 1 USD = 1.336.300 TL). 2005-01-03'ten itibaren YTL.
-- 1.000.000'a bölünmüş seri süreklidir: 31.12.2004 USD alış 1,3363 → 03.01.2005 1,3383 (%0,15).
-- EVDS serilerinin 2005 öncesini eski TL mi yoksa yeniden ölçeklenmiş olarak mı verdiği **EVDS'den ayrıca doğrulanmalı**.
+## D-005 2005 para reformu — DOĞRULANDI
 
-## D-006 Tarih konvansiyonu — KISMEN DOĞRULANDI
+EVDS örnek gözlemleri (USD Döviz Alış):
 
-- TCMB resmi sayfası: "Gösterge Kurlar; Türkiye Cumhuriyet Merkez Bankası tarafından her iş günü, saat 15.30'da belirlenir."
-  Belirleme 10.00–15.00 arasındaki 6 saatlik ortalamaya dayanır.
-  (https://www.tcmb.gov.tr/wps/wcm/connect/tr/tcmb+tr/main+menu/temel+faaliyetler/doviz+efektif/doviz+ve+efektif+piyasalari/gosterge+niteligindeki+kurlar)
-- XML dosyasının `Tarih` özniteliği belirlendiği günü ve bülten numarasını taşır (ör. `Tarih="15.01.2020" Bulten_No="2020/10"`,
-  USD alış 5.8827 / satış 5.8933).
-- **Açık soru:** EVDS'de 2020-01-15 tarihli gözlem, 15.01.2020 bülteni (5.8827) mi, yoksa 14.01.2020 bülteni (5.8811) mi?
-  Anahtarla karşılaştırma yapılınca yanıtlanacak. Karşılaştırma için örnek değerler hazır (13–16 Ocak 2020, 29.03.2024, 01.04.2024).
-- TCMB XML arşivinin ilk dosyası: **1996-04-16** (1996-01-02 → 404). EVDS kapsamı bundan farklı olabilir.
+| EVDS tarihi | Arşiv `TP.DK.USD.A` | Ana `TP.DK.USD.A.YTL` |
+|---|---|---|
+| 30-12-2004 | 1352500 | 1.3525 |
+| 31-12-2004 | 1342100 | 1.3421 |
+| 03-01-2005 | 1.3363 | 1.3363 |
+| 04-01-2005 | 1.3383 | 1.3383 |
+
+- **Arşiv serileri** 2005 öncesini **eski TL** ile (TCMB'nin yayımladığı gibi) verir.
+- **Ana `.YTL` serileri** 2005 öncesini **EVDS tarafından 1.000.000'a bölünmüş** olarak verir. 2005 sonrası iki aile birebir aynı
+  (örnekler: 2020-01-10…17, 2024-03-28…04-02, tüm alanlarda eşit).
+- 1.000.000'a bölünmüş seri süreklidir (1,3421 → 1,3363).
+- **Hassasiyet riski:** EVDS 8 ondalık basamak veriyor. Çok eski yıllarda (ör. 1950'lerde 1 USD ≈ 2,80 eski TL → 0,0000028 YTL)
+  `.YTL` serisinde anlamlı basamak kaybı olabilir. Arşiv serisinde ham değer tam.
+
+**Öneri (owner onayı):** Ham değer (`rawValues`) olarak **arşiv serisi** saklanır; normalize değer SPEC §4.7 gereği **tarihe göre**
+(< 2005-01-01 → ÷1.000.000) Döviz Arşiv tarafından hesaplanır. `.YTL` serisi her güncellemede çapraz kontrol olarak çekilir;
+iki ailenin normalize değerleri eşleşmezse `data:validate` hata verir. Böylece "Orijinal değer: 1.342.100 TL" notu gerçek
+kaynak değeri gösterir ve hassasiyet kaybı olmaz.
+
+## D-006 Tarih konvansiyonu — DOĞRULANDI
+
+EVDS veri grubu notu (`bie_dkdovytl`, resmi metadata): **"Bir önceki iş günü saat 15:30'da belirlenen gösterge niteliğindeki
+TCMB Döviz Alış ve Döviz Satış Kurlarıdır. Belirlendiği günden bir sonraki gün Resmi Gazete'de yayımlanmaktadır."**
+(Efektif grup için aynı ifade.)
+
+Veriyle kanıt: EVDS tarihi D = D'den önceki iş günü yayımlanan TCMB bülteni.
+
+| EVDS tarihi | EVDS USD alış | TCMB bülteni | Bülten USD alış |
+|---|---|---|---|
+| 14-01-2020 | 5.8529 | 13.01.2020 (2020/8) | 5.8529 |
+| 15-01-2020 | 5.8811 | 14.01.2020 (2020/9) | 5.8811 |
+| 16-01-2020 | 5.8827 | 15.01.2020 (2020/10) | 5.8827 |
+| 01-04-2024 (Pzt) | 32.2854 | 29.03.2024 (Cum, 2024/64) | 32.2854 |
+| 30-12-2004 | 1352500 | 29.12.2004 (2004/249) | 1352500 |
+| 03-01-2005 | 1.3363 | 31.12.2004 (2004/251) | 1336300 |
+
+Yani "15 Ocak 2020" EVDS gözlemi, **14 Ocak 2020 15.30'da belirlenen** kurdur. Kullanıcıların "15 Ocak 2020 dolar kuru"
+aramasında çoğunlukla hangisini kastettiği bir **ürün kararıdır** (Açık sorular #2). Hangi seçenek seçilirse seçilsin her gün
+sayfasında iki tarih birlikte gösterilecek: "Geçerlilik (EVDS) tarihi" ve "TCMB'nin belirlediği tarih (bülten)".
+Muhasebe/vergi açısından hangi günün kurunun kullanılacağına dair iddia kurulmayacak (SPEC §4.7).
 
 ## D-007 Kullanım şartları — EVDS şartları SPEC §4.2'yi DOĞRULUYOR; genel TCMB şartlarıyla gerilim risk olarak kayıtlı
 
@@ -229,19 +258,24 @@ Teknik tercihler (öneri):
   (harici bağımlılık gerekmez). Ortalama gibi bölme içeren işlemlerde hassasiyet kuralı `/metodoloji/`de belgelenir.
 - Tarihler her yerde `YYYY-MM-DD` string; `Date` nesnesi yalnızca UTC ile ve gün adı hesaplamak için.
 
-## D-010 Güncelleme zamanlaması (SPEC §3.3) — KISMEN DOĞRULANDI
+## D-010 Güncelleme zamanlaması (SPEC §3.3) — DOĞRULANDI
 
-- Gösterge kurlar her iş günü **15.30 (TSİ, UTC+3)** = **12.30 UTC**'de belirlenir (TCMB resmi sayfası, D-006).
-- EVDS'ye yansıma saati resmi kaynakta bulunamadı. **DOĞRULANMADI.**
-- Öneri: iş günleri **13.40 UTC** (16.40 TSİ) ana çalışma + **16.20 UTC** yedek çalışma (ilk çalışmada yeni gün yoksa).
-  Anahtar geldikten sonra birkaç gün gözlemle kesinleşecek. Cloudflare 500 build/ay limitiyle çakışmaz (yalnızca veri
-  değiştiyse commit → ~22 build/ay).
-- Mevcut `.github/workflows/daily-data-fetch.yml` (`main`) son 43 çalışmasının tamamında başarısız; Faz 1'de silinip
-  yerine `data-update.yml` gelecek.
+- Kurlar her iş günü 15.30 TSİ'de belirlenir ve EVDS'de **bir sonraki iş gününün tarihiyle** yer alır (D-006).
+- Kanıt: 2026-09-28 (Pazartesi) 06:31 UTC'de EVDS `END_DATE` = 28-09-2026 idi; yani o günün satırı sabah zaten mevcuttu.
+- **Karar:** iş akışı hafta içi **03:40 UTC** (06:40 TSİ) çalışır ve o günün EVDS tarihli satırını alır. Yeni gün yoksa (tatil)
+  commit atılmaz. Günlük ~1 build → ayda ~22 build (500 limitinin çok altında).
+- Mevcut `.github/workflows/daily-data-fetch.yml` (`main`) son 43 çalışmasının tamamında başarısız; Faz 1'de silinip yerine
+  `data-update.yml` gelecek.
 
 ## Açık sorular (owner)
 
-1. **`EVDS_API_KEY`**: GitHub → Settings → Secrets and variables → Actions → `EVDS_API_KEY` olarak eklenmesi.
-   Olmadan D-004, D-005 (EVDS tarafı), D-006 (EVDS tarafı) ve kapsam (D-002) doğrulanamaz; Faz 1 başlayamaz.
-2. EVDS genel/özel şart gerilimi (D-007) bilgi olarak kabul ediliyor mu? (SPEC kararı değişmiyor; yalnızca teyit.)
-3. EVDS kapsamı 1996'dan çok eskiye giderse (D-002 riski) gün sayfaları için alt sınır yılı.
+1. **Gün sayfalarının alt sınır yılı** (D-002): 1950'den tüm günler 20.000 dosya limitini aşıyor. Önerim: gün sayfaları **1990**'dan,
+   ay/yıl sayfaları 1950'den.
+2. **Gün sayfasının tarihi** (D-006): `/tarih/2020-01-15/` hangi kuru göstersin?
+   (A) EVDS tarihi = 15 Ocak'ta geçerli olan, **14 Ocak'ta belirlenen** kur (kaynağın kendi tarihi; veri kaydırılmaz), ya da
+   (B) **15 Ocak'ta belirlenen** kur (bülten tarihi; EVDS verisi bir iş günü kaydırılarak eşlenir).
+   Önerim: **(A)**. Kaynak tarihine sadık kalır, kaydırma hatası riski yoktur. Her sayfada "TCMB'nin 14 Ocak 2020 15.30'da
+   belirlediği kur" satırı açıkça yer alır.
+3. **2005 ham kaynağı** (D-005): arşiv serisi ham + kendi tarih bazlı dönüşümümüz + `.YTL` çapraz kontrolü önerisi onaylanıyor mu?
+4. EVDS genel/özel şart gerilimi (D-007) bilgi olarak kabul ediliyor mu? (SPEC kararı değişmiyor.)
+5. Klasör yapısı (D-009) ve silme listesi (D-008) onayı.
