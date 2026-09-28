@@ -52,6 +52,18 @@ async function raw(url, max = 3000) {
   return r;
 }
 
+if (MODE === 'r5') {
+  // Resmi EVDS belgeleri: 18 = Kullanım Şartları (TR), 21 = Terms of Use (EN), 8 = Web Servis Kılavuzu
+  const { writeFile } = await import('node:fs/promises');
+  for (const id of [18, 21, 8]) {
+    const r = await fetch(`https://evds3.tcmb.gov.tr/igmevdsms-dis/documents/showDocument?docId=${id}`,
+      { headers: { 'user-agent': 'Mozilla/5.0 dovizarsiv-phase0-probe' }, signal: AbortSignal.timeout(30000) });
+    const buf = Buffer.from(await r.arrayBuffer());
+    section(`DOC ${id} -> ${r.status} ${r.headers.get('content-type')} ${buf.length}B`);
+    await writeFile(`/tmp/doc-${id}.pdf`, buf);
+  }
+}
+
 if (MODE === 'r4') {
   // EVDS kullanım şartları ve gizlilik belgeleri (resmi doküman uç noktası)
   const base = 'https://evds3.tcmb.gov.tr/igmevdsms-dis';

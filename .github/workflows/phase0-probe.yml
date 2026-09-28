@@ -17,12 +17,13 @@ jobs:
       - name: Probe
         env:
           EVDS_API_KEY: ${{ secrets.EVDS_API_KEY }}
-        run: node scripts/discovery/phase0-probe.mjs ${{ vars.PROBE_MODE || 'r4' }}
+        run: node scripts/discovery/phase0-probe.mjs ${{ vars.PROBE_MODE || 'r5' }}
       - name: Belge metinleri
         run: |
-          for f in /tmp/DOC_ID_*.bin; do
+          sudo apt-get install -y -qq poppler-utils >/dev/null
+          for f in /tmp/doc-*.pdf; do
             [ -f "$f" ] || continue
             echo "==================== TEXT $f ===================="
-            file "$f"
-            if file "$f" | grep -qi pdf; then pdftotext -layout "$f" - ; else sed -e 's/<[^>]*>/ /g' "$f" | tr -s ' \n' | head -c 30000; fi
+            pdfinfo "$f" | grep -E 'Title|CreationDate|ModDate|Pages' || true
+            pdftotext -layout "$f" -
           done
