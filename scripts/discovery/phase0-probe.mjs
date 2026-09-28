@@ -52,6 +52,22 @@ async function raw(url, max = 3000) {
   return r;
 }
 
+if (MODE === 'r3') {
+  // EVDS kullanım şartları: SPA paketinde gömülü metin ve doküman uç noktaları
+  const home = await get('https://evds3.tcmb.gov.tr/');
+  const idx = home.body.match(/\/assets\/index-[^"]+\.js/)?.[0];
+  const b = (await get('https://evds3.tcmb.gov.tr' + idx)).body;
+  for (const needle of ['KULLANIM ŞARTLARI', 'kullanım esasları hakkında', 'DOC_ID_EVDS_TERMS_OF_USE', 'igmevdsms-dis', 'kaynak gösteril', 'ücret', 'ticari']) {
+    let i = -1, n = 0;
+    while ((i = b.indexOf(needle, i + 1)) !== -1 && n < 4) {
+      section(`CTX "${needle}" @${i}`);
+      out(b.slice(Math.max(0, i - 1500), i + 4000).replace(/\\n/g, '\n'));
+      n++;
+    }
+  }
+  await page('https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Bottom+Menu/Diger/Kullanim+Sartlari', 20000);
+}
+
 if (MODE === 'r2') {
   await raw('https://developers.cloudflare.com/pages/functions/pricing/index.md', 5000);
   await raw('https://developers.cloudflare.com/pages/platform/limits/index.md', 200);
