@@ -1,0 +1,25 @@
+---
+/** Özet istatistik ızgarası. Hesaplanan değerler etiketlenir ("Döviz Arşiv hesaplaması"). */
+export interface Stat {
+  label: string;
+  value: string;
+  meta?: string;
+}
+interface Props {
+  stats: Stat[];
+  label: string;
+}
+const { stats, label } = Astro.props;
+---
+
+<ul class="stat-grid" aria-label={label}>
+  {
+    stats.map((s) => (
+      <li class="stat">
+        <span class="stat__label">{s.label}</span>
+        <span class="stat__value">{s.value}</span>
+        {s.meta && <span class="stat__meta">{s.meta}</span>}
+      </li>
+    ))
+  }
+</ul>

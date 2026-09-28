@@ -1,0 +1,15 @@
+---
+/** Hareket gösterimi: "▲ %1,24" / "▼ %0,73". Renk tek başına anlam taşımaz (SPEC §7.2). */
+import type { Decimal } from '../lib/calculations/decimal.ts';
+import { direction } from '../lib/text/engine.ts';
+import { formatChange } from '../lib/formatting/format.ts';
+
+interface Props {
+  pct: Decimal | null;
+}
+const { pct } = Astro.props;
+const dir = direction(pct);
+const label = dir === 'up' ? 'yükseliş' : dir === 'down' ? 'düşüş' : dir === 'flat' ? 'değişim yok' : 'karşılaştırma yok';
+---
+
+<span class:list={['move', dir === 'up' && 'move--up', dir === 'down' && 'move--down']} title={label}>{formatChange(pct)}<span class="visually-hidden"> ({label})</span></span>

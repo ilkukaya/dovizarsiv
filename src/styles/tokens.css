@@ -1,0 +1,94 @@
+/*
+ * TASARIM TOKEN'LARI (SPEC §9). DOKUNULMAZ (HANDOFF.md). Rastgele değer kullanılmaz; her şey buradan gelir.
+ * Açık tema önce; koyu tema prefers-color-scheme ile.
+ */
+:root {
+  /* Renk: kırık beyaz zemin, lacivert/arduvaz metin, yumuşak gri çizgi, sakin mavi bağlantı */
+  --color-bg: #fbfaf7;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f3f2ee;
+  --color-text: #1d2733;
+  --color-text-muted: #4f5b69;
+  --color-border: #dcdad3;
+  --color-border-strong: #b9b6ad;
+  --color-link: #1f5fa8;
+  --color-link-hover: #164a84;
+  --color-focus: #1f5fa8;
+  /* Yeşil/kırmızı YALNIZCA sayısal hareket için; tek başına anlam taşımaz (▲/▼ ile birlikte) */
+  --color-up: #1c7a45;
+  --color-down: #b3312b;
+  --color-note-bg: #f4f1e6;
+  --color-note-border: #d8cfae;
+
+  /* Tipografi: sistem font yığını */
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.125rem;
+  --text-lg: 1.375rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.125rem;
+  --leading-tight: 1.25;
+  --leading-normal: 1.6;
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-bold: 650;
+
+  /* Boşluk ölçeği */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  /* Çizgi ve köşe */
+  --border-width: 1px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  /* Konteyner */
+  --container-max: 72rem;
+  --content-max: 46rem;
+  --gutter: 1rem;
+
+  /* Etkileşim */
+  --focus-ring: 0 0 0 3px var(--color-surface), 0 0 0 5px var(--color-focus);
+  --tap-min: 44px;
+  --transition-fast: 120ms ease;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 1.5rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #12161c;
+    --color-surface: #181d24;
+    --color-surface-muted: #1f252e;
+    --color-text: #e6e9ed;
+    --color-text-muted: #a8b1bc;
+    --color-border: #2f3742;
+    --color-border-strong: #455060;
+    --color-link: #7fb0ea;
+    --color-link-hover: #a5c8f2;
+    --color-focus: #7fb0ea;
+    --color-up: #5cc28a;
+    --color-down: #f0877f;
+    --color-note-bg: #232219;
+    --color-note-border: #4a4431;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+  }
+}

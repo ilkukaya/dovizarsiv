@@ -1,0 +1,72 @@
+---
+/**
+ * Kur tablosu. Semantik yapı: caption, thead, th scope (SPEC §9). Tablo kendi kapsayıcısında kayar, ilk sütun sabit.
+ */
+import Move from './Move.astro';
+import { formatRate } from '../lib/formatting/format.ts';
+import type { Decimal } from '../lib/calculations/decimal.ts';
+
+export interface RateRow {
+  label: string;
+  href?: string;
+  /** İlk sütunun altında küçük not (ör. tarih). */
+  sub?: string;
+  values: Array<string | null>;
+  changePct?: Decimal | null;
+  emptyText?: string;
+}
+
+interface Props {
+  caption: string;
+  firstHeader: string;
+  valueHeaders: string[];
+  rows: RateRow[];
+  showChange?: boolean;
+  changeHeader?: string;
+  fractionDigits?: number;
+}
+const { caption, firstHeader, valueHeaders, rows, showChange = false, changeHeader = 'Değişim', fractionDigits = 4 } = Astro.props;
+---
+
+<div class="table-scroll" tabindex="0" role="region" aria-label={caption}>
+  <table class="data-table">
+    <caption>{caption}</caption>
+    <thead>
+      <tr>
+        <th scope="col">{firstHeader}</th>
+        {valueHeaders.map((h) => <th scope="col" class="num">{h}</th>)}
+        {showChange && <th scope="col" class="num">{changeHeader}</th>}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((r) =>
+          r.emptyText ? (
+            <tr class="is-empty">
+              <th scope="row">{r.label}</th>
+              <td colspan={valueHeaders.length + (showChange ? 1 : 0)}>{r.emptyText}</td>
+            </tr>
+          ) : (
+            <tr>
+              <th scope="row">
+                {r.href ? <a href={r.href}>{r.label}</a> : r.label}
+                {r.sub && (
+                  <>
+                    <br />
+                    <span class="muted small">{r.sub}</span>
+                  </>
+                )}
+              </th>
+              {r.values.map((v) => <td class="num">{v === null ? '—' : formatRate(v, fractionDigits)}</td>)}
+              {showChange && (
+                <td class="num">
+                  <Move pct={r.changePct ?? null} />
+                </td>
+              )}
+            </tr>
+          ),
+        )
+      }
+    </tbody>
+  </table>
+</div>
