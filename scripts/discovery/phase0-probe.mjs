@@ -52,6 +52,49 @@ async function raw(url, max = 3000) {
   return r;
 }
 
+if (MODE === 'evds-discover') {
+  // Anahtarla keşif: seri kodları TAHMİN EDİLMEZ; resmi metadata servislerinden bulunur.
+  // Resmi kılavuz: "EVDS Web Servis Kılavuzu" (EVDS3 docId=8, 2026-02-26).
+  if (!KEY) { section('EVDS_API_KEY yok: GitHub Secrets > Actions > EVDS_API_KEY tanımlanmalı'); process.exit(0); }
+  const B = 'https://evds3.tcmb.gov.tr/igmevdsms-dis/';
+  const H = { headers: { key: KEY, 'user-agent': 'dovizarsiv-phase0-probe' } };
+  const pause = () => new Promise((r) => setTimeout(r, 1200));
+  const j = async (path) => { await pause(); const r = await get(B + path, H); try { return { status: r.status, data: JSON.parse(r.body) }; } catch { return { status: r.status, data: null, raw: r.body.slice(0, 500) }; } };
+  const cats = await j('categories/type=json');
+  section(`categories -> ${cats.status}`);
+  const catList = Array.isArray(cats.data) ? cats.data : (cats.data?.items || []);
+  for (const c of catList) out(JSON.stringify(c));
+  const dgs = await j('datagroups/mode=0&type=json');
+  const dgList = Array.isArray(dgs.data) ? dgs.data : (dgs.data?.items || []);
+  section(`datagroups mode=0 -> ${dgs.status}, ${dgList.length} grup; döviz/efektif filtreli:`);
+  const fx = dgList.filter((d) => /d[öo]viz|efektif|exchange rate/i.test(JSON.stringify(d)));
+  for (const d of fx) out(JSON.stringify(d));
+  const wanted = /(^|\.)(USD|EUR|GBP)(\.|$)/;
+  const found = [];
+  for (const d of fx) {
+    const code = d.DATAGROUP_CODE || d.Datagroup_Code || d.datagroupCode;
+    if (!code) continue;
+    const sl = await j(`serieList/type=json&code=${encodeURIComponent(code)}`);
+    const list = Array.isArray(sl.data) ? sl.data : (sl.data?.items || []);
+    section(`serieList ${code} -> ${sl.status}, ${list.length} seri (USD/EUR/GBP olanlar):`);
+    for (const s of list) {
+      const sc = s.SERIE_CODE || s.Serie_Code || s.serieCode || '';
+      if (wanted.test(sc)) { out(JSON.stringify(s)); found.push(sc); }
+    }
+  }
+  section(`Bulunan seri kodları: ${found.join(' ')}`);
+  // Örnek gözlemler: 2005 geçişi ve tarih konvansiyonu (TCMB XML değerleriyle karşılaştırılacak)
+  const uniq = [...new Set(found)];
+  for (let i = 0; i < uniq.length; i += 6) {
+    const chunk = uniq.slice(i, i + 6).join('-');
+    for (const [a, b] of [['27-12-2004', '05-01-2005'], ['10-01-2020', '17-01-2020'], ['28-03-2024', '02-04-2024']]) {
+      const r = await j(`series=${chunk}&startDate=${a}&endDate=${b}&type=json`);
+      section(`series ${chunk} ${a}..${b} -> ${r.status}`);
+      out(JSON.stringify(r.data ?? r.raw).slice(0, 6000));
+    }
+  }
+}
+
 if (MODE === 'r5') {
   // Resmi EVDS belgeleri: 18 = Kullanım Şartları (TR), 21 = Terms of Use (EN), 8 = Web Servis Kılavuzu
   const { writeFile } = await import('node:fs/promises');
