@@ -39,8 +39,8 @@ Anahtar kodda, logda, commit'te veya build çıktısında yer almaz. `build-guar
 | `npm run data:validate` | Şema, aralık, alış ≤ satış, tazelik, çapraz kontrol |
 | `npm run data:stats` | Özet, anomali raporu (`data/metadata/anomalies.json`) |
 
-- **Günlük güncelleme:** `.github/workflows/data-update.yml`, hafta içi TCMB'nin 15.30 kurunun EVDS'ye düşmesinden sonra çalışır
-  (saat: DECISIONS D-013). Yeni veri varsa `data/` commit'lenir, Cloudflare Pages yeniden build eder.
+- **Günlük güncelleme:** `.github/workflows/data-update.yml`, hafta içi 16.40 TSİ'de çalışır (kur 15.30'da belirlenir,
+  ≈16.00'da EVDS'ye düşer; DECISIONS D-013). 19.40 yedek ve ertesi sabah 07.15 telafi çalışmaları vardır. Yeni veri varsa `data/` commit'lenir, Cloudflare Pages yeniden build eder.
 - **Tarih konvansiyonu:** sayfadaki tarih, TCMB'nin kuru **belirlediği** gündür. EVDS aynı kuru bir sonraki iş gününün tarihiyle
   yayımlar (DECISIONS D-012, `/metodoloji/#tarih-konvansiyonu`).
 - **2005 para reformu:** 2005 öncesi değerler 1.000.000'a bölünerek yeni TL'ye çevrilir. Eski TL karşılığı "Döviz Arşiv hesaplaması"

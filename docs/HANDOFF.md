@@ -11,7 +11,7 @@ Bu belge, Opus'un bitirdiği temeli (Faz 0–2) ve Sonnet'in yapacağı işleri 
 |---|---|
 | Veri hattı (SPEC §4) | ✅ 1950 → bugün tam geçmiş; 45.437 gözlem, 19.262 belirlenme günü; çapraz kontrol 0 uyuşmazlık (D-014) |
 | Tarih konvansiyonu B (owner kararı #2) | ✅ tek fonksiyon + testler; 73 TCMB XML bülteniyle birebir doğrulandı (D-012) |
-| Günlük güncelleme (GitHub Actions) | ✅ `data-update.yml`; saat D-013'e göre (bkz. §F risk 1) |
+| Günlük güncelleme (GitHub Actions) | ✅ `data-update.yml`: hafta içi 16.40 TSİ + 19.40 yedek + ertesi sabah 07.15 telafi (D-013: kur ≈16.00'da EVDS'de) |
 | Referans sayfalar (SPEC §6.3–6.8, §6.11'in ikisi, §6.12) | ✅ ana sayfa, 3 hub, yıl, ay, gün, tarih arşivi, metodoloji, veri kaynakları, 404 |
 | Teknik SEO (SPEC §8) | ✅ merkezi layout, isIndexablePage, sitemap index + gruplar, robots, `_headers`, `_redirects`, JSON-LD |
 | Kalite kapıları (SPEC §11.1, 11.2, 11.3, 11.7) | ✅ seo:validate, links:check, build-guard, 71 birim testi |
@@ -221,14 +221,15 @@ Commit başına bir görev. Veri, SEO çekirdeği ve metin motoru değişmez (§
 
 ## E. Güncelleme zamanlaması
 
-Günlük akış: `data-update.yml`, hafta içi (UTC) D-013'te ölçülen EVDS yayın saatinden sonra çalışır. Yeni veri varsa `data/`
+Günlük akış: TCMB kuru 15.30 TSİ'de belirler, kur ≈16.00 TSİ'de EVDS'ye düşer (D-013). `data-update.yml` hafta içi 16.40 TSİ'de
+çalışır; 19.40 TSİ yedek ve ertesi sabah 07.15 TSİ telafi çalışması vardır. Yeni veri varsa `data/`
 commit'lenir; bu commit Cloudflare Pages build'ini tetikler. Zamanlanmış iş akışları yalnızca **varsayılan dalda** (main) çalışır.
 
 ---
 
 ## F. Riskler ve açık sorular
 
-1. **EVDS yayın saati:** D-013 tek günlük ölçüme dayanır. İkinci cron çalışması (daha geç saat) gecikmelere karşı güvencedir.
+1. **EVDS yayın saati:** D-013 tek günlük ölçüme dayanır (≈16.00 TSİ). Yedek (19.40) ve ertesi sabah telafi (07.15) çalışmaları gecikmelere karşı güvencedir.
    Son belirlenme günü 4 günden eskiyse `data:validate` uyarır, 16 günden eskiyse başarısız olur (Actions kırmızı).
 2. **EVDS kullanım şartları (D-007):** EVDS'nin kendi şartları ticari kullanıma izin veriyor, TCMB genel site şartları ise daha
    kısıtlayıcı bir dil taşıyor. Owner riski kabul etti. `docs/data-usage/` 6 ayda bir ve iş modeli değişmeden önce yeniden kontrol edilir.

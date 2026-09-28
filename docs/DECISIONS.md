@@ -263,7 +263,7 @@ Teknik tercihler (öneri):
 - Kurlar her iş günü 15.30 TSİ'de belirlenir ve EVDS'de **bir sonraki iş gününün tarihiyle** yer alır (D-006).
 - Kanıt: 2026-09-28 (Pazartesi) 06:31 UTC'de EVDS `END_DATE` = 28-09-2026 idi; yani o günün satırı sabah zaten mevcuttu.
 - **Güncelleme (Faz 1):** konvansiyon B ile günün kuru, TCMB'nin o gün 15.30'da belirlediği kurdur; bu kur EVDS'ye ertesi
-  iş günü tarihli satır olarak girer. Bu yüzden sabah çalışması yerine öğleden sonra çalışması gerekir; kesin saat D-013'te.
+  iş günü tarihli satır olarak girer. Ölçüm (D-013): kur ≈16.00 TSİ'de EVDS'de. Ana çalışma 16.40 TSİ'ye alındı.
 - ~~**Karar:** iş akışı hafta içi **03:40 UTC** (06:40 TSİ) çalışır~~ (D-013 ile değiştirildi) ve o günün EVDS tarihli satırını alır. Yeni gün yoksa (tatil)
   commit atılmaz. Günlük ~1 build → ayda ~22 build (500 limitinin çok altında).
 - Mevcut `.github/workflows/daily-data-fetch.yml` (`main`) son 43 çalışmasının tamamında başarısız; Faz 1'de silinip yerine
@@ -382,6 +382,23 @@ Not: 2000–2001 bültenlerinde `Bulten_No` alanı yok; tarih alanı eşleşiyor
 **2005 kenar durumu:** 31.12.2004'te belirlenen kur, EVDS'de 03.01.2005 satırında (arşiv serisinde bile) zaten yeni TL
 (1,3363). TCMB bülteni aynı kuru eski TL ile (1.336.300) veriyor. Normalizasyon KAYNAK satır tarihine göre yapılır (değer
 büyüklüğüne göre değil); 2004-12-31 gün sayfasında eski TL karşılığı "Döviz Arşiv hesaplaması" olarak gösterilir.
+
+## D-013 EVDS yayın saati ve güncelleme zamanlaması — ÖLÇÜLDÜ (2026-09-28)
+
+- **Yöntem:** `evds-watch.yml` (Actions run 36421860552), `npm run data:discover -- --watch`: 12:26 UTC'den itibaren
+  5 dakikada bir EVDS'ye son satırlar soruldu.
+- **Sonuç:** 2026-09-28 (Pazartesi) 15.30 TSİ'de belirlenen kur, EVDS'de **2026-09-29 tarihli satır** olarak
+  12:57:06 UTC'de henüz yoktu, **13:02:07 UTC'de vardı** (ham arşiv serisi ve `.YTL` serisi aynı anda; USD döviz alış 48,9008).
+  → Kur, belirlenmesinden **≈27–32 dakika sonra**, yaklaşık **16.00 TSİ**'de EVDS'ye düşüyor. Konvansiyon B ile uyumlu:
+  yeni satırın tarihi bir sonraki iş günü, belirlenme günü bugün.
+- **Karar (`data-update.yml`, hafta içi, UTC):**
+  - `40 13 * * 1-5`: **16.40 TSİ** ana çalışma (ölçülen yayın anından ≈40 dk sonra; GitHub zamanlayıcı gecikmesi payı dahil).
+  - `40 16 * * 1-5`: **19.40 TSİ** yedek (EVDS'nin geç yayımladığı günler).
+  - `15 4 * * 1-5`: **07.15 TSİ** ertesi sabah telafi (önceki günün iki çalışması da kaçırdıysa; Pazartesi sabahı Cuma kurunu alır).
+  - Yeni veri yoksa commit yok, build yok. Ayda ≈22 veri build'i (D-001 limitinin çok altında).
+- **Sınırlılık:** tek günlük ölçüm. Yarım gün (arife) ve yoğun günlerde süre farklı olabilir. Yedek ve telafi çalışmaları
+  bu yüzden var. Gecikme örüntüsü görülürse `npm run data:discover -- --watch` yeniden çalıştırılıp bu kayıt güncellenir.
+- Zamanlanmış iş akışları yalnızca varsayılan dalda (main) çalışır.
 
 ## D-014 Faz 1 veri bulguları
 

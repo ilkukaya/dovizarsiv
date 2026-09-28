@@ -2,12 +2,15 @@ name: Veri güncelleme
 
 # Akış (SPEC §3.3): data:discover → data:update → data:validate → data:stats → test → (yalnızca veri değiştiyse) commit.
 # Commit, Cloudflare Pages build'ini tetikler.
-# Zamanlama: TCMB kurları 15.30 TSİ'de belirler; EVDS'ye düşme saati DECISIONS D-013'te ölçülür.
+# Zamanlama (DECISIONS D-013): TCMB kuru 15.30 TSİ'de belirler; kur EVDS'ye ~16.00 TSİ'de (13:00 UTC) düşer.
 on:
   schedule:
-    # Hafta içi, UTC. Saat D-013 ölçümüne göre kesinleşecek.
+    # Hafta içi, UTC (D-013). Ana çalışma 16.40 TSİ; yedek 19.40 TSİ (EVDS gecikmesine karşı);
+    # ertesi sabah 07.15 TSİ telafi çalışması (önceki gün kaçan kur için; Pazartesi sabahı Cuma'yı yakalar).
+    # Yeni veri yoksa commit atılmaz, build tetiklenmez.
     - cron: '40 13 * * 1-5'
     - cron: '40 16 * * 1-5'
+    - cron: '15 4 * * 1-5'
   workflow_dispatch:
     inputs:
       full:
