@@ -9,7 +9,7 @@ import { dirname, join, resolve } from 'node:path';
 import { EVDS_SERIES } from '../../../src/config/evds-series.ts';
 import { yearOf, type IsoDate } from '../../../src/lib/data/dates.ts';
 import { SCHEMA_VERSION, type Observation, type Revision, type YearFile } from '../../../src/lib/data/model.ts';
-import { storeFromObservations, type SourceStore } from '../../../src/lib/data/normalize.ts';
+import { storeFromObservations, type ExtraSourceRow, type SourceStore } from '../../../src/lib/data/normalize.ts';
 import { CURRENCIES, RATE_FIELDS, type CurrencyCode, type RateField } from '../../../src/lib/providers/types.ts';
 
 export const DATA_DIR = resolve(process.env.DOVIZARSIV_DATA_DIR ?? 'data');
@@ -109,37 +109,42 @@ export function writeYearFiles(observations: readonly Observation[]): number[] {
   return changed;
 }
 
-/** Belirlenme günü bilinmediği için gözleme dönüşemeyen kaynak satırları (serinin en başı). */
-export interface UnmappedSourceRow {
-  sourceDate: IsoDate;
+/**
+ * Gözleme dönüşmeyen kaynak satırları: serinin ilk satırı ve taşınan-kur (carry-over) satırları.
+ * Ham kaynağın eksiksiz saklanması ve eşlemenin yeniden kurulabilmesi için tutulur.
+ */
+export interface ExtraSourceFileRow extends ExtraSourceRow {
   fetchedAt: string;
   values: Record<string, string>;
 }
 
-const UNMAPPED_PATH = () => join(METADATA_DIR, 'unmapped-source.json');
+const EXTRA_PATH = () => join(METADATA_DIR, 'source-extra.json');
+const LEGACY_UNMAPPED_PATH = () => join(METADATA_DIR, 'unmapped-source.json');
 
-export function readUnmapped(): UnmappedSourceRow[] {
-  return readJson<UnmappedSourceRow[]>(UNMAPPED_PATH(), []);
+export function readExtraRows(): ExtraSourceFileRow[] {
+  const legacy = readJson<Array<Omit<ExtraSourceFileRow, 'reason'>>>(LEGACY_UNMAPPED_PATH(), []);
+  return [...legacy.map((r) => ({ ...r, reason: 'first_row' as const })), ...readJson<ExtraSourceFileRow[]>(EXTRA_PATH(), [])];
 }
 
-export function writeUnmapped(store: SourceStore, dates: readonly IsoDate[]): boolean {
-  const rows: UnmappedSourceRow[] = dates.map((sourceDate) => {
-    const codes = store.get(sourceDate) ?? new Map();
+export function writeExtraRows(store: SourceStore, extras: readonly ExtraSourceRow[]): boolean {
+  const rows: ExtraSourceFileRow[] = extras.map((extra) => {
+    const codes = store.get(extra.sourceDate) ?? new Map();
     const values: Record<string, string> = {};
     let fetchedAt = '';
     for (const [code, rec] of [...codes].sort((a, b) => (a[0] < b[0] ? -1 : 1))) {
       values[code] = rec.raw;
       if (rec.fetchedAt > fetchedAt) fetchedAt = rec.fetchedAt;
     }
-    return { sourceDate, fetchedAt, values };
+    return { ...extra, fetchedAt, values };
   });
-  return writeJsonAtomic(UNMAPPED_PATH(), rows);
+  if (existsSync(LEGACY_UNMAPPED_PATH())) rmSync(LEGACY_UNMAPPED_PATH());
+  return writeJsonAtomic(EXTRA_PATH(), rows);
 }
 
-/** Depolanmış tüm ham kaynak kayıtları (gözlemler + eşlenmemiş baş satırlar). */
+/** Depolanmış tüm ham kaynak kayıtları (gözlemler + ek satırlar). */
 export function loadSourceStore(): SourceStore {
   const store = storeFromObservations(readAllObservations());
-  for (const row of readUnmapped()) {
+  for (const row of readExtraRows()) {
     let codes = store.get(row.sourceDate);
     if (!codes) store.set(row.sourceDate, (codes = new Map()));
     for (const [code, raw] of Object.entries(row.values)) codes.set(code, { raw, fetchedAt: row.fetchedAt });

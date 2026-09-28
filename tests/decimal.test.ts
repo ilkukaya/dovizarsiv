@@ -40,6 +40,13 @@ describe('Decimal aritmetik', () => {
     expect(() => dec('1').div(dec('0'))).toThrow('Sıfıra bölme');
   });
 
+  it('half-up yuvarlama (EVDS .YTL serisinin davranışı)', () => {
+    expect(dec('0.000009045').roundHalfUp(8).toString()).toBe('0.00000905');
+    expect(dec('0.000009045').round(8).toString()).toBe('0.00000904');
+    expect(dec('-1.25').roundHalfUp(1).toString()).toBe('-1.3');
+    expect(dec('1.24').roundHalfUp(1).toString()).toBe('1.2');
+  });
+
   it('karşılaştırma ölçekten bağımsızdır', () => {
     expect(dec('1.50').eq(dec('1.5'))).toBe(true);
     expect(dec('1.4999').cmp(dec('1.5'))).toBe(-1);

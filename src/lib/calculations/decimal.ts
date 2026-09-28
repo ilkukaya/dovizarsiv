@@ -108,6 +108,16 @@ export class Decimal {
     return this.div(Decimal.fromBigInt(1n), scale);
   }
 
+  /** Belirtilen basamağa half-up (sıfırdan uzağa) yuvarlar. Yalnızca kaynağın yuvarlamasını taklit etmek için. */
+  roundHalfUp(scale: number): Decimal {
+    if (this.scale <= scale) return this;
+    const drop = 10n ** BigInt(this.scale - scale);
+    const abs = this.units < 0n ? -this.units : this.units;
+    let q = abs / drop;
+    if ((abs % drop) * 2n >= drop) q += 1n;
+    return new Decimal(this.units < 0n ? -q : q, scale).normalize();
+  }
+
   cmp(other: Decimal): -1 | 0 | 1 {
     const [x, y] = Decimal.align(this, other);
     return x < y ? -1 : x > y ? 1 : 0;

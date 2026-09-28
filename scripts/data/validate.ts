@@ -9,10 +9,10 @@ import { Decimal } from '../../src/lib/calculations/decimal.ts';
 import { buildDeterminationIndex } from '../../src/lib/data/convention.ts';
 import { daysBetween, isValidIsoDate, todayIstanbul, yearOf } from '../../src/lib/data/dates.ts';
 import { SCHEMA_VERSION, type Observation } from '../../src/lib/data/model.ts';
-import { isPreRedenomination, toTry } from '../../src/lib/data/normalize.ts';
+import { isPreRedenomination, storeFromObservations, toTry } from '../../src/lib/data/normalize.ts';
 import { CURRENCIES, RATE_FIELDS } from '../../src/lib/providers/types.ts';
 import { annotate, loadEnv, parseArgs } from './lib/env.ts';
-import { listYearFiles, readJson, readUnmapped, readYearFile, metadataPath, yearFilePath } from './lib/storage.ts';
+import { listYearFiles, readExtraRows, readJson, readYearFile, metadataPath, yearFilePath } from './lib/storage.ts';
 
 /** En uzun resmî tatil zinciri (9 günlük bayram + hafta sonları) için pay. */
 const MAX_STALENESS_DAYS = 16;
@@ -95,12 +95,27 @@ function main(): void {
     }
   }
 
-  // Tarih konvansiyonu: depodaki tüm kaynak tarihlerinden eşleme yeniden kurulur ve karşılaştırılır.
-  const sourceDates = [...all.map((o) => o.sourceDate), ...readUnmapped().map((u) => u.sourceDate)];
-  const index = buildDeterminationIndex(sourceDates);
+  // Tarih konvansiyonu: depodaki tüm ham kaynak satırlarından eşleme yeniden kurulur ve karşılaştırılır.
+  const store = storeFromObservations(all);
+  const extras = readExtraRows();
+  for (const row of extras) {
+    if (store.has(row.sourceDate)) fail(`${row.sourceDate}: ek kaynak satırı aynı zamanda gözlem olarak da var`);
+    store.set(row.sourceDate, new Map(Object.entries(row.values).map(([code, raw]) => [code, { raw, fetchedAt: row.fetchedAt }])));
+  }
+  const index = buildDeterminationIndex(
+    [...store].map(([sourceDate, codes]) => ({ sourceDate, values: new Map([...codes].map(([c, r]) => [c, r.raw])) })),
+  );
   for (const obs of all) {
     const expected = index.determinedOn(obs.sourceDate);
     if (expected !== obs.date) fail(`${obs.sourceDate}/${obs.currency}: belirlenme günü ${obs.date}, eşleme fonksiyonu ${String(expected)} diyor`);
+  }
+  for (const row of extras) {
+    if (index.determinedOn(row.sourceDate)) fail(`${row.sourceDate}: ek satır olarak saklanmış ama eşleme yeni kur diyor`);
+    if (row.reason === 'carry_over' && index.carryOverOf(row.sourceDate) !== row.repeats) fail(`${row.sourceDate}: taşınan-kur kaynağı tutarsız`);
+  }
+  const firstRows = extras.filter((r) => r.reason === 'first_row').map((r) => r.sourceDate);
+  for (const d of firstRows) {
+    if (d !== index.sourceDates[0]) fail(`${d}: yalnızca serinin ilk satırı "first_row" olabilir`);
   }
 
   // Kapsam: etkin her para birimi için döviz alış/satış verisi olmalı.
@@ -122,7 +137,7 @@ function main(): void {
     for (const year of years) {
       if (readFileSync(yearFilePath(year), 'utf8').includes(key)) fail(`${year}.json EVDS API anahtarını içeriyor!`);
     }
-    for (const name of ['coverage.json', 'series.json', 'revisions.json', 'crosscheck.json', 'unmapped-source.json']) {
+    for (const name of ['coverage.json', 'series.json', 'revisions.json', 'crosscheck.json', 'source-extra.json']) {
       try {
         if (readFileSync(metadataPath(name), 'utf8').includes(key)) fail(`metadata/${name} EVDS API anahtarını içeriyor!`);
       } catch {

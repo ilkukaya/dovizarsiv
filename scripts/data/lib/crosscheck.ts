@@ -76,7 +76,8 @@ export function crosscheck(rawRows: readonly SourceRow[], ytlRows: readonly Sour
         }
         const yv = Decimal.parse(y);
         if (rawAsTry.eq(yv)) result.exact++;
-        else if (rawAsTry.round(EVDS_SCALE).eq(yv)) result.roundingOnly.push(diff);
+        // EVDS .YTL serisi 8 basamakta yuvarlıyor (gözlenen: half-up); iki yöntem de yalnızca hassasiyet farkıdır.
+        else if (rawAsTry.round(EVDS_SCALE).eq(yv) || rawAsTry.roundHalfUp(EVDS_SCALE).eq(yv)) result.roundingOnly.push(diff);
         else result.mismatches.push(diff);
       }
     }

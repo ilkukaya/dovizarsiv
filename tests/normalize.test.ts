@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { buildDeterminationIndex } from '../src/lib/data/convention.ts';
+import { buildDeterminationIndex, sameRate } from '../src/lib/data/convention.ts';
 import { normalize, storeFromObservations, type SourceStore } from '../src/lib/data/normalize.ts';
 import { percentChange, dec } from '../src/lib/calculations/decimal.ts';
 import { parseSeriesResponse } from '../src/lib/providers/evds.ts';
@@ -23,14 +23,52 @@ function storeFrom(response: unknown, codes: string[]): SourceStore {
 const ARCHIVE_CODES = ['TP.DK.USD.A', 'TP.DK.USD.S', 'TP.DK.USD.C', 'TP.DK.EUR.A', 'TP.DK.EUR.S', 'TP.DK.EUR.C'];
 
 describe('Tarih konvansiyonu (owner kararı B) — tek eşleme fonksiyonu', () => {
+  const row = (sourceDate: string, usd: string) => ({ sourceDate, values: new Map([['TP.DK.USD.A', usd]]) });
+
   it('EVDS D satırı = D\'den önceki son TCMB iş gününde belirlenen kur', () => {
-    const index = buildDeterminationIndex(['2020-01-16', '2020-01-10', '2020-01-13', '2020-01-14', '2020-01-15']);
+    const index = buildDeterminationIndex([
+      row('2020-01-16', '5.8827'), row('2020-01-10', '5.8810'), row('2020-01-13', '5.8713'), row('2020-01-14', '5.8529'), row('2020-01-15', '5.8811'),
+    ]);
     expect(index.determinedOn('2020-01-10')).toBeUndefined(); // öncülü bilinmiyor
     expect(index.determinedOn('2020-01-13')).toBe('2020-01-10'); // Pazartesi satırı → Cuma belirlenen
     expect(index.determinedOn('2020-01-16')).toBe('2020-01-15');
     expect(index.sourceDateFor('2020-01-10')).toBe('2020-01-13');
     expect(index.sourceDateFor('2020-01-15')).toBe('2020-01-16');
     expect(index.sourceDateFor('2020-01-16')).toBeUndefined(); // bugün belirlenen kur henüz kaynakta yok
+    expect(index.calendar).toEqual(['2020-01-10', '2020-01-13', '2020-01-14', '2020-01-15']);
+  });
+
+  it('arife/bayram: EVDS\'nin tekrarladığı (taşınan) satır belirlenme günü üretmez — Kurban 2017 gerçek değerleri', () => {
+    // EVDS arşiv: 29.08 → 3.4446, 31.08 (arife) → 3.4410, 05.09 → 3.4410 (bayram sonrası, tekrar), 06.09 → 3.4392
+    const index = buildDeterminationIndex([
+      row('2017-08-28', '3.4782'), row('2017-08-29', '3.4446'), row('2017-08-31', '3.4410'), row('2017-09-05', '3.4410'), row('2017-09-06', '3.4392'),
+    ]);
+    expect(index.determinedOn('2017-08-31')).toBe('2017-08-29'); // 3.4410, 29 Ağustos'ta belirlendi
+    expect(index.determinedOn('2017-09-05')).toBeUndefined(); // tekrar satırı
+    expect(index.carryOverOf('2017-09-05')).toBe('2017-08-31');
+    expect(index.determinedOn('2017-09-06')).toBe('2017-09-05'); // bayram sonrası ilk belirlenme
+    expect(index.calendar).toEqual(['2017-08-28', '2017-08-29', '2017-09-05']); // 31 Ağustos arifesinde kur belirlenmedi
+  });
+
+  it('28 Ekim arifesi: arife günü belirlenme günü değildir', () => {
+    const index = buildDeterminationIndex([
+      row('2019-10-25', '5.7630'), row('2019-10-28', '5.7640'), row('2019-10-30', '5.7640'), row('2019-10-31', '5.7200'),
+    ]);
+    expect(index.calendar).toEqual(['2019-10-25', '2019-10-30']);
+    expect(index.determinedOn('2019-10-28')).toBe('2019-10-25');
+    expect(index.determinedOn('2019-10-31')).toBe('2019-10-30');
+  });
+
+  it('1990 öncesi sabit kur dönemlerinde her satır ayrı belirlenmedir (tekrar kuralı uygulanmaz)', () => {
+    const index = buildDeterminationIndex([row('1960-01-04', '2.8'), row('1960-01-05', '2.8'), row('1960-01-06', '2.8')]);
+    expect(index.calendar).toEqual(['1960-01-04', '1960-01-05']);
+    expect(index.carryOverOf('1960-01-06')).toBeUndefined();
+  });
+
+  it('karşılaştırma yalnızca ortak serilerde yapılır', () => {
+    expect(sameRate(new Map([['A', '1'], ['B', '2']]), new Map([['A', '1']]))).toBe(true);
+    expect(sameRate(new Map([['A', '1']]), new Map([['B', '1']]))).toBe(false);
+    expect(sameRate(new Map([['A', '1']]), new Map([['A', '1.0']]))).toBe(false);
   });
 
   it('gerçek veride: sitedeki 15 Ocak 2020 = TCMB 15.01.2020 bülteni (2020/10, USD alış 5.8827)', () => {
@@ -57,7 +95,7 @@ describe('Tarih konvansiyonu (owner kararı B) — tek eşleme fonksiyonu', () =
 });
 
 describe('2005 para reformu — tarihe göre dönüşüm', () => {
-  const { observations, unmapped } = normalize(storeFrom(fixtures.archive_2004_2005, ARCHIVE_CODES), checksum);
+  const { observations, extraRows } = normalize(storeFrom(fixtures.archive_2004_2005, ARCHIVE_CODES), checksum);
   const usd = (date: string) => observations.find((o) => o.date === date && o.currency === 'USD')!;
 
   it('2005 öncesi kaynak satırı: ham eski TL korunur, TRY karşılığı ÷ 1.000.000 ve işaretlenir', () => {
@@ -86,7 +124,7 @@ describe('2005 para reformu — tarihe göre dönüşüm', () => {
   });
 
   it('serinin ilk satırı eşlenemez ve ayrıca raporlanır', () => {
-    expect(unmapped).toEqual(['2004-12-27']);
+    expect(extraRows).toEqual([{ sourceDate: '2004-12-27', reason: 'first_row' }]);
   });
 });
 

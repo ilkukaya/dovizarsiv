@@ -31,8 +31,15 @@ export interface NormalizeResult {
   observations: Observation[];
   issues: NormalizationIssue[];
   index: DeterminationIndex;
-  /** Belirlenme günü bilinmediği için atlanan satırlar (serinin ilk satırı). */
-  unmapped: IsoDate[];
+  /** Gözleme dönüşmeyen kaynak satırları: serinin ilk satırı (belirlenme günü bilinmiyor) ve taşınan-kur satırları. */
+  extraRows: ExtraSourceRow[];
+}
+
+export interface ExtraSourceRow {
+  sourceDate: IsoDate;
+  reason: 'first_row' | 'carry_over';
+  /** carry_over için: aynı kuru ilk taşıyan satır. */
+  repeats?: IsoDate;
 }
 
 export function isPreRedenomination(sourceDate: IsoDate): boolean {
@@ -68,15 +75,21 @@ export function normalize(
     if (kept.size > 0) valid.set(sourceDate, kept);
   }
 
-  const index = buildDeterminationIndex(valid.keys());
+  const index = buildDeterminationIndex(
+    [...valid].map(([sourceDate, codes]) => ({
+      sourceDate,
+      values: new Map([...codes].map(([code, record]) => [code, record.raw])),
+    })),
+  );
   const observations: Observation[] = [];
-  const unmapped: IsoDate[] = [];
+  const extraRows: ExtraSourceRow[] = [];
 
-  for (const sourceDate of index.calendar) {
+  for (const sourceDate of index.sourceDates) {
     const codes = valid.get(sourceDate)!;
     const date = index.determinedOn(sourceDate);
     if (!date) {
-      unmapped.push(sourceDate);
+      const repeats = index.carryOverOf(sourceDate);
+      extraRows.push(repeats ? { sourceDate, reason: 'carry_over', repeats } : { sourceDate, reason: 'first_row' });
       continue;
     }
     for (const currency of CURRENCIES) {
@@ -85,7 +98,7 @@ export function normalize(
     }
   }
   observations.sort(compareObservations);
-  return { observations, issues, index, unmapped };
+  return { observations, issues, index, extraRows };
 }
 
 function buildObservation(
