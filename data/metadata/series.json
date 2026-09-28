@@ -1,0 +1,310 @@
+{
+  "datagroups": {
+    "bie_dkdovizgn": {
+      "code": "bie_dkdovizgn",
+      "name": "Kurlar-Döviz Kurları (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "unit": "",
+      "startDate": "1950-01-02",
+      "endDate": "2026-09-28",
+      "note": "",
+      "lastUpdated": "25-06-2026"
+    },
+    "bie_dkefektif": {
+      "code": "bie_dkefektif",
+      "name": "Kurlar-Efektif Kurlar (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "unit": "",
+      "startDate": "1990-01-02",
+      "endDate": "2026-09-28",
+      "note": "",
+      "lastUpdated": "28-12-2025"
+    },
+    "bie_dkdovytl": {
+      "code": "bie_dkdovytl",
+      "name": "Döviz Kurları",
+      "frequency": "GÜNLÜK",
+      "unit": "Türk lirası",
+      "startDate": "1950-01-02",
+      "endDate": "2026-09-28",
+      "note": "Bir önceki iş günü saat 15:30'da belirlenen gösterge niteliğindeki TCMB Döviz Alış ve Döviz Satış Kurlarıdır. Belirlendiği günden bir sonraki gün Resmi Gazete'de yayımlanmaktadır. ",
+      "lastUpdated": "02-03-2026"
+    },
+    "bie_dkefkytl": {
+      "code": "bie_dkefkytl",
+      "name": "Efektif Kurlar",
+      "frequency": "GÜNLÜK",
+      "unit": "Türk lirası",
+      "startDate": "1990-01-02",
+      "endDate": "2026-09-28",
+      "note": "Bir önceki iş günü saat 15:30'da belirlenen gösterge niteliğindeki TCMB Efektif Alış ve Efektif Satış Kurlarıdır. Belirlendiği günden bir sonraki gün Resmi Gazete'de yayımlanmaktadır. ",
+      "lastUpdated": "02-03-2026"
+    }
+  },
+  "series": {
+    "TP.DK.USD.A": {
+      "code": "TP.DK.USD.A",
+      "datagroupCode": "bie_dkdovizgn",
+      "name": "(USD) ABD doları (Döviz Alış) (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1950-01-02",
+      "endDate": "2026-09-28",
+      "role": "raw",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    "TP.DK.USD.A.YTL": {
+      "code": "TP.DK.USD.A.YTL",
+      "datagroupCode": "bie_dkdovytl",
+      "name": "(USD)  ABD  Doları  (Döviz  Alış)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1950-01-02",
+      "endDate": "2026-09-28",
+      "role": "crosscheck",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    "TP.DK.USD.S": {
+      "code": "TP.DK.USD.S",
+      "datagroupCode": "bie_dkdovizgn",
+      "name": "(USD) ABD doları (Döviz Satış) (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1950-01-02",
+      "endDate": "2026-09-28",
+      "role": "raw",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    "TP.DK.USD.S.YTL": {
+      "code": "TP.DK.USD.S.YTL",
+      "datagroupCode": "bie_dkdovytl",
+      "name": "(USD)  ABD  Doları  (Döviz  Satış)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1950-01-02",
+      "endDate": "2026-09-28",
+      "role": "crosscheck",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    "TP.DK.USD.A.EF": {
+      "code": "TP.DK.USD.A.EF",
+      "datagroupCode": "bie_dkefektif",
+      "name": "(USD) ABD doları (Efektif Alış) (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1990-01-02",
+      "endDate": "2026-09-28",
+      "role": "raw",
+      "currency": "USD",
+      "field": "cashBuying"
+    },
+    "TP.DK.USD.A.EF.YTL": {
+      "code": "TP.DK.USD.A.EF.YTL",
+      "datagroupCode": "bie_dkefkytl",
+      "name": "(USD) ABD Doları (Efektif Alış)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1990-01-02",
+      "endDate": "2026-09-28",
+      "role": "crosscheck",
+      "currency": "USD",
+      "field": "cashBuying"
+    },
+    "TP.DK.USD.S.EF": {
+      "code": "TP.DK.USD.S.EF",
+      "datagroupCode": "bie_dkefektif",
+      "name": "(USD) ABD doları (Efektif Satış) (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1990-01-02",
+      "endDate": "2026-09-28",
+      "role": "raw",
+      "currency": "USD",
+      "field": "cashSelling"
+    },
+    "TP.DK.USD.S.EF.YTL": {
+      "code": "TP.DK.USD.S.EF.YTL",
+      "datagroupCode": "bie_dkefkytl",
+      "name": "(USD) ABD Doları (Efektif Satış)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1990-01-02",
+      "endDate": "2026-09-28",
+      "role": "crosscheck",
+      "currency": "USD",
+      "field": "cashSelling"
+    },
+    "TP.DK.EUR.A": {
+      "code": "TP.DK.EUR.A",
+      "datagroupCode": "bie_dkdovizgn",
+      "name": "(EUR) EURO (Döviz Alış) (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1999-01-04",
+      "endDate": "2026-09-28",
+      "role": "raw",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    "TP.DK.EUR.A.YTL": {
+      "code": "TP.DK.EUR.A.YTL",
+      "datagroupCode": "bie_dkdovytl",
+      "name": "(EUR)  Euro  (Döviz  Alış)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1999-01-04",
+      "endDate": "2026-09-28",
+      "role": "crosscheck",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    "TP.DK.EUR.S": {
+      "code": "TP.DK.EUR.S",
+      "datagroupCode": "bie_dkdovizgn",
+      "name": "(EUR) EURO (Döviz Satış) (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1999-01-04",
+      "endDate": "2026-09-28",
+      "role": "raw",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    "TP.DK.EUR.S.YTL": {
+      "code": "TP.DK.EUR.S.YTL",
+      "datagroupCode": "bie_dkdovytl",
+      "name": "(EUR)  Euro  (Döviz  Satış)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1999-01-04",
+      "endDate": "2026-09-28",
+      "role": "crosscheck",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    "TP.DK.EUR.A.EF": {
+      "code": "TP.DK.EUR.A.EF",
+      "datagroupCode": "bie_dkefektif",
+      "name": "(EUR) EURO (Efektif Alış) (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "startDate": "2002-01-02",
+      "endDate": "2026-09-28",
+      "role": "raw",
+      "currency": "EUR",
+      "field": "cashBuying"
+    },
+    "TP.DK.EUR.A.EF.YTL": {
+      "code": "TP.DK.EUR.A.EF.YTL",
+      "datagroupCode": "bie_dkefkytl",
+      "name": "(EUR) Euro (Efektif Alış)",
+      "frequency": "GÜNLÜK",
+      "startDate": "2002-01-02",
+      "endDate": "2026-09-28",
+      "role": "crosscheck",
+      "currency": "EUR",
+      "field": "cashBuying"
+    },
+    "TP.DK.EUR.S.EF": {
+      "code": "TP.DK.EUR.S.EF",
+      "datagroupCode": "bie_dkefektif",
+      "name": "(EUR) EURO (Efektif Satış) (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "startDate": "2002-01-02",
+      "endDate": "2026-09-28",
+      "role": "raw",
+      "currency": "EUR",
+      "field": "cashSelling"
+    },
+    "TP.DK.EUR.S.EF.YTL": {
+      "code": "TP.DK.EUR.S.EF.YTL",
+      "datagroupCode": "bie_dkefkytl",
+      "name": "(EUR) Euro (Efektif Satış)",
+      "frequency": "GÜNLÜK",
+      "startDate": "2002-01-02",
+      "endDate": "2026-09-28",
+      "role": "crosscheck",
+      "currency": "EUR",
+      "field": "cashSelling"
+    },
+    "TP.DK.GBP.A": {
+      "code": "TP.DK.GBP.A",
+      "datagroupCode": "bie_dkdovizgn",
+      "name": "(GBP) İngiliz Sterlini (Döviz Alış) (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1950-01-02",
+      "endDate": "2026-09-28",
+      "role": "raw",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    "TP.DK.GBP.A.YTL": {
+      "code": "TP.DK.GBP.A.YTL",
+      "datagroupCode": "bie_dkdovytl",
+      "name": "(GBP)  İngiliz  Sterlini  (Döviz  Alış)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1950-01-02",
+      "endDate": "2026-09-28",
+      "role": "crosscheck",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    "TP.DK.GBP.S": {
+      "code": "TP.DK.GBP.S",
+      "datagroupCode": "bie_dkdovizgn",
+      "name": "(GBP) İngiliz Sterlini (Döviz Satış) (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1950-01-02",
+      "endDate": "2026-09-28",
+      "role": "raw",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    "TP.DK.GBP.S.YTL": {
+      "code": "TP.DK.GBP.S.YTL",
+      "datagroupCode": "bie_dkdovytl",
+      "name": "(GBP)  İngiliz  Sterlini  (Döviz  Satış)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1950-01-02",
+      "endDate": "2026-09-28",
+      "role": "crosscheck",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    "TP.DK.GBP.A.EF": {
+      "code": "TP.DK.GBP.A.EF",
+      "datagroupCode": "bie_dkefektif",
+      "name": "(GBP) İngiliz Sterlini (Efektif Alış) (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1990-01-02",
+      "endDate": "2026-09-28",
+      "role": "raw",
+      "currency": "GBP",
+      "field": "cashBuying"
+    },
+    "TP.DK.GBP.A.EF.YTL": {
+      "code": "TP.DK.GBP.A.EF.YTL",
+      "datagroupCode": "bie_dkefkytl",
+      "name": "(GBP) İngiliz Sterlini (Efektif Alış)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1990-01-02",
+      "endDate": "2026-09-28",
+      "role": "crosscheck",
+      "currency": "GBP",
+      "field": "cashBuying"
+    },
+    "TP.DK.GBP.S.EF": {
+      "code": "TP.DK.GBP.S.EF",
+      "datagroupCode": "bie_dkefektif",
+      "name": "(GBP) İngiliz Sterlini (Efektif Satış) (Arşiv)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1990-01-02",
+      "endDate": "2026-09-28",
+      "role": "raw",
+      "currency": "GBP",
+      "field": "cashSelling"
+    },
+    "TP.DK.GBP.S.EF.YTL": {
+      "code": "TP.DK.GBP.S.EF.YTL",
+      "datagroupCode": "bie_dkefkytl",
+      "name": "(GBP) İngiliz Sterlini (Efektif Satış)",
+      "frequency": "GÜNLÜK",
+      "startDate": "1990-01-02",
+      "endDate": "2026-09-28",
+      "role": "crosscheck",
+      "currency": "GBP",
+      "field": "cashSelling"
+    }
+  }
+}

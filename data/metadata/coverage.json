@@ -1,0 +1,75 @@
+{
+  "dateConvention": "determination-date",
+  "dayPagesStart": "2000-01-01",
+  "lastDate": "2026-09-25",
+  "lastSourceDate": "2026-09-28",
+  "determinationDays": 19349,
+  "currencies": {
+    "USD": {
+      "forexBuying": {
+        "first": "1950-01-02",
+        "last": "2026-09-25",
+        "count": 19349
+      },
+      "forexSelling": {
+        "first": "1950-01-02",
+        "last": "2026-09-25",
+        "count": 19349
+      },
+      "cashBuying": {
+        "first": "1989-12-31",
+        "last": "2026-09-25",
+        "count": 9246
+      },
+      "cashSelling": {
+        "first": "1989-12-31",
+        "last": "2026-09-25",
+        "count": 9246
+      }
+    },
+    "EUR": {
+      "forexBuying": {
+        "first": "1998-12-31",
+        "last": "2026-09-25",
+        "count": 6976
+      },
+      "forexSelling": {
+        "first": "1998-12-31",
+        "last": "2026-09-25",
+        "count": 6976
+      },
+      "cashBuying": {
+        "first": "2001-12-31",
+        "last": "2026-09-25",
+        "count": 6223
+      },
+      "cashSelling": {
+        "first": "2001-12-31",
+        "last": "2026-09-25",
+        "count": 6223
+      }
+    },
+    "GBP": {
+      "forexBuying": {
+        "first": "1950-01-02",
+        "last": "2026-09-25",
+        "count": 19349
+      },
+      "forexSelling": {
+        "first": "1950-01-02",
+        "last": "2026-09-25",
+        "count": 19349
+      },
+      "cashBuying": {
+        "first": "1989-12-31",
+        "last": "2026-09-25",
+        "count": 9246
+      },
+      "cashSelling": {
+        "first": "1989-12-31",
+        "last": "2026-09-25",
+        "count": 9246
+      }
+    }
+  }
+}
