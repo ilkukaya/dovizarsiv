@@ -4,7 +4,7 @@
  * API anahtarı sızıntısı ve mock veri. Ciddi hatada çıkış kodu 1.
  */
 import { readFileSync } from 'node:fs';
-import { EVDS_SERIES, REDENOMINATION } from '../../src/config/evds-series.ts';
+import { DAY_PAGES_START, EVDS_SERIES, REDENOMINATION } from '../../src/config/evds-series.ts';
 import { Decimal } from '../../src/lib/calculations/decimal.ts';
 import { buildDeterminationIndex } from '../../src/lib/data/convention.ts';
 import { daysBetween, isValidIsoDate, todayIstanbul, yearOf } from '../../src/lib/data/dates.ts';
@@ -87,7 +87,8 @@ function main(): void {
         const b = obs[buy];
         const s = obs[sell];
         if (b && s && Decimal.parse(b).cmp(Decimal.parse(s)) > 0) {
-          (obs.date >= '1990-01-01' ? fail : warn)(`${id}: ${buy} (${b}) > ${sell} (${s})`);
+          // Kaynak tutarsızlığı tamir edilmez. Gün sayfası kapsamında (DAY_PAGES_START+) hata, öncesinde uyarı.
+          (obs.date >= DAY_PAGES_START ? fail : warn)(`${id}: ${buy} (${b}) > ${sell} (${s}) — kaynakta (EVDS ${obs.sourceDate}) böyle`);
         }
       }
       all.push(obs);
