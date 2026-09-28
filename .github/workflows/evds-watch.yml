@@ -1,0 +1,31 @@
+name: EVDS yayın saati ölçümü
+
+# Bugün 15.30 TSİ'de belirlenen kurun EVDS'ye düştüğü anı ölçer (DECISIONS D-013). Ölçüm aracıdır.
+on:
+  workflow_dispatch:
+    inputs:
+      until:
+        description: 'İzleme bitişi (UTC, SS:DD)'
+        default: '17:30'
+  push:
+    branches: ['claude/**']
+
+permissions:
+  contents: read
+
+jobs:
+  watch:
+    if: github.event_name != 'push' || contains(github.event.head_commit.message, '[watch]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    env:
+      EVDS_API_KEY: ${{ secrets.EVDS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run data:discover -- --latest
+      - run: npm run data:discover -- --watch --until=${{ inputs.until || '17:30' }}

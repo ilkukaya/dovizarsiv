@@ -1,0 +1,30 @@
+name: Veri doğrulaması (TCMB bülteni + EVDS)
+
+# Yalnızca doğrulama. TCMB bülten XML'leri hiçbir dosyaya yazılmaz, üretim verisine girmez (DECISIONS D-007).
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/**']
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    if: github.event_name != 'push' || contains(github.event.head_commit.message, '[verify]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Tarih konvansiyonu ↔ TCMB bülten XML'leri
+        run: npm run verify:bulletins
+      - name: Rastgele 10 tarih ↔ EVDS
+        if: always()
+        env:
+          EVDS_API_KEY: ${{ secrets.EVDS_API_KEY }}
+        run: npm run verify:evds-spot
