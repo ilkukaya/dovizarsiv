@@ -15,7 +15,7 @@ import { REDENOMINATION } from '../../../config/evds-series.ts';
 import { SITE } from '../../../config/site.ts';
 import { percentChange } from '../../../lib/calculations/decimal.ts';
 import { lastDate, isFlatPeriod, monthsOf, periodObservations, periodSummary, sharpestMoves, yearsOf, hasDayPage } from '../../../lib/data/store.ts';
-import { formatChange, formatDate, formatMonth, formatRate, MONTHS_TR } from '../../../lib/formatting/format.ts';
+import { formatChange, formatDate, formatMonth, formatRate, roundRate, MONTHS_TR } from '../../../lib/formatting/format.ts';
 import { periodIntro } from '../../../lib/text/engine.ts';
 import { dataset } from '../../../lib/seo/schema.ts';
 import { paths } from '../../../lib/seo/urls.ts';
@@ -63,7 +63,7 @@ const monthRows = months.map((ym) => {
   return { ym, s, closing, change };
 });
 const title = `${year} ${info.short} Kuru Arşivi`;
-const description = `${year} TCMB ${info.lower} kuru: döviz satış ortalaması ${formatRate(selling.mean.round(4))} TL, en düşük ${formatRate(selling.min.value)} TL, en yüksek ${formatRate(selling.max.value)} TL. Aylık tablo, grafik ve en sert günler.`;
+const description = `${year} TCMB ${info.lower} kuru: döviz satış ortalaması ${formatRate(roundRate(selling.mean))} TL, en düşük ${formatRate(selling.min.value)} TL, en yüksek ${formatRate(selling.max.value)} TL. Aylık tablo, grafik ve en sert günler.`;
 const pre2005 = `${year}-01-01` < REDENOMINATION.effectiveSourceDate;
 const dayLink = (d: string) => (hasDayPage(d) ? paths.day(d) : paths.month(code, d.slice(0, 7)));
 const crumbs = [
@@ -97,7 +97,7 @@ const schema = dataset({
           stats={[
             { label: 'İlk gözlem', value: `${formatRate(s.first.value)} TL`, meta: formatDate(s.first.date) },
             { label: 'Son gözlem', value: `${formatRate(s.last.value)} TL`, meta: formatDate(s.last.date) },
-            { label: 'Ortalama', value: `${formatRate(s.mean.round(4))} TL`, meta: 'Döviz Arşiv hesaplaması' },
+            { label: 'Ortalama', value: `${formatRate(roundRate(s.mean))} TL`, meta: 'Döviz Arşiv hesaplaması' },
             { label: 'İlk → son değişim', value: formatChange(s.changePct), meta: 'Döviz Arşiv hesaplaması' },
             { label: 'En düşük', value: `${formatRate(s.min.value)} TL`, meta: formatDate(s.min.date) },
             { label: 'En yüksek', value: `${formatRate(s.max.value)} TL`, meta: formatDate(s.max.date) },
@@ -138,8 +138,8 @@ const schema = dataset({
           monthRows.map((r) => (
             <tr>
               <th scope="row"><a href={paths.month(code, r.ym)}>{formatMonth(r.ym)}</a></th>
-              <td class="num">{r.s.forexBuying ? formatRate(r.s.forexBuying.mean.round(4)) : '—'}</td>
-              <td class="num">{r.s.forexSelling ? formatRate(r.s.forexSelling.mean.round(4)) : '—'}</td>
+              <td class="num">{r.s.forexBuying ? formatRate(roundRate(r.s.forexBuying.mean)) : '—'}</td>
+              <td class="num">{r.s.forexSelling ? formatRate(roundRate(r.s.forexSelling.mean)) : '—'}</td>
               <td class="num">{r.s.forexSelling ? formatRate(r.s.forexSelling.min.value) : '—'}</td>
               <td class="num">{r.s.forexSelling ? formatRate(r.s.forexSelling.max.value) : '—'}</td>
               <td class="num">{r.closing ? formatRate(r.closing) : '—'}</td>

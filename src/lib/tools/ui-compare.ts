@@ -1,7 +1,7 @@
 /** Yıl karşılaştırma tablolarının sunumu (SPEC §6.9). Değerler yıl sayfalarıyla aynı tanımdadır. */
 import { CURRENCY_INFO, FIELD_LABELS } from '../../config/currencies.ts';
 import { SOURCE_ATTRIBUTION } from '../../config/site.ts';
-import { formatChange, formatDate, formatNumber } from '../formatting/format.ts';
+import { formatChange, formatDate, formatNumber, roundRate } from '../formatting/format.ts';
 import { paths } from '../seo/urls.ts';
 import type { RateField } from '../providers/types.ts';
 import type { CompareTable } from './compare.ts';
@@ -45,7 +45,7 @@ export function renderCompare(tables: CompareTable[], field: RateField): HTMLEle
           {},
           el('th', { scope: 'row' }, el('a', { href: paths.year(t.currency, r.year) }, String(r.year))),
           el('td', { class: 'num' }, formatNumber(String(r.count), 0, 0)),
-          cell(formatRateFull(r.summary.mean.round(4))),
+          cell(formatRateFull(roundRate(r.summary.mean))),
           cell(formatRateFull(r.summary.min.value), r.summary.min.date),
           cell(formatRateFull(r.summary.max.value), r.summary.max.date),
           cell(formatRateFull(r.yearEnd.value), r.yearEnd.date),

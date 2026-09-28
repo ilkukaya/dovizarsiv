@@ -19,7 +19,7 @@ Bu belge, Opus'un bitirdiği temeli (Faz 0–2) ve Sonnet'in yapacağı işleri 
 | Araçlar (D-1…D-4) | ✅ Faz A: 3 araç + gün sayfası mini hesaplayıcı; mantık `src/lib/tools/`, 21 birim testi, smoke senaryoları |
 | Rehber (10 yazı) ve yasal sayfalar (D-5, D-6) | ✅ Faz B: `src/content/guides/`, 6 yasal sayfa; insan incelemesi: `docs/guides-review.md` |
 | Reklam altyapısı, paylaş/baskı/localStorage (D-7, D-8) | ✅ Faz C: varsayılan KAPALI; `src/config/ads.ts`, `AdSlot`, `/ads/runtime.js`, `ads.txt`, CSP dönüşümü; DECISIONS D-018 |
-| E2E, a11y/perf turu, README, lansman listesi | ⏳ **Sonnet — §D (D-9, D-10)** |
+| E2E, a11y/perf turu, README, lansman listesi (D-9, D-10) | ✅ Faz D: klavye/etiket smoke'u, README tamamlandı, `docs/LAUNCH-CHECKLIST.md`, bağımsız veri doğrulaması (DECISIONS D-019) |
 
 ### Komutlar
 
@@ -209,13 +209,13 @@ Commit başına bir görev. Veri, SEO çekirdeği ve metin motoru değişmez (§
 - localStorage yalnızca kullanıcı tercihi için (ör. son seçilen para birimi / kur türü). try/catch ile sarılır, veri önbelleği tutulmaz.
 - **Kabul:** yazdırma önizlemesi `/tarih/2020-01-15/` tek sayfaya sığar. localStorage kapalı tarayıcıda hata yok.
 
-### D-9 E2E, erişilebilirlik ve performans turu (SPEC §11.4, §11.5, §9)
+### D-9 E2E, erişilebilirlik ve performans turu (SPEC §11.4, §11.5, §9) ✅ TAMAMLANDI (Faz D)
 - `scripts/qa/smoke.ts`'i genişletin (Playwright): araçlar, mini hesaplayıcı, rehber, yasal sayfalar, klavye ile tarih bulucu.
   Mevcut senaryoları silmeyin. CI'ye `qa:smoke` işi eklenebilir (Chromium kurulumu gerekir).
 - `qa:layout` sayfa listesine yeni sayfa türlerini ekleyin.
 - Lighthouse: tüm sayfa türleri mobil LCP < 2,0 sn, CLS < 0,05; erişilebilirlik 100. Sonuçlar DECISIONS'a.
 
-### D-10 README'yi tamamlama ve lansman kontrol listesi (SPEC §12, §13)
+### D-10 README'yi tamamlama ve lansman kontrol listesi (SPEC §12, §13) ✅ TAMAMLANDI (Faz D)
 - README'deki "Sonnet tamamlayacak" başlıklarını doldurun: AdSense/CMP/ads.txt aktivasyonu, rehber ekleme, sorun giderme ayrıntıları.
 - `docs/LAUNCH-CHECKLIST.md`: §G owner görevleri + teknik son kontroller (production build, sitemap gönderimi, `_headers`
   canlıda doğrulama, www→apex, 404 davranışı, robots, ilk kademeli indeksleme adımı).

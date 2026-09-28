@@ -25,7 +25,7 @@ interface Props {
   changeHeader?: string;
   fractionDigits?: number;
 }
-const { caption, firstHeader, valueHeaders, rows, showChange = false, changeHeader = 'Değişim', fractionDigits = 4 } = Astro.props;
+const { caption, firstHeader, valueHeaders, rows, showChange = false, changeHeader = 'Değişim', fractionDigits } = Astro.props;
 ---
 
 <div class="table-scroll" tabindex="0" role="region" aria-label={caption}>
