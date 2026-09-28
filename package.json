@@ -25,7 +25,8 @@
     "qa:layout": "tsx scripts/qa/layout-check.ts",
     "qa:smoke": "tsx scripts/qa/smoke.ts",
     "qa:lighthouse": "node scripts/qa/lighthouse.mjs",
-    "assets:images": "tsx scripts/assets/generate-images.ts"
+    "assets:images": "tsx scripts/assets/generate-images.ts",
+    "verify:stats": "tsx scripts/validation/dump-summaries.ts"
   },
   "dependencies": {
     "astro": "^7.3.5"

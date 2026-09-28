@@ -15,7 +15,7 @@ import { DAY_PAGES_START, REDENOMINATION } from '../../../config/evds-series.ts'
 import { Decimal, percentChange } from '../../../lib/calculations/decimal.ts';
 import { addDays, monthKey, weekday } from '../../../lib/data/dates.ts';
 import { hasDayPage, isFlatPeriod, lastDate, monthsOf, periodObservations, periodSummary, previousObservation } from '../../../lib/data/store.ts';
-import { formatChange, formatDate, formatMonth, formatRate, WEEKDAYS_TR } from '../../../lib/formatting/format.ts';
+import { formatChange, formatDate, formatMonth, formatRate, roundRate, WEEKDAYS_TR } from '../../../lib/formatting/format.ts';
 import { SITE } from '../../../config/site.ts';
 import { periodIntro } from '../../../lib/text/engine.ts';
 import { paths } from '../../../lib/seo/urls.ts';
@@ -55,7 +55,7 @@ const intro = periodIntro({
   flat,
 });
 const title = `${formatMonth(ym)} ${info.short} Kuru`;
-const description = `${formatMonth(ym)} TCMB ${info.lower} kuru: ${selling.count} gözlem, döviz satış ortalaması ${formatRate(selling.mean.round(4))} TL, en düşük ${formatRate(selling.min.value)} TL, en yüksek ${formatRate(selling.max.value)} TL. Günlük tablo ve grafik.`;
+const description = `${formatMonth(ym)} TCMB ${info.lower} kuru: ${selling.count} gözlem, döviz satış ortalaması ${formatRate(roundRate(selling.mean))} TL, en düşük ${formatRate(selling.min.value)} TL, en yüksek ${formatRate(selling.max.value)} TL. Günlük tablo ve grafik.`;
 const pre2005 = `${ym}-01` < REDENOMINATION.effectiveSourceDate;
 
 // Ayın tüm takvim günleri (içinde bulunulan ayda son veri gününe kadar).
@@ -90,11 +90,11 @@ const crumbs = [
     stats={[
       { label: 'İlk gözlem (satış)', value: `${formatRate(selling.first.value)} TL`, meta: formatDate(selling.first.date) },
       { label: 'Son gözlem (satış)', value: `${formatRate(selling.last.value)} TL`, meta: formatDate(selling.last.date) },
-      { label: 'Ortalama (satış)', value: `${formatRate(selling.mean.round(4))} TL`, meta: 'Döviz Arşiv hesaplaması' },
+      { label: 'Ortalama (satış)', value: `${formatRate(roundRate(selling.mean))} TL`, meta: 'Döviz Arşiv hesaplaması' },
       { label: 'Değişim (ilk → son)', value: formatChange(selling.changePct), meta: 'Döviz Arşiv hesaplaması' },
       { label: 'En düşük (satış)', value: `${formatRate(selling.min.value)} TL`, meta: formatDate(selling.min.date) },
       { label: 'En yüksek (satış)', value: `${formatRate(selling.max.value)} TL`, meta: formatDate(selling.max.date) },
-      ...(buying ? [{ label: 'Ortalama (alış)', value: `${formatRate(buying.mean.round(4))} TL`, meta: 'Döviz Arşiv hesaplaması' }] : []),
+      ...(buying ? [{ label: 'Ortalama (alış)', value: `${formatRate(roundRate(buying.mean))} TL`, meta: 'Döviz Arşiv hesaplaması' }] : []),
       { label: 'Kur belirlenen gün', value: String(selling.count), meta: complete ? 'ay tamamlandı' : 'ay devam ediyor' },
     ]}
   />

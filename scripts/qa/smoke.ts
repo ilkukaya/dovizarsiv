@@ -219,6 +219,31 @@ check((await page.isVisible('[data-source-disclosure]')) && (await page.isVisibl
 check(!(await page.isVisible('.tool__form')), 'baskı: hesaplama formu gizli');
 await page.emulateMedia({ media: 'screen' });
 
+// ---- Klavye erişimi (SPEC §9: klavyeyle gezinme, görünür focus) ----
+await page.goto(`${BASE}/`);
+await page.keyboard.press('Tab');
+check((await page.evaluate(() => document.activeElement?.textContent?.trim())) === 'İçeriğe geç', 'klavye: ilk Tab "İçeriğe geç" bağlantısına gider');
+const focusVisible = await page.evaluate(() => {
+  const el = document.activeElement as HTMLElement;
+  const cs = getComputedStyle(el);
+  return cs.outlineStyle !== 'none' || cs.boxShadow !== 'none';
+});
+check(focusVisible, 'klavye: odaklanan öğede görünür focus göstergesi var');
+await page.fill('#ana-tarih', '2020-01-15');
+await page.press('#ana-tarih', 'Enter');
+await page.waitForURL(/\/tarih\/2020-01-15\//);
+check(true, 'klavye: tarih alanında Enter tarih bulucuyu çalıştırır');
+await openTool('/hesaplama/gecmis-doviz/');
+await page.fill('#gd-tarih', '2020-01-15');
+await page.selectOption('#gd-kaynak', 'USD');
+await page.selectOption('#gd-hedef', 'TRY');
+await page.fill('#gd-tutar', '100');
+await page.press('#gd-tutar', 'Enter');
+await page.waitForFunction(() => document.querySelector('[data-result]')?.textContent?.includes('588,27') || document.querySelector('[data-result]')?.textContent?.includes('TL'));
+check(true, 'klavye: hesaplayıcıda tutar alanında Enter sonucu üretir');
+const unlabeled = await page.$$eval('input:not([type=hidden]), select, textarea', (els) => els.filter((e) => !(e as HTMLInputElement).labels?.length && !e.getAttribute('aria-label')).length);
+check(unlabeled === 0, 'erişilebilirlik: tüm form alanları etiketli');
+
 await browser.close();
 server.close();
 if (failures.length) {

@@ -504,6 +504,34 @@ büyüklüğüne göre değil); 2004-12-31 gün sayfasında eski TL karşılığ
 - **Baskı CSS'i:** başlık, kurlar, hesap sonucu, kaynak kutusu ve sayfa adresi kalır; menü, footer, formlar, reklam ve paylaş gizlenir; koyu tema tarayıcılarda da beyaz zemin.
 - **Ölçümler:** reklam açık simülasyonunda (test kipi, sabit 280 px rezerve) gün/ay/yıl/hub/rehber sayfalarında **CLS 0,000**, Lighthouse 100/100/100/100; mobilde ikincil slot gizli. Bu, gerçek reklam yüklenmesini değil rezerve alan davranışını ölçer; canlı CLS lansman sonrası alan verisiyle izlenmelidir.
 
+## D-019 Faz D: lansman öncesi doğrulama, yayın durumu (Sonnet, 2026-09-28)
+
+**Yayın:** `main`'e birleştirildi (PR #1). Netlify (`dovizarsiv.netlify.app`) `main`'den otomatik derliyor (`netlify.toml`). Geliştirme ortamı Netlify ve Google'a erişemediğinden yayın ve doküman doğrulamaları GitHub Actions'tan yapıldı. Alan adı, reklam ve Search Console henüz yok (owner, `docs/LAUNCH-CHECKLIST.md`).
+Canlı kontrol (2026-09-28): 18 sayfa/uç nokta beklenen kodlarla yanıt verdi, güvenlik başlıkları ve CSP aktif, `/usd` → `/dolar/` 301, geçersiz tarih gerçek 404, sitemap ve robots doğru, gün sayfasında 5,8827 / 5,8933.
+
+**Veri doğrulaması (SPEC §11.6):**
+- **EVDS ↔ site, rastgele 10 tarih:** ham değerler birebir (Actions `[verify]`; D-014'teki sonuç 10/10, 0 fark; lansman commit'inde yeniden çalıştırıldı, aşağıda).
+- **Bağımsız yeniden hesap:** `npm run verify:stats` (site kodu) ile `python3 scripts/validation/independent-recompute.py` (Python `decimal`, `data/normalized`'dan): 12 dönem × 4 kur türü = **44 karşılaştırma, 0 fark** (ortalama 4 ondalık half-even, en düşük/en yüksek ve tarihleri, eşitlikte en erken tarih, ilk→son yüzde 2 ondalık, gözlem sayısı, ilk/son değer).
+
+| Para | Dönem | Gözlem | Ortalama (satış) | En düşük | En yüksek | İlk→son % |
+|---|---|---|---|---|---|---|
+| USD | 2020 | 250 | 7,0234 | 5,8635 (13.01) | 8,4765 (06.11) | 24,74 |
+| USD | Ocak 2020 | 22 | 5,9303 | 5,8635 (13.01) | 5,9833 (31.01) | 0,42 |
+| EUR | 2015 | 250 | 3,0235 | 2,6281 (23.01) | 3,4747 (14.09) | 12,67 |
+| EUR | 1999 | 246 | 0,4481 | 0,371276 (07.01) | 0,545555 (28.12) | 46,46 |
+| GBP | Mart 2010 | 23 | 2,3101 | 2,2781 (26.03) | 2,3295 (04.03) | −0,72 |
+| GBP | 1985 | 251 | 0,00070… | 0,00050783 (28.01) | 0,00084255 (02.12) | 61,86 |
+| USD | Haziran 1999 | 22 | 0,4142 | 0,407313 (01.06) | 0,421362 (30.06) | 3,45 |
+| USD | 2004 | 251 | 1,4288 | 1,307617 (02.04) | 1,558189 (21.05) | −3,82 |
+| USD | 2005 | 251 | 1,3473 | 1,2601 (07.03) | 1,4068 (06.01) | 0,26 |
+| EUR | 2024 | 248 | 35,5683 | 32,5572 (05.01) | 38,2402 (30.09) | 12,46 |
+| USD | 2026 (kısmi) | 182 | 45,6952 | 42,9582 (02.01) | 48,9889 (28.09) | 14,04 |
+
+**Bulunan ve düzeltilen gösterim sorunu:** yeni TL'ye çevrilmiş eski değerler (1990 öncesi, ör. 1985 sterlin 0,00050783) 4 ondalıkla "0,0005"e kesiliyordu. `formatRate` artık ondalık sayısı verilmezse |değer| ≥ 1 için 4 (değişmedi), < 1 için 4–8 ondalık gösterir; `roundRate` ortalamayı buna uygun yuvarlar (yıl/ay/hub sayfaları, karşılaştırma aracı, gün tablosu). Güncel değerlerin gösterimi değişmedi (testli).
+**Açık (protected):** metin motorunda `s.mean.round(4)` (satır 214) tek başına kalan bir yuvarlamadır; owner onayıyla `roundRate(s.mean)` yapılabilir.
+
+**QA:** klavye senaryoları (ilk Tab "İçeriğe geç", görünür focus, Enter ile tarih bulucu ve hesaplayıcı, tüm form alanları etiketli) smoke'a eklendi; Lighthouse erişilebilirlik 100.
+
 ## Owner kararları (Faz 0 sonrası, 2026-09-28)
 
 Faz 0'daki açık soruların hepsi cevaplandı:

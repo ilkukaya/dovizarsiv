@@ -28,10 +28,23 @@ function toDecimalString(value: Decimal | string): string {
   return typeof value === 'string' ? Decimal.parse(value).toString() : value.toString();
 }
 
-/** Kur gösterimi: varsayılan 4 ondalık (TCMB'nin yayımladığı hassasiyet). */
-export function formatRate(value: Decimal | string, fractionDigits = 4): string {
+const ONE = Decimal.parse('1');
+
+/**
+ * Kur gösterimi. `fractionDigits` verilirse tam o kadar ondalık (ör. hizalı tablolar, yüzde).
+ * Verilmezse: |değer| ≥ 1 için 4 ondalık (TCMB'nin yayımladığı hassasiyet); |değer| < 1 için en az 4, en çok 8 ondalık.
+ * Böylece yeni TL'ye çevrilmiş eski değerler (ör. 1985 sterlin 0,00050783) "0,0005"e kesilip anlam kaybetmez.
+ */
+export function formatRate(value: Decimal | string, fractionDigits?: number): string {
   const s = toDecimalString(value);
-  return nf(fractionDigits, fractionDigits).format(s as unknown as number);
+  if (fractionDigits !== undefined) return nf(fractionDigits, fractionDigits).format(s as unknown as number);
+  const small = Decimal.parse(s).abs().cmp(ONE) < 0;
+  return (small ? nf(4, 8) : nf(4, 4)).format(s as unknown as number);
+}
+
+/** Ortalama gibi hesaplanan kurları gösterime yuvarlar: ≥ 1 için 4, < 1 için 8 ondalık (formatRate ile uyumlu). */
+export function roundRate(value: Decimal): Decimal {
+  return value.abs().cmp(ONE) < 0 ? value.round(8) : value.round(4);
 }
 
 /** Genel sayı: en az `min`, en çok `max` ondalık. */

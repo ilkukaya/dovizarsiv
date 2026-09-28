@@ -60,18 +60,27 @@ npm run qa:lighthouse
 Build şu durumlarda başarısız olur: production'da yayıncı adı/e-posta boş, ücretli veri özelliği tanımlı, para birimi verisi
 eksik, çıktıda API anahtarı ya da test verisi izi, SEO veya iç link hatası (SPEC §11.7).
 
-## Cloudflare Pages deploy'u
+## Yayın (deploy)
 
+Site tamamen statiktir (`dist/`). `npm run build` tek geçerli build komutudur (build-guard + astro build + CSP dönüşümü + seo:validate + links:check).
+
+**Bugünkü yayın: Netlify** (`dovizarsiv.netlify.app`). Netlify repoya bağlıdır; `main`'e her push ya da veri commit'i `netlify.toml`'daki ayarlarla derlenir
+(`npm run build`, çıktı `dist`, `NODE_VERSION=22`, `DOVIZARSIV_ENV=production`). `_headers` ve `_redirects` Netlify'da aynen çalışır.
+Ücretsiz planda her production deploy kredi harcar (DECISIONS D-001: ayda ≈20 deploy). Günlük veri commit'i ayda ≈22 deploy demektir;
+krediyi Netlify panelinden izleyin.
+
+**Planlanan ana host: Cloudflare Pages** (statik istekler sınırsız ve ücretsiz):
 1. Cloudflare → Workers & Pages → Create → Pages → Connect to Git → bu repo.
-2. Production branch: `main`. Build command: `npm run build`. Build output: `dist`. Ortam değişkeni: `NODE_VERSION=22`.
-3. Settings → Builds → Branch control: preview build'leri kapatın ya da yalnızca gereken dallara açın (ücretsiz plan: 500 build/ay).
-4. Custom domains → `dovizarsiv.net` ekleyin.
-5. **www → apex:** `www.dovizarsiv.net` için DNS kaydı (proxied) + Rules → Redirect Rules: `http.host eq "www.dovizarsiv.net"`
-   → `https://dovizarsiv.net${http.request.uri.path}` (301, query string korunur).
-6. Canlıda kontrol: `curl -I https://dovizarsiv.net/` → `content-security-policy`, `x-content-type-options` başlıkları;
-   `/usd` → `/dolar/` 301; `/tarih/2020-02-31/` → 404.
+2. Production branch: `main`. Build command: `npm run build`. Output: `dist`. Ortam değişkeni: `NODE_VERSION=22`.
+3. Settings → Builds → Branch control: preview build'leri kapatın ya da sınırlayın (ücretsiz plan: 500 build/ay).
+4. Custom domains → `dovizarsiv.net`.
+5. **www → apex:** `www` için DNS kaydı (proxied) + Rules → Redirect Rules: `http.host eq "www.dovizarsiv.net"` → `https://dovizarsiv.net${http.request.uri.path}` (301, query string korunur).
+6. Canlıda kontrol: `curl -I https://dovizarsiv.net/` → `content-security-policy`, `x-content-type-options`; `/usd` → `/dolar/` 301; `/tarih/2020-02-31/` → 404.
 
-`src/config/site.ts` içindeki `publisherName` ve `contactEmail` doldurulmadan production build başarısız olur.
+**Alan adı bağlama (Netlify ya da Cloudflare):** kanonik adres `https://dovizarsiv.net`'tir (`src/config/site.ts`). Alan adı bağlanana kadar
+`*.netlify.app` adresi de yanıt verir; sayfaların canonical'ı yine `dovizarsiv.net`'i gösterir. Alan adını bağladıktan sonra `www` → apex yönlendirmesini ekleyin.
+
+`src/config/site.ts` içindeki `publisherName` ve `contactEmail` boş bırakılırsa production build başarısız olur.
 
 ## Veri kullanım uyumu
 
@@ -85,18 +94,52 @@ DECISIONS'a kayıt düşün. Site ücretsizdir; veriye bağlı ücretli özellik
 2. Sitemaps → `https://dovizarsiv.net/sitemap-index.xml` gönderin.
 3. Gün sitemap'lerini `docs/indexing-rollout.md` takvimine göre `src/config/indexing.ts` → `DATE_SITEMAP_YEARS`'a ekleyin.
 
-## CSP ve reklam
+## Reklam, onay yönetimi ve ads.txt
 
-Bugünkü CSP `script-src 'self'`'tir. Tüm script'ler harici dosyadır (`assetsInlineLimit: 0`), satır içi script yazmayın.
-AdSense/CMP açılırken `public/_headers`'daki CSP genişletilir. Gerekli alan adları ve aktivasyon adımları HANDOFF.md §D-7'dedir.
-_(AdSense/CMP/ads.txt kurulum ayrıntıları: Sonnet tamamlayacak.)_
+Reklam **varsayılan olarak kapalıdır**: kapalıyken çıktıda reklam kutusu, script, `/ads.txt` ve `/ads/runtime.js` yoktur. Tasarım kararları ve Google
+dokümanlarından doğrulananlar için DECISIONS **D-018**. Aktivasyon (SPEC §13) yalnızca gerçek AdSense hesabıyla, sırayla:
 
-## Para birimi ve rehber ekleme
+1. **AdSense başvurusu** ve site onayı; gerçek publisher ID (`ca-pub-` + 16 rakam) ve reklam birimi kimlikleri.
+2. **Onay yönetimi (CMP):** AdSense hesabında "Privacy & messaging" sekmesinden mesajı oluşturun (AEA/UK/İsviçre için Google sertifikalı CMP zorunlu; Türkiye için KVKK çerez bilgilendirmesi).
+   Aldığınız script adresini `PUBLIC_CMP_SRC`'ye yazın. Snippet ek satır içi kod içeriyorsa `src/lib/ads/runtime.ts` genişletilmelidir (DECISIONS D-018 "doğrulanamayanlar").
+3. **Ortam değişkenleri** (Netlify/Cloudflare panelinde; koda yazılmaz): `PUBLIC_ADSENSE_ENABLED=true`, `PUBLIC_ADSENSE_CLIENT`, `PUBLIC_ADSENSE_SLOT_PRIMARY`
+   (ve isteğe bağlı `PUBLIC_ADSENSE_SLOT_SECONDARY`), `PUBLIC_CMP_SRC`. Geçersiz ya da eksik değerde build hata verir; production'da CMP olmadan reklam açılamaz.
+4. **ads.txt** otomatik üretilir (`google.com, pub-…, DIRECT, f08c47fec0942fa0`, kök dizinde); sahte ID hiçbir zaman yazılmaz. AdSense → Siteler'den "ads.txt" durumunu kontrol edin.
+5. **CSP:** reklam canlı kipteyken build sonrası `dist/_headers` içindeki CSP, Google'ın desteklediği daha gevşek biçime çevrilir (Google yalnızca nonce'lu strict CSP'yi destekler; alan adı listesi tutulmaz).
+   Yayına almadan önce bu politikayı `Content-Security-Policy-Report-Only` ile deneyin (Google'ın önerisi).
+6. **Gizlilik, çerez ve reklam politikası sayfalarını güncelleyin** (`src/pages/gizlilik.astro`, `cerez-politikasi.astro`, `reklam-politikasi.astro`): reklam sağlayıcısı, çerezler ve onay yönetimi yazılmadan yayına almayın.
+7. Az sayıda slotla başlayın; Core Web Vitals'ı (Search Console / CrUX) izleyin, deneyim bozulmadıkça slot sayısını artırmayın.
 
-- **Para birimi:** önce EVDS'de serinin varlığını `data:discover` ile doğrulayın. Ardından `src/config/evds-series.ts` ve
-  `src/config/currencies.ts`'e ekleyip `data:update -- --full` çalıştırın. Bu, DO-NOT-TOUCH alanına dokunur ve owner onayı ister.
-  Dosya sayısı etkisini hesaplayın (HANDOFF.md §F-4).
-- **Rehber:** _(Sonnet tamamlayacak.)_
+QA için **test kipi**: `PUBLIC_ADSENSE_ENABLED=true PUBLIC_ADSENSE_TEST_MODE=true npm run build` sabit yükseklikli yer tutucu kutular basar (harici script yok); production'da build'i düşürür.
+Yerleşim kuralları (SPEC §10): tarih seçici, hesaplayıcı formları, önceki/sonraki gezinme yakınında ve araç/404/yasal sayfalarda reklam yoktur; ikincil slot yalnızca ≥ 900 px'te görünür.
+
+## Analitik
+
+`PUBLIC_ANALYTICS_ENABLED=false` (varsayılan; şu an kod yoktur). Seçenekler (karar owner'ındır):
+- **Cloudflare Web Analytics:** çerezsiz, yalnızca Cloudflare'de barındırılırsa kolay; onay banner'ı gerektirmeyebilir (hukuki durum için danışın).
+- **GA4 + Consent Mode v2:** ayrıntılı ama çerez ve onay gerektirir; `window.dovizarsivConsent.update(...)` bağlantı noktası vardır.
+Meta Pixel, Hotjar ve Clarity eklenmez. Ölçüm eklenirse gizlilik ve çerez sayfaları aynı değişiklikle güncellenmelidir.
+
+## Para birimi, rehber ve sayfa ekleme
+
+- **Para birimi:** önce EVDS'de serinin varlığını `data:discover` ile doğrulayın. Ardından `src/config/evds-series.ts` ve `src/config/currencies.ts`'e ekleyip
+  `data:update -- --full` çalıştırın. Bu, veri katmanına dokunur (owner onayı, DECISIONS kaydı). Dosya sayısı etkisini hesaplayın (HANDOFF.md §F-4).
+- **Rehber yazısı:** `src/content/guides/<slug>.md` dosyası ekleyin (frontmatter: `title`, `description` 50–170 karakter, `order`, `updated`, en az bir `sources` ve `related`).
+  Ardından `src/config/static-routes.ts`'e `/rehber/<slug>/` satırını (`kind: 'guide'`, `sitemap: 'guides'`, aynı `updated`) ekleyin. `npm test` (yasak kalıp, kaynak, rota tutarlılığı)
+  ve `npm run build` (seo:validate, links:check) bunu denetler. Doğrulanamayan olgu yazılmaz; iddiaları `docs/guides-review.md`'ye işleyin.
+- **Yeni sayfa (araç, yasal, bilgi):** HANDOFF.md §B "Yeni sayfa nasıl eklenir".
+
+## Kalite kapıları ve testler
+
+| Komut | Ne denetler |
+|---|---|
+| `npm test` | 167+ birim testi (Decimal, normalizasyon, tarih konvansiyonu, araç mantığı, metin motoru, rehber kalite kapısı, reklam yapılandırması/çalışma zamanı/CSP, tercihler) |
+| `npm run build` | build-guard (yayıncı bilgisi, ücretli özellik, mock veri, API anahtarı izi) + seo:validate + links:check |
+| `npm run qa:smoke` | Playwright: tarih bulucu, 404, araçlar, mini hesaplayıcı, rehber/yasal sayfalar, paylaş, localStorage, baskı, klavye, "reklam kapalı = iz yok" |
+| `npm run qa:layout` | 25 sayfa × 7 genişlikte yatay taşma (araç sonuçları açıkken de) |
+| `npm run qa:lighthouse` | mobil ve masaüstü Lighthouse tablosu |
+| `npm run verify:stats` + `python3 scripts/validation/independent-recompute.py` | ortalama, en düşük/en yüksek, yüzde değişimin bağımsız (Python Decimal) yeniden hesabı |
+| `[verify]` commit etiketi (Actions) | TCMB bülteni ve EVDS ile birebir tarih/değer karşılaştırması (konteyner TCMB'ye erişemez) |
 
 ## Sorun giderme
 
@@ -108,4 +151,11 @@ _(AdSense/CMP/ads.txt kurulum ayrıntıları: Sonnet tamamlayacak.)_
 | `seo:validate`: "hiçbir sitemap'te yok" | Yeni sayfa `src/config/static-routes.ts`'e eklenmemiş |
 | `links:check`: kırık link | `FEATURES` bayrağı sayfa var olmadan açılmış olabilir |
 | Tarayıcıda script çalışmıyor, konsolda CSP hatası | Satır içi script eklenmiş. Harici modül script'e taşıyın |
-| _(Diğerleri: Sonnet tamamlayacak.)_ | |
+| Build: "publisherName boş (production)" | `src/config/site.ts` yayıncı adı ve e-posta doldurulmalı (`DOVIZARSIV_ENV=production` ya da `CF_PAGES_BRANCH=main` iken zorunlu) |
+| Build: "Reklam yapılandırması geçersiz" | `PUBLIC_ADSENSE_*` değerleri eksik/biçimsiz ya da production'da `PUBLIC_CMP_SRC` yok; ayrıntı hata metninde |
+| CI `typecheck`: `astro:content` bulunamadı | `npm run typecheck` önce `astro sync` çalıştırır; yerelde `.astro/` silinmişse aynı komutu kullanın |
+| Reklam açıldı ama reklam görünmüyor | Tarayıcı konsolunda CSP ihlali, ads.txt durumu (AdSense → Siteler), onay (CMP) mesajı ve reklam birimi kimliklerini kontrol edin; site onayı bekleniyor olabilir |
+| Araç "Kur verisi yüklenemedi" diyor | `/veri/kurlar/{yıl}.json` erişilemiyor (ağ ya da yanlış base). Sayfayı yenileyin; başarısız istek önbelleğe alınmaz |
+| Gün sayfası yok (404) | O gün TCMB kur belirlemedi (hafta sonu/tatil/arife) ya da 2000 öncesi; ay sayfası kullanılır. Tarih seçici en yakın önceki günü açar |
+| Veri güncellemesi yok | `data-update.yml` yalnızca varsayılan dalda (`main`) zamanlanır; EVDS yayın saati DECISIONS D-013 |
+| Netlify deploy krediniz bitti | Ücretsiz planda ayda ≈20 deploy (D-001); Cloudflare Pages'e geçin ya da veri güncellemesini seyreltin |

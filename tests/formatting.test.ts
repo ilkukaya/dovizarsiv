@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { dec } from '../src/lib/calculations/decimal.ts';
 import { addDays, evdsToIso, isoToEvds, isValidIsoDate, weekday } from '../src/lib/data/dates.ts';
-import { decadeLabel, formatChange, formatDate, formatDateLong, formatMonth, formatNumber, formatRate } from '../src/lib/formatting/format.ts';
+import { decadeLabel, formatChange, formatDate, formatDateLong, formatMonth, formatNumber, formatRate, roundRate } from '../src/lib/formatting/format.ts';
 
 describe('tr-TR sayı biçimleri', () => {
   it('kur: 4 ondalık, virgül ayırıcı', () => {
@@ -53,5 +53,28 @@ describe('onluk yıl etiketi', () => {
     expect([1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020].map(decadeLabel)).toEqual([
       "1950'ler", "1960'lar", "1970'ler", "1980'ler", "1990'lar", "2000'ler", "2010'lar", "2020'ler",
     ]);
+  });
+});
+
+describe('formatRate: küçük (yeni TL\'ye çevrilmiş eski) değerler', () => {
+  it('|değer| ≥ 1: 4 ondalık; değişmedi', () => {
+    expect(formatRate('5.8827')).toBe('5,8827');
+    expect(formatRate('1')).toBe('1,0000');
+    expect(formatRate('48.9008')).toBe('48,9008');
+  });
+  it('|değer| < 1: en az 4, en çok 8 ondalık; anlamlı basamak kaybolmaz', () => {
+    expect(formatRate('0.00050783')).toBe('0,00050783');
+    expect(formatRate('0.411728')).toBe('0,411728');
+    expect(formatRate('0.5')).toBe('0,5000');
+    expect(formatRate('0.0000028252')).toBe('0,00000283');
+  });
+  it('açık ondalık sayısı verilirse aynen uygulanır (yüzde, hizalı tablolar)', () => {
+    expect(formatRate('0.411728', 4)).toBe('0,4117');
+    expect(formatRate('5.8827', 2)).toBe('5,88');
+    expect(formatRate('0.00050783', 8)).toBe('0,00050783');
+  });
+  it('roundRate: ≥ 1 için 4, < 1 için 8 ondalık', () => {
+    expect(roundRate(dec('7.023412345')).toString()).toBe('7.0234');
+    expect(roundRate(dec('0.000712345678')).toString()).toBe('0.00071235');
   });
 });
