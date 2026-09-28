@@ -510,7 +510,7 @@ büyüklüğüne göre değil); 2004-12-31 gün sayfasında eski TL karşılığ
 Canlı kontrol (2026-09-28): 18 sayfa/uç nokta beklenen kodlarla yanıt verdi, güvenlik başlıkları ve CSP aktif, `/usd` → `/dolar/` 301, geçersiz tarih gerçek 404, sitemap ve robots doğru, gün sayfasında 5,8827 / 5,8933.
 
 **Veri doğrulaması (SPEC §11.6):**
-- **EVDS ↔ site, rastgele 10 tarih:** ham değerler birebir (Actions `[verify]`; D-014'teki sonuç 10/10, 0 fark; lansman commit'inde yeniden çalıştırıldı, aşağıda).
+- **EVDS ↔ site, rastgele 10 tarih:** Actions `[verify]` (run 36481514345, seed 428587; 1950, 1962, 1976, 1990, 1991, 1995, 2012, 2018, 2021, 2023 tarihleri, katmanlı): **10/10 birebir eşleşme, 0 fark** (her tarihte 4–12 kur/alan karşılaştırıldı). Aynı çalışmada 73 tarihlik TCMB bülten ↔ konvansiyon doğrulaması da geçti.
 - **Bağımsız yeniden hesap:** `npm run verify:stats` (site kodu) ile `python3 scripts/validation/independent-recompute.py` (Python `decimal`, `data/normalized`'dan): 12 dönem × 4 kur türü = **44 karşılaştırma, 0 fark** (ortalama 4 ondalık half-even, en düşük/en yüksek ve tarihleri, eşitlikte en erken tarih, ilk→son yüzde 2 ondalık, gözlem sayısı, ilk/son değer).
 
 | Para | Dönem | Gözlem | Ortalama (satış) | En düşük | En yüksek | İlk→son % |
