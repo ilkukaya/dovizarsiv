@@ -1,0 +1,109 @@
+---
+/**
+ * Tarih bulucu (küçük island, SPEC §6.3, §6.7). İndekslenebilir query URL üretmez:
+ * - Gün sayfası olan tarih → /tarih/YYYY-MM-DD/
+ * - Kur belirlenmemiş gün (hafta sonu, tatil, arife) → en yakın ÖNCEKİ belirlenme günü + ?istenen=YYYY-MM-DD
+ *   (sayfanın canonical'ı parametresizdir; bant yalnızca istemcide gösterilir)
+ * - Gün sayfası kapsamından (2000) önceki tarih → ilgili ay sayfası
+ * Gün listesi (/veri/gunler.json) yalnızca form gönderilince, bir kez yüklenir.
+ * JS yoksa form /tarih-arsivi/ sayfasına gider.
+ */
+import { DAY_PAGES_START } from '../config/evds-series.ts';
+import { CURRENCY_INFO } from '../config/currencies.ts';
+import { firstDate, lastDate } from '../lib/data/store.ts';
+import { paths } from '../lib/seo/urls.ts';
+
+interface Props {
+  id?: string;
+  label?: string;
+  buttonText?: string;
+}
+const { id = 'tarih-bul', label = 'Tarih seçin', buttonText = 'Kuru Göster' } = Astro.props;
+const min = firstDate();
+const max = lastDate();
+---
+
+<form class="date-finder" action={paths.archive()} method="get" data-date-finder data-day-start={DAY_PAGES_START} data-max={max} data-index={paths.dayIndex()} data-month-slug={CURRENCY_INFO.USD.slug}>
+  <div class="field">
+    <label for={id}>{label}</label>
+    <input class="input date-finder__input" type="date" id={id} name="tarih" min={min} max={max} required aria-describedby={`${id}-msg`} />
+  </div>
+  <button class="button" type="submit">{buttonText}</button>
+  <p class="date-finder__message muted" id={`${id}-msg`} aria-live="polite"></p>
+</form>
+
+<script>
+  import { loadPrefs, rememberDate } from '../lib/tools/prefs.ts';
+  import { formatDate } from '../lib/formatting/format.ts';
+
+  let cache: Promise<string[]> | null = null;
+  const loadDays = (url: string) => (cache ??= fetch(url).then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status))))));
+
+  function lastOnOrBefore(days: string[], target: string): string | null {
+    let lo = 0;
+    let hi = days.length - 1;
+    let found: string | null = null;
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+      if (days[mid]! <= target) {
+        found = days[mid]!;
+        lo = mid + 1;
+      } else hi = mid - 1;
+    }
+    return found;
+  }
+
+  // Son bakılan tarihler (yalnızca bu tarayıcıda; bkz. gizlilik sayfası). Bağlantılar doğrulanmış site içi adreslerdir.
+  function renderRecent(form: HTMLFormElement): void {
+    const recent = loadPrefs().recent ?? [];
+    form.querySelector('.date-finder__recent')?.remove();
+    if (recent.length === 0) return;
+    const box = document.createElement('p');
+    box.className = 'date-finder__recent small';
+    box.append('Son bakılanlar: ');
+    recent.forEach((r, i) => {
+      const a = document.createElement('a');
+      a.href = r.href;
+      a.textContent = formatDate(r.date);
+      if (i > 0) box.append(' · ');
+      box.append(a);
+    });
+    form.append(box);
+  }
+
+  for (const form of document.querySelectorAll<HTMLFormElement>('form[data-date-finder]')) {
+    renderRecent(form);
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const input = form.querySelector<HTMLInputElement>('input[type="date"]')!;
+      const msg = form.querySelector<HTMLElement>('.date-finder__message')!;
+      const value = input.value;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        msg.textContent = 'Lütfen geçerli bir tarih seçin.';
+        return;
+      }
+      const { dayStart = '2000-01-01', max = '', index = '', monthSlug = 'dolar' } = form.dataset;
+      if (value < dayStart) {
+        msg.textContent = 'Bu tarih için aylık arşiv sayfası açılıyor…';
+        const monthHref = `/${monthSlug}/${value.slice(0, 4)}/${value.slice(5, 7)}/`;
+        rememberDate({ date: value, href: monthHref });
+        location.href = monthHref;
+        return;
+      }
+      const target = value > max ? max : value;
+      msg.textContent = 'Tarih aranıyor…';
+      try {
+        const days = await loadDays(index);
+        const found = lastOnOrBefore(days, target);
+        if (!found) {
+          msg.textContent = 'Bu tarih için kayıt bulunamadı.';
+          return;
+        }
+        rememberDate({ date: value, href: `/tarih/${found}/` });
+        location.href = found === value ? `/tarih/${found}/` : `/tarih/${found}/?istenen=${value}`;
+      } catch {
+        msg.textContent = 'Tarih listesi yüklenemedi; lütfen Tarih Arşivi sayfasını kullanın.';
+      }
+    });
+  }
+</script>

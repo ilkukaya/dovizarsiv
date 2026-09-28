@@ -1,0 +1,73 @@
+---
+/** Altbilgi: Arşiv, Araçlar, Bilgi, Döviz Arşiv grupları; kısa kaynak gösterimi ve feragat notu (SPEC §9). */
+import { FEATURES, SITE, SOURCE_ATTRIBUTION } from '../config/site.ts';
+import { paths } from '../lib/seo/urls.ts';
+
+const groups = [
+  {
+    title: 'Arşiv',
+    links: [
+      { label: 'Dolar Kuru Arşivi', href: paths.hub('USD') },
+      { label: 'Euro Kuru Arşivi', href: paths.hub('EUR') },
+      { label: 'Sterlin Kuru Arşivi', href: paths.hub('GBP') },
+      { label: 'Tarih Arşivi', href: paths.archive() },
+    ],
+  },
+  {
+    title: 'Araçlar',
+    links: FEATURES.tools
+      ? [
+          { label: 'Geçmiş Döviz Hesaplama', href: paths.historicalCalculator() },
+          { label: 'Kur Değişimi Hesaplama', href: paths.changeCalculator() },
+          { label: 'Karşılaştır', href: paths.compare() },
+        ]
+      : [],
+  },
+  {
+    title: 'Bilgi',
+    links: [
+      { label: 'Metodoloji', href: paths.methodology() },
+      { label: 'Veri Kaynakları', href: paths.sources() },
+      ...(FEATURES.guides ? [{ label: 'Rehber', href: paths.guides() }] : []),
+    ],
+  },
+  {
+    title: SITE.name,
+    links: FEATURES.legalPages
+      ? [
+          { label: 'Hakkımızda', href: '/hakkimizda/' },
+          { label: 'İletişim', href: '/iletisim/' },
+          { label: 'Gizlilik', href: '/gizlilik/' },
+          { label: 'Çerez Politikası', href: '/cerez-politikasi/' },
+          { label: 'Kullanım Koşulları', href: '/kullanim-kosullari/' },
+          { label: 'Reklam Politikası', href: '/reklam-politikasi/' },
+        ]
+      : [],
+  },
+].filter((g) => g.links.length > 0);
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__groups">
+      {
+        groups.map((g) => (
+          <section aria-labelledby={`f-${g.title}`}>
+            <h2 id={`f-${g.title}`}>{g.title}</h2>
+            <ul>
+              {g.links.map((l) => (
+                <li>
+                  <a href={l.href}>{l.label}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+    <div class="site-footer__legal">
+      <p>{SOURCE_ATTRIBUTION} TCMB kurları gösterge niteliğindedir; banka, döviz bürosu veya kart işlemlerindeki kurlar farklı olabilir.</p>
+      <p>{SITE.name} bağımsız bir bilgi sitesidir; TCMB ile bağlantılı değildir. Ortalama, değişim ve yüzde değerleri {SITE.name} hesaplamasıdır. Yatırım tavsiyesi değildir.</p>
+    </div>
+  </div>
+</footer>

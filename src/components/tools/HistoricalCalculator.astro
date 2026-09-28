@@ -1,0 +1,138 @@
+---
+/**
+ * Geçmiş döviz hesaplayıcısı (SPEC §6.9). Küçük, yıla göre bölünmüş JSON parçalarını (/veri/kurlar/{yıl}.json) lazy yükler.
+ * Etkileşim durumu URL üretmez. Hesap mantığı: src/lib/tools/historical.ts (testli). JS yoksa form işlevsizdir; sayfa
+ * açıklaması ve tarih arşivi linki görünür kalır.
+ */
+import { CURRENCY_INFO, CURRENCY_ORDER, FIELD_LABELS } from '../../config/currencies.ts';
+import { DAY_PAGES_START } from '../../config/evds-series.ts';
+import { firstDate, lastDate } from '../../lib/data/store.ts';
+
+const firstDates = Object.fromEntries(CURRENCY_ORDER.map((c) => [c, firstDate(c)]));
+const last = lastDate();
+const minDate = Object.values(firstDates).sort()[0]!;
+const units = [{ value: 'TRY', label: 'Türk lirası (TL)' }, ...CURRENCY_ORDER.map((c) => ({ value: c, label: `${CURRENCY_INFO[c].name} (${c})` }))];
+---
+
+<div class="tool" data-tool="historical" data-first-dates={JSON.stringify(firstDates)} data-last-date={last} data-day-start={DAY_PAGES_START} data-swap-label="Kaynak ve hedef birimi değiştir">
+  <form class="tool__form" novalidate>
+    <div class="field">
+      <label for="gd-tarih">Tarih</label>
+      <input class="input" type="date" id="gd-tarih" name="tarih" min={minDate} max={last} value={last} required />
+    </div>
+    <div class="field">
+      <label for="gd-tutar">Tutar</label>
+      <input class="input" type="text" inputmode="decimal" id="gd-tutar" name="tutar" value="100" autocomplete="off" required aria-describedby="gd-tutar-yardim" />
+    </div>
+    <div class="field">
+      <label for="gd-kaynak">Kaynak birim</label>
+      <select class="input" id="gd-kaynak" name="kaynak">
+        {units.map((u) => <option value={u.value} selected={u.value === 'USD'}>{u.label}</option>)}
+      </select>
+    </div>
+    <div class="tool__swap">
+      <button class="button button--secondary" type="button" data-swap aria-label="Kaynak ve hedef birimi değiştir">⇄</button>
+    </div>
+    <div class="field">
+      <label for="gd-hedef">Hedef birim</label>
+      <select class="input" id="gd-hedef" name="hedef">
+        {units.map((u) => <option value={u.value} selected={u.value === 'TRY'}>{u.label}</option>)}
+      </select>
+    </div>
+    <div class="field">
+      <label for="gd-kur">Kur türü</label>
+      <select class="input" id="gd-kur" name="kur">
+        <option value="">Önerilen</option>
+        <option value="forexBuying">{FIELD_LABELS.forexBuying}</option>
+        <option value="forexSelling">{FIELD_LABELS.forexSelling}</option>
+        <option value="cashBuying">{FIELD_LABELS.cashBuying}</option>
+        <option value="cashSelling">{FIELD_LABELS.cashSelling}</option>
+      </select>
+    </div>
+    <div class="field" data-tl-unit hidden>
+      <label for="gd-tl">TL tutarın birimi (2005 öncesi)</label>
+      <select class="input" id="gd-tl" name="tl">
+        <option value="old">Eski TL (o tarihte geçerli)</option>
+        <option value="new">Yeni TL (1 YTL = 1.000.000 TL)</option>
+      </select>
+    </div>
+    <div class="tool__actions">
+      <button class="button" type="submit">Hesapla</button>
+    </div>
+    <p class="small muted tool__help" id="gd-tutar-yardim">Tutarı 1.250,50 gibi yazabilirsiniz. Kur türü “Önerilen”: döviz → TL için döviz alış, TL → döviz için döviz satış. Seçtiğiniz günde TCMB kur belirlemediyse (hafta sonu, resmî tatil, arife) en yakın önceki belirlenme günü kullanılır ve sonuçta belirtilir.</p>
+  </form>
+  <p class="tool-message" data-message aria-live="polite"></p>
+  <p class="visually-hidden" data-announce aria-live="polite"></p>
+  <div class="tool-result" data-result></div>
+</div>
+
+<script>
+  import { calculateHistorical, isPreRedenomination, type HistoricalError, type Unit } from '../../lib/tools/historical.ts';
+  import { createFetchLoader, ensureRates, RateStore } from '../../lib/tools/rates.ts';
+  import { loadPrefs, savePrefs } from '../../lib/tools/prefs.ts';
+  import { panelsOf, historicalErrorText, renderHistorical, showBusy, showError, showResult, LOAD_FAILED, describeResult } from '../../lib/tools/ui.ts';
+  import type { CurrencyCode, RateField } from '../../lib/providers/types.ts';
+
+  const root = document.querySelector<HTMLElement>('[data-tool="historical"]');
+  if (root) {
+    const form = root.querySelector('form')!;
+    const coverage = { firstDates: JSON.parse(root.dataset.firstDates!) as Partial<Record<CurrencyCode, string>>, lastDate: root.dataset.lastDate! };
+    const dayStart = root.dataset.dayStart!;
+    const panels = panelsOf(root);
+    const store = new RateStore();
+    const loader = createFetchLoader();
+    const field = <T extends HTMLElement>(name: string) => form.elements.namedItem(name) as unknown as T;
+    const tlBox = root.querySelector<HTMLElement>('[data-tl-unit]')!;
+    const empty = new RateStore();
+
+    const syncTl = () => {
+      const from = field<HTMLSelectElement>('kaynak').value;
+      const to = field<HTMLSelectElement>('hedef').value;
+      const date = field<HTMLInputElement>('tarih').value;
+      tlBox.hidden = !(/^\d{4}-\d{2}-\d{2}$/.test(date) && isPreRedenomination(date) && (from === 'TRY' || to === 'TRY'));
+    };
+    for (const n of ['kaynak', 'hedef', 'tarih']) field<HTMLElement>(n).addEventListener('change', syncTl);
+    root.querySelector('[data-swap]')!.addEventListener('click', () => {
+      const a = field<HTMLSelectElement>('kaynak');
+      const b = field<HTMLSelectElement>('hedef');
+      [a.value, b.value] = [b.value, a.value];
+      syncTl();
+    });
+    // Son seçilen para birimi ve kur türü (yalnızca bu tarayıcıda; bkz. gizlilik sayfası).
+    const prefs = loadPrefs();
+    if (prefs.currency) {
+      const side = field<HTMLSelectElement>('kaynak').value === 'TRY' ? field<HTMLSelectElement>('hedef') : field<HTMLSelectElement>('kaynak');
+      side.value = prefs.currency;
+    }
+    if (prefs.rateField) field<HTMLSelectElement>('kur').value = prefs.rateField;
+    syncTl();
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const input = {
+        amount: field<HTMLInputElement>('tutar').value,
+        from: field<HTMLSelectElement>('kaynak').value as Unit,
+        to: field<HTMLSelectElement>('hedef').value as Unit,
+        date: field<HTMLInputElement>('tarih').value,
+        rateField: (field<HTMLSelectElement>('kur').value || undefined) as RateField | undefined,
+        tlUnit: field<HTMLSelectElement>('tl').value as 'old' | 'new',
+      };
+      // Önce veri gerektirmeyen doğrulamalar (tutar, tarih aralığı, kapsam); geçerse yalnızca gereken yıl(lar) yüklenir.
+      const pre = calculateHistorical(empty, input, coverage);
+      if ('code' in pre && pre.code !== 'not_loaded') return showError(panels, historicalErrorText(pre as HistoricalError));
+      showBusy(panels, 'Kur verisi yükleniyor…');
+      try {
+        const currencies = [input.from, input.to].filter((u): u is CurrencyCode => u !== 'TRY');
+        await ensureRates(store, loader, currencies, input.date, coverage.firstDates);
+      } catch {
+        return showError(panels, LOAD_FAILED);
+      }
+      const result = calculateHistorical(store, input, coverage);
+      if ('code' in result) return showError(panels, historicalErrorText(result));
+      const spoken = `Sonuç: ${describeResult(result)}.`;
+      showResult(panels, renderHistorical(result, { dayStart }), spoken);
+      const foreign = [input.from, input.to].find((u): u is CurrencyCode => u !== 'TRY');
+      savePrefs({ ...(foreign ? { currency: foreign } : {}), ...(input.rateField ? { rateField: input.rateField } : {}) });
+    });
+  }
+</script>

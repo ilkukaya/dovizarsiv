@@ -1,0 +1,34 @@
+---
+/** Rehber dizini (SPEC §6.10). Yazılar src/content/guides/*.md; liste koleksiyondan gelir. */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE } from '../../config/site.ts';
+import { paths } from '../../lib/seo/urls.ts';
+
+const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Döviz Kuru Rehberi"
+  description="TCMB döviz kurları, alış ve satış farkı, efektif kur, hafta sonu kuru, yüzde değişim ve 2005 para reformu hakkında kısa, kaynaklı açıklamalar."
+  path={paths.guides()}
+  page={{ kind: 'guide' }}
+  crumbs={[{ name: 'Rehber', path: paths.guides() }]}
+  navCurrent={paths.guides()}
+>
+  <article class="prose">
+    <h1>Döviz Kuru Rehberi</h1>
+    <p class="lead">Arşivdeki kurları okurken sık karşılaşılan kavramlar ve hesaplar. Her yazı, {SITE.name}'deki ilgili arşiv ve araç sayfalarına bağlanır ve dayandığı kaynakları listeler.</p>
+    <ol class="guide-list">
+      {
+        guides.map((g) => (
+          <li>
+            <a href={paths.guide(g.id)}>{g.data.title}</a>
+            <span class="muted small"> {g.data.description}</span>
+          </li>
+        ))
+      }
+    </ol>
+    <p>Rakamlar için <a href={paths.archive()}>tarih arşivini</a>, hesap için <a href={paths.historicalCalculator()}>geçmiş döviz kuru hesaplama</a> aracını kullanabilirsiniz. Verinin nasıl derlendiği <a href={paths.methodology()}>metodoloji</a> sayfasındadır.</p>
+  </article>
+</BaseLayout>

@@ -1,0 +1,2617 @@
+{
+  "thresholdPct": "5",
+  "lastDate": "2026-09-28",
+  "count": 290,
+  "items": [
+    {
+      "date": "1960-08-19",
+      "prevDate": "1960-08-18",
+      "value": "0.000009",
+      "prev": "0.0000028",
+      "changePct": "221.428571428571",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1960-08-19",
+      "prevDate": "1960-08-18",
+      "value": "0.0000252",
+      "prev": "0.00000784",
+      "changePct": "221.428571428571",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1960-08-19",
+      "prevDate": "1960-08-18",
+      "value": "0.000025326",
+      "prev": "0.00000791",
+      "changePct": "220.176991150442",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1960-08-19",
+      "prevDate": "1960-08-18",
+      "value": "0.000009045",
+      "prev": "0.0000028252",
+      "changePct": "220.154325357497",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1980-01-24",
+      "prevDate": "1980-01-23",
+      "value": "0.00016269",
+      "prev": "0.0000805961",
+      "changePct": "101.858402577792",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1980-01-24",
+      "prevDate": "1980-01-23",
+      "value": "0.0001595",
+      "prev": "0.0000790158",
+      "changePct": "101.858362504714",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1980-01-24",
+      "prevDate": "1980-01-23",
+      "value": "0.00007",
+      "prev": "0.000035",
+      "changePct": "100",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1980-01-24",
+      "prevDate": "1980-01-23",
+      "value": "0.0000714",
+      "prev": "0.0000357",
+      "changePct": "100",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1970-08-07",
+      "prevDate": "1970-08-06",
+      "value": "0.00001515",
+      "prev": "0.00000908",
+      "changePct": "66.850220264317",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1970-08-07",
+      "prevDate": "1970-08-06",
+      "value": "0.00003636",
+      "prev": "0.000021792",
+      "changePct": "66.850220264317",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1970-08-07",
+      "prevDate": "1970-08-06",
+      "value": "0.0000359375",
+      "prev": "0.0000216",
+      "changePct": "66.377314814815",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1970-08-07",
+      "prevDate": "1970-08-06",
+      "value": "0.00001485",
+      "prev": "0.000009",
+      "changePct": "65",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1979-06-11",
+      "prevDate": "1979-06-08",
+      "value": "0.00007217",
+      "prev": "0.0000501",
+      "changePct": "44.051896207585",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1979-06-11",
+      "prevDate": "1979-06-08",
+      "value": "0.0000736134",
+      "prev": "0.000051102",
+      "changePct": "44.051896207585",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-02-22",
+      "prevDate": "2001-02-21",
+      "value": "1.382047",
+      "prev": "0.988689",
+      "changePct": "39.78581738039",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-02-22",
+      "prevDate": "2001-02-21",
+      "value": "1.389271",
+      "prev": "0.993857",
+      "changePct": "39.785804195171",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-02-22",
+      "prevDate": "2001-02-21",
+      "value": "0.962499",
+      "prev": "0.688696",
+      "changePct": "39.756728658218",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-02-22",
+      "prevDate": "2001-02-21",
+      "value": "0.957879",
+      "prev": "0.685391",
+      "changePct": "39.756576902819",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-04-05",
+      "prevDate": "1994-04-04",
+      "value": "0.03198889",
+      "prev": "0.02303184",
+      "changePct": "38.889858561018",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-04-05",
+      "prevDate": "1994-04-04",
+      "value": "0.032053",
+      "prev": "0.023078",
+      "changePct": "38.889851806916",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-05",
+      "prevDate": "1994-04-04",
+      "value": "0.04703778",
+      "prev": "0.03386697",
+      "changePct": "38.889838683531",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-05",
+      "prevDate": "1994-04-04",
+      "value": "0.0469437",
+      "prev": "0.03379924",
+      "changePct": "38.88980935666",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-02-22",
+      "prevDate": "2001-02-21",
+      "value": "0.87135",
+      "prev": "0.629881",
+      "changePct": "38.335653877478",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-02-22",
+      "prevDate": "2001-02-21",
+      "value": "0.867168",
+      "prev": "0.626858",
+      "changePct": "38.335635821829",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1979-06-11",
+      "prevDate": "1979-06-08",
+      "value": "0.000035",
+      "prev": "0.0000265",
+      "changePct": "32.075471698113",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1979-06-11",
+      "prevDate": "1979-06-08",
+      "value": "0.0000357",
+      "prev": "0.00002703",
+      "changePct": "32.075471698113",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1978-02-28",
+      "prevDate": "1978-02-27",
+      "value": "0.00004575",
+      "prev": "0.0000347",
+      "changePct": "31.844380403458",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1978-02-28",
+      "prevDate": "1978-02-27",
+      "value": "0.000046665",
+      "prev": "0.000035394",
+      "changePct": "31.844380403458",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1978-02-28",
+      "prevDate": "1978-02-27",
+      "value": "0.000025",
+      "prev": "0.00001925",
+      "changePct": "29.87012987013",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1978-02-28",
+      "prevDate": "1978-02-27",
+      "value": "0.0000255",
+      "prev": "0.000019635",
+      "changePct": "29.87012987013",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-21",
+      "prevDate": "2021-12-20",
+      "value": "13.0226",
+      "prev": "17.4731",
+      "changePct": "-25.4705804923",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-12-21",
+      "prevDate": "2021-12-20",
+      "value": "13.0461",
+      "prev": "17.5046",
+      "changePct": "-25.470447768015",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-21",
+      "prevDate": "2021-12-20",
+      "value": "17.2981",
+      "prev": "23.1535",
+      "changePct": "-25.289481071976",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-21",
+      "prevDate": "2021-12-20",
+      "value": "17.2084",
+      "prev": "23.0334",
+      "changePct": "-25.289362404161",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-12-21",
+      "prevDate": "2021-12-20",
+      "value": "14.7289",
+      "prev": "19.7143",
+      "changePct": "-25.288242544752",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-21",
+      "prevDate": "2021-12-20",
+      "value": "14.7024",
+      "prev": "19.6788",
+      "changePct": "-25.288127324837",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-04-06",
+      "prevDate": "1994-04-05",
+      "value": "0.05854426",
+      "prev": "0.0469437",
+      "changePct": "24.711643947963",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-04-06",
+      "prevDate": "1994-04-05",
+      "value": "0.05866158",
+      "prev": "0.04703778",
+      "changePct": "24.711625421098",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-06",
+      "prevDate": "1994-04-05",
+      "value": "0.03985313",
+      "prev": "0.03198889",
+      "changePct": "24.584285356572",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-04-06",
+      "prevDate": "1994-04-05",
+      "value": "0.039933",
+      "prev": "0.032053",
+      "changePct": "24.58428228247",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-08-13",
+      "prevDate": "2018-08-10",
+      "value": "6.8922",
+      "prev": "5.9496",
+      "changePct": "15.843081887858",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-08-13",
+      "prevDate": "2018-08-10",
+      "value": "6.8798",
+      "prev": "5.9389",
+      "changePct": "15.843001229184",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-13",
+      "prevDate": "2018-08-10",
+      "value": "8.758",
+      "prev": "7.5731",
+      "changePct": "15.646168675972",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-13",
+      "prevDate": "2018-08-10",
+      "value": "8.8036",
+      "prev": "7.6126",
+      "changePct": "15.645114678297",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-08-13",
+      "prevDate": "2018-08-10",
+      "value": "7.8327",
+      "prev": "6.8081",
+      "changePct": "15.049720186249",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-13",
+      "prevDate": "2018-08-10",
+      "value": "7.8468",
+      "prev": "6.8204",
+      "changePct": "15.048970734854",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1967-11-20",
+      "prevDate": "1967-11-17",
+      "value": "0.0000216",
+      "prev": "0.0000252",
+      "changePct": "-14.285714285714",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1967-11-20",
+      "prevDate": "1967-11-17",
+      "value": "0.000021792",
+      "prev": "0.000025424",
+      "changePct": "-14.285714285714",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-01-26",
+      "prevDate": "1994-01-25",
+      "value": "0.02574923",
+      "prev": "0.02265009",
+      "changePct": "13.682682938567",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-01-26",
+      "prevDate": "1994-01-25",
+      "value": "0.02580083",
+      "prev": "0.02269548",
+      "changePct": "13.682680427997",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1977-02-28",
+      "prevDate": "1977-02-25",
+      "value": "0.00003",
+      "prev": "0.0000264",
+      "changePct": "13.636363636364",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1977-02-28",
+      "prevDate": "1977-02-25",
+      "value": "0.0000306",
+      "prev": "0.000026928",
+      "changePct": "13.636363636364",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-01-26",
+      "prevDate": "1994-01-25",
+      "value": "0.01725",
+      "prev": "0.015186",
+      "changePct": "13.591465823785",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-01-26",
+      "prevDate": "1994-01-25",
+      "value": "0.0172155",
+      "prev": "0.01515563",
+      "changePct": "13.591450833783",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-02-23",
+      "prevDate": "2001-02-22",
+      "value": "1.561503",
+      "prev": "1.389271",
+      "changePct": "12.397293256679",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-02-23",
+      "prevDate": "2001-02-22",
+      "value": "1.553383",
+      "prev": "1.382047",
+      "changePct": "12.39726290061",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-02-23",
+      "prevDate": "2001-02-22",
+      "value": "0.977139",
+      "prev": "0.87135",
+      "changePct": "12.140815975211",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-02-23",
+      "prevDate": "2001-02-22",
+      "value": "0.972449",
+      "prev": "0.867168",
+      "changePct": "12.140784715303",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-02-23",
+      "prevDate": "2001-02-22",
+      "value": "1.072988",
+      "prev": "0.957879",
+      "changePct": "12.017071049684",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-02-23",
+      "prevDate": "2001-02-22",
+      "value": "1.078163",
+      "prev": "0.962499",
+      "changePct": "12.017051446287",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-02-26",
+      "prevDate": "2001-02-23",
+      "value": "1.368186",
+      "prev": "1.553383",
+      "changePct": "-11.922172445559",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-02-26",
+      "prevDate": "2001-02-23",
+      "value": "1.375338",
+      "prev": "1.561503",
+      "changePct": "-11.922167296509",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-02-26",
+      "prevDate": "2001-02-23",
+      "value": "0.95087",
+      "prev": "1.078163",
+      "changePct": "-11.806470821202",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-02-26",
+      "prevDate": "2001-02-23",
+      "value": "0.946306",
+      "prev": "1.072988",
+      "changePct": "-11.806469410655",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-04-03",
+      "prevDate": "2001-04-02",
+      "value": "1.096735",
+      "prev": "0.982789",
+      "changePct": "11.594146861636",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-04-03",
+      "prevDate": "2001-04-02",
+      "value": "1.091471",
+      "prev": "0.978072",
+      "changePct": "11.59413621901",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-02-26",
+      "prevDate": "2001-02-23",
+      "value": "0.860192",
+      "prev": "0.972449",
+      "changePct": "-11.543741625525",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-02-26",
+      "prevDate": "2001-02-23",
+      "value": "0.864341",
+      "prev": "0.977139",
+      "changePct": "-11.543700537999",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1991-03-22",
+      "prevDate": "1991-03-21",
+      "value": "0.00634258",
+      "prev": "0.00716127",
+      "changePct": "-11.432190100359",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1991-03-22",
+      "prevDate": "1991-03-21",
+      "value": "0.00635529",
+      "prev": "0.00717562",
+      "changePct": "-11.432182863641",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2008-10-30",
+      "prevDate": "2008-10-27",
+      "value": "1.4964",
+      "prev": "1.6861",
+      "changePct": "-11.250815491371",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2008-10-30",
+      "prevDate": "2008-10-27",
+      "value": "1.5036",
+      "prev": "1.6942",
+      "changePct": "-11.250147562271",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-04-03",
+      "prevDate": "2001-04-02",
+      "value": "1.764561",
+      "prev": "1.590003",
+      "changePct": "10.978469851944",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-04-03",
+      "prevDate": "2001-04-02",
+      "value": "1.755385",
+      "prev": "1.581735",
+      "changePct": "10.978450878308",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-04-25",
+      "prevDate": "1994-04-22",
+      "value": "0.05069076",
+      "prev": "0.04568125",
+      "changePct": "10.966227938158",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-04-25",
+      "prevDate": "1994-04-22",
+      "value": "0.05079234",
+      "prev": "0.0457728",
+      "changePct": "10.966207005034",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1991-03-22",
+      "prevDate": "1991-03-21",
+      "value": "0.003557",
+      "prev": "0.003992",
+      "changePct": "-10.896793587174",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1991-03-22",
+      "prevDate": "1991-03-21",
+      "value": "0.00354989",
+      "prev": "0.00398402",
+      "changePct": "-10.896782646673",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1977-09-20",
+      "prevDate": "1977-09-19",
+      "value": "0.00003355",
+      "prev": "0.0000303",
+      "changePct": "10.726072607261",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1977-09-20",
+      "prevDate": "1977-09-19",
+      "value": "0.000034221",
+      "prev": "0.000030906",
+      "changePct": "10.726072607261",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-25",
+      "prevDate": "1994-04-22",
+      "value": "0.033993",
+      "prev": "0.03072",
+      "changePct": "10.654296875",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-25",
+      "prevDate": "1994-04-22",
+      "value": "0.03392501",
+      "prev": "0.03065856",
+      "changePct": "10.654283828073",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-04-03",
+      "prevDate": "2001-04-02",
+      "value": "1.232604",
+      "prev": "1.114738",
+      "changePct": "10.573426222126",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-04-03",
+      "prevDate": "2001-04-02",
+      "value": "1.238549",
+      "prev": "1.120115",
+      "changePct": "10.573378626302",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-08-10",
+      "prevDate": "2018-08-09",
+      "value": "5.9496",
+      "prev": "5.4085",
+      "changePct": "10.004622353703",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-08-10",
+      "prevDate": "2018-08-09",
+      "value": "5.9389",
+      "prev": "5.3988",
+      "changePct": "10.004074979625",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1977-09-20",
+      "prevDate": "1977-09-19",
+      "value": "0.00001925",
+      "prev": "0.0000175",
+      "changePct": "10",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1977-09-20",
+      "prevDate": "1977-09-19",
+      "value": "0.000019635",
+      "prev": "0.00001785",
+      "changePct": "10",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1979-07-17",
+      "prevDate": "1979-07-16",
+      "value": "0.0000790158",
+      "prev": "0.00007217",
+      "changePct": "9.485658861023",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1979-07-17",
+      "prevDate": "1979-07-16",
+      "value": "0.0000805961",
+      "prev": "0.0000736134",
+      "changePct": "9.485637125849",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-04-02",
+      "prevDate": "2001-03-30",
+      "value": "1.120115",
+      "prev": "1.025482",
+      "changePct": "9.228148324398",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-04-02",
+      "prevDate": "2001-03-30",
+      "value": "1.114738",
+      "prev": "1.02056",
+      "changePct": "9.228070863056",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-10",
+      "prevDate": "2018-08-09",
+      "value": "7.6126",
+      "prev": "6.9768",
+      "changePct": "9.11306042885",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-08-10",
+      "prevDate": "2018-08-09",
+      "value": "7.5731",
+      "prev": "6.9406",
+      "changePct": "9.113044981702",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1988-10-14",
+      "prevDate": "1988-10-13",
+      "value": "0.00302666",
+      "prev": "0.00332561",
+      "changePct": "-8.98932827361",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1988-10-14",
+      "prevDate": "1988-10-13",
+      "value": "0.00303273",
+      "prev": "0.00333227",
+      "changePct": "-8.989067512536",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-08",
+      "prevDate": "1994-04-07",
+      "value": "0.03356074",
+      "prev": "0.03687111",
+      "changePct": "-8.978221702574",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-04-08",
+      "prevDate": "1994-04-07",
+      "value": "0.033628",
+      "prev": "0.036945",
+      "changePct": "-8.978210853972",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1988-10-14",
+      "prevDate": "1988-10-13",
+      "value": "0.00172607",
+      "prev": "0.00189601",
+      "changePct": "-8.963032895396",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1988-10-14",
+      "prevDate": "1988-10-13",
+      "value": "0.00172953",
+      "prev": "0.00189981",
+      "changePct": "-8.963001563314",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-11-23",
+      "prevDate": "2021-11-22",
+      "value": "12.1775",
+      "prev": "11.1913",
+      "changePct": "8.812202335743",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-11-23",
+      "prevDate": "2021-11-22",
+      "value": "12.1556",
+      "prev": "11.1712",
+      "changePct": "8.811945001432",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-10",
+      "prevDate": "2018-08-09",
+      "value": "6.8204",
+      "prev": "6.27",
+      "changePct": "8.778309409888",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-08-10",
+      "prevDate": "2018-08-09",
+      "value": "6.8081",
+      "prev": "6.2588",
+      "changePct": "8.776442768582",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-03-22",
+      "prevDate": "2021-03-19",
+      "value": "7.904",
+      "prev": "7.267",
+      "changePct": "8.765652951699",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-03-22",
+      "prevDate": "2021-03-19",
+      "value": "7.9182",
+      "prev": "7.2801",
+      "changePct": "8.764989491903",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-04-02",
+      "prevDate": "2001-03-30",
+      "value": "1.581735",
+      "prev": "1.455447",
+      "changePct": "8.676921935323",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-04-02",
+      "prevDate": "2001-03-30",
+      "value": "1.590003",
+      "prev": "1.463055",
+      "changePct": "8.67691235121",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-03-22",
+      "prevDate": "2021-03-19",
+      "value": "9.4239",
+      "prev": "8.6722",
+      "changePct": "8.667927400198",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-03-22",
+      "prevDate": "2021-03-19",
+      "value": "9.4069",
+      "prev": "8.6566",
+      "changePct": "8.667375181942",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-04-08",
+      "prevDate": "1994-04-07",
+      "value": "0.04951887",
+      "prev": "0.05420053",
+      "changePct": "-8.637664613243",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-04-08",
+      "prevDate": "1994-04-07",
+      "value": "0.04961811",
+      "prev": "0.05430915",
+      "changePct": "-8.637660504722",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-11-23",
+      "prevDate": "2021-11-22",
+      "value": "13.6789",
+      "prev": "12.5938",
+      "changePct": "8.616144452032",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-11-23",
+      "prevDate": "2021-11-22",
+      "value": "13.7035",
+      "prev": "12.6165",
+      "changePct": "8.615701660524",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-04-02",
+      "prevDate": "2001-03-30",
+      "value": "0.982789",
+      "prev": "0.905501",
+      "changePct": "8.53538538334",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-04-02",
+      "prevDate": "2001-03-30",
+      "value": "0.978072",
+      "prev": "0.901155",
+      "changePct": "8.535379596185",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-07-17",
+      "prevDate": "2001-07-16",
+      "value": "1.482571",
+      "prev": "1.366647",
+      "changePct": "8.482365965754",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-07-17",
+      "prevDate": "2001-07-16",
+      "value": "1.489722",
+      "prev": "1.373239",
+      "changePct": "8.482354491826",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-06-02",
+      "prevDate": "1994-06-01",
+      "value": "0.05031975",
+      "prev": "0.04639174",
+      "changePct": "8.467046073288",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-06-02",
+      "prevDate": "1994-06-01",
+      "value": "0.05042059",
+      "prev": "0.04648471",
+      "changePct": "8.467042173652",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-11-23",
+      "prevDate": "2021-11-22",
+      "value": "16.3178",
+      "prev": "15.0586",
+      "changePct": "8.361999123424",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-11-23",
+      "prevDate": "2021-11-22",
+      "value": "16.2331",
+      "prev": "14.9805",
+      "changePct": "8.36153666433",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-06-02",
+      "prevDate": "1994-06-01",
+      "value": "0.033248",
+      "prev": "0.030685",
+      "changePct": "8.352615284341",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-06-02",
+      "prevDate": "1994-06-01",
+      "value": "0.0331815",
+      "prev": "0.03062363",
+      "changePct": "8.352602222532",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-07-17",
+      "prevDate": "2001-07-16",
+      "value": "2.073284",
+      "prev": "1.913494",
+      "changePct": "8.350692502825",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-07-17",
+      "prevDate": "2001-07-16",
+      "value": "2.084121",
+      "prev": "1.923496",
+      "changePct": "8.350680219767",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-08-24",
+      "prevDate": "1994-08-23",
+      "value": "0.03529128",
+      "prev": "0.0325837",
+      "changePct": "8.309614930164",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-08-24",
+      "prevDate": "1994-08-23",
+      "value": "0.035362",
+      "prev": "0.032649",
+      "changePct": "8.309596006003",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-03-22",
+      "prevDate": "2021-03-19",
+      "value": "10.9343",
+      "prev": "10.1064",
+      "changePct": "8.191838834798",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-03-22",
+      "prevDate": "2021-03-19",
+      "value": "10.9913",
+      "prev": "10.1591",
+      "changePct": "8.191670521995",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-08-24",
+      "prevDate": "1994-08-23",
+      "value": "0.05480736",
+      "prev": "0.05066114",
+      "changePct": "8.184221673654",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-08-24",
+      "prevDate": "1994-08-23",
+      "value": "0.05491719",
+      "prev": "0.05076267",
+      "changePct": "8.184203076789",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-08-25",
+      "prevDate": "1994-08-24",
+      "value": "0.05038265",
+      "prev": "0.05480736",
+      "changePct": "-8.07320403683",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-08-25",
+      "prevDate": "1994-08-24",
+      "value": "0.05048362",
+      "prev": "0.05491719",
+      "changePct": "-8.073191654562",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-23",
+      "prevDate": "2021-12-22",
+      "value": "11.4714",
+      "prev": "12.476",
+      "changePct": "-8.052260339853",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-23",
+      "prevDate": "2021-12-22",
+      "value": "11.4508",
+      "prev": "12.4535",
+      "changePct": "-8.051551772594",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-07-18",
+      "prevDate": "2001-07-17",
+      "value": "1.370245",
+      "prev": "1.489722",
+      "changePct": "-8.020086969247",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-07-18",
+      "prevDate": "2001-07-17",
+      "value": "1.363668",
+      "prev": "1.482571",
+      "changePct": "-8.020054351529",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1976-09-21",
+      "prevDate": "1976-09-20",
+      "value": "0.00002752",
+      "prev": "0.0000299",
+      "changePct": "-7.959866220736",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1976-09-21",
+      "prevDate": "1976-09-20",
+      "value": "0.0000280704",
+      "prev": "0.000030498",
+      "changePct": "-7.959866220736",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-08-25",
+      "prevDate": "1994-08-24",
+      "value": "0.03252382",
+      "prev": "0.03529128",
+      "changePct": "-7.841767144745",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-08-25",
+      "prevDate": "1994-08-24",
+      "value": "0.032589",
+      "prev": "0.035362",
+      "changePct": "-7.841751032181",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-18",
+      "prevDate": "1994-04-15",
+      "value": "0.03240406",
+      "prev": "0.03511064",
+      "changePct": "-7.708717357473",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-04-18",
+      "prevDate": "1994-04-15",
+      "value": "0.032469",
+      "prev": "0.035181",
+      "changePct": "-7.708706404025",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-23",
+      "prevDate": "2021-12-22",
+      "value": "12.9683",
+      "prev": "14.0483",
+      "changePct": "-7.68776293217",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-12-23",
+      "prevDate": "2021-12-22",
+      "value": "12.9917",
+      "prev": "14.0736",
+      "changePct": "-7.68744315598",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-07-17",
+      "prevDate": "2001-07-16",
+      "value": "1.269094",
+      "prev": "1.178514",
+      "changePct": "7.685950272971",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-07-17",
+      "prevDate": "2001-07-16",
+      "value": "1.263002",
+      "prev": "1.172857",
+      "changePct": "7.685932726667",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-12-17",
+      "prevDate": "2021-12-16",
+      "value": "21.7046",
+      "prev": "20.1644",
+      "changePct": "7.638213881891",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-12-17",
+      "prevDate": "2021-12-16",
+      "value": "21.8177",
+      "prev": "20.2695",
+      "changePct": "7.638076913589",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-18",
+      "prevDate": "1994-04-15",
+      "value": "0.04787229",
+      "prev": "0.05181809",
+      "changePct": "-7.614715247127",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-18",
+      "prevDate": "1994-04-15",
+      "value": "0.04777655",
+      "prev": "0.05171445",
+      "changePct": "-7.614699566562",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-12-17",
+      "prevDate": "2021-12-16",
+      "value": "18.5044",
+      "prev": "17.1957",
+      "changePct": "7.610623586129",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-12-17",
+      "prevDate": "2021-12-16",
+      "value": "18.5377",
+      "prev": "17.2267",
+      "changePct": "7.610279391874",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-07",
+      "prevDate": "1994-04-06",
+      "value": "0.036945",
+      "prev": "0.039933",
+      "changePct": "-7.482533243182",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-07",
+      "prevDate": "1994-04-06",
+      "value": "0.03687111",
+      "prev": "0.03985313",
+      "changePct": "-7.48252395734",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2023-06-07",
+      "prevDate": "2023-06-06",
+      "value": "28.7345",
+      "prev": "26.7403",
+      "changePct": "7.457657543109",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2023-06-07",
+      "prevDate": "2023-06-06",
+      "value": "28.5854",
+      "prev": "26.6017",
+      "changePct": "7.457042219106",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-07-18",
+      "prevDate": "2001-07-17",
+      "value": "1.919273",
+      "prev": "2.073284",
+      "changePct": "-7.428360031718",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-07-18",
+      "prevDate": "2001-07-17",
+      "value": "1.929305",
+      "prev": "2.084121",
+      "changePct": "-7.428359485846",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-07",
+      "prevDate": "1994-04-06",
+      "value": "0.05420053",
+      "prev": "0.05854426",
+      "changePct": "-7.41956598307",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-04-07",
+      "prevDate": "1994-04-06",
+      "value": "0.05430915",
+      "prev": "0.05866158",
+      "changePct": "-7.419558082138",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1980-06-06",
+      "prevDate": "1980-06-05",
+      "value": "0.00018194",
+      "prev": "0.0001694",
+      "changePct": "7.402597402597",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1980-06-06",
+      "prevDate": "1980-06-05",
+      "value": "0.00018558",
+      "prev": "0.00017279",
+      "changePct": "7.402048729672",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-17",
+      "prevDate": "2021-12-16",
+      "value": "16.3358",
+      "prev": "15.2118",
+      "changePct": "7.389000644237",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-12-17",
+      "prevDate": "2021-12-16",
+      "value": "16.3652",
+      "prev": "15.2392",
+      "changePct": "7.38883930915",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-23",
+      "prevDate": "2021-12-22",
+      "value": "15.3893",
+      "prev": "16.6023",
+      "changePct": "-7.306216608542",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-23",
+      "prevDate": "2021-12-22",
+      "value": "15.3095",
+      "prev": "16.5162",
+      "changePct": "-7.306160012594",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2008-10-22",
+      "prevDate": "2008-10-21",
+      "value": "1.6425",
+      "prev": "1.5308",
+      "changePct": "7.296838254507",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2008-10-22",
+      "prevDate": "2008-10-21",
+      "value": "1.6346",
+      "prev": "1.5235",
+      "changePct": "7.292418772563",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2023-06-07",
+      "prevDate": "2023-06-06",
+      "value": "23.021",
+      "prev": "21.4565",
+      "changePct": "7.291496749237",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2023-06-07",
+      "prevDate": "2023-06-06",
+      "value": "23.0625",
+      "prev": "21.4952",
+      "changePct": "7.29139528825",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2023-06-07",
+      "prevDate": "2023-06-06",
+      "value": "24.6248",
+      "prev": "22.9581",
+      "changePct": "7.259747104508",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2023-06-07",
+      "prevDate": "2023-06-06",
+      "value": "24.6692",
+      "prev": "22.9995",
+      "changePct": "7.259723037457",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-20",
+      "prevDate": "2021-12-17",
+      "value": "17.5046",
+      "prev": "16.3652",
+      "changePct": "6.962334710239",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-20",
+      "prevDate": "2021-12-17",
+      "value": "17.4731",
+      "prev": "16.3358",
+      "changePct": "6.962009818925",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-15",
+      "prevDate": "2018-08-14",
+      "value": "6.9626",
+      "prev": "7.4822",
+      "changePct": "-6.944481569592",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-08-15",
+      "prevDate": "2018-08-14",
+      "value": "6.9501",
+      "prev": "7.4687",
+      "changePct": "-6.943644811011",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-03-29",
+      "prevDate": "2001-03-28",
+      "value": "1.525258",
+      "prev": "1.426608",
+      "changePct": "6.915003981472",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-03-29",
+      "prevDate": "2001-03-28",
+      "value": "1.517327",
+      "prev": "1.41919",
+      "changePct": "6.915000810321",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2023-06-23",
+      "prevDate": "2023-06-22",
+      "value": "25.2505",
+      "prev": "23.6239",
+      "changePct": "6.88539995513",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2023-06-23",
+      "prevDate": "2023-06-22",
+      "value": "25.296",
+      "prev": "23.6665",
+      "changePct": "6.88525975535",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-07-18",
+      "prevDate": "2001-07-17",
+      "value": "1.18211",
+      "prev": "1.269094",
+      "changePct": "-6.854023421433",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-07-18",
+      "prevDate": "2001-07-17",
+      "value": "1.176436",
+      "prev": "1.263002",
+      "changePct": "-6.853987562965",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-15",
+      "prevDate": "2018-08-14",
+      "value": "7.788",
+      "prev": "8.3549",
+      "changePct": "-6.785239799399",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-15",
+      "prevDate": "2018-08-14",
+      "value": "7.8286",
+      "prev": "8.3984",
+      "changePct": "-6.78462564298",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-30",
+      "prevDate": "2021-12-29",
+      "value": "17.544",
+      "prev": "16.4654",
+      "changePct": "6.550706329637",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-30",
+      "prevDate": "2021-12-29",
+      "value": "17.453",
+      "prev": "16.38",
+      "changePct": "6.550671550672",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2008-10-30",
+      "prevDate": "2008-10-27",
+      "value": "1.9682",
+      "prev": "2.1061",
+      "changePct": "-6.547647310194",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2008-10-30",
+      "prevDate": "2008-10-27",
+      "value": "1.9588",
+      "prev": "2.096",
+      "changePct": "-6.545801526718",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-03-29",
+      "prevDate": "2001-03-28",
+      "value": "1.06164",
+      "prev": "0.99714",
+      "changePct": "6.468499909742",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-03-29",
+      "prevDate": "2001-03-28",
+      "value": "1.056544",
+      "prev": "0.992354",
+      "changePct": "6.468457828557",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-03-14",
+      "prevDate": "2001-03-13",
+      "value": "1.454706",
+      "prev": "1.367006",
+      "changePct": "6.415480253927",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-03-14",
+      "prevDate": "2001-03-13",
+      "value": "1.46231",
+      "prev": "1.374152",
+      "changePct": "6.415447490525",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2023-06-23",
+      "prevDate": "2023-06-22",
+      "value": "32.051",
+      "prev": "30.1221",
+      "changePct": "6.403603998393",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2023-06-23",
+      "prevDate": "2023-06-22",
+      "value": "32.2181",
+      "prev": "30.2792",
+      "changePct": "6.403405638194",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-30",
+      "prevDate": "2021-12-29",
+      "value": "14.7088",
+      "prev": "13.8259",
+      "changePct": "6.385841066404",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-30",
+      "prevDate": "2021-12-29",
+      "value": "14.6823",
+      "prev": "13.8011",
+      "changePct": "6.384998297237",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-12-20",
+      "prevDate": "2021-12-17",
+      "value": "19.7143",
+      "prev": "18.5377",
+      "changePct": "6.347065709338",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-20",
+      "prevDate": "2021-12-17",
+      "value": "19.6788",
+      "prev": "18.5044",
+      "changePct": "6.346598646808",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-15",
+      "prevDate": "2018-08-14",
+      "value": "6.136",
+      "prev": "6.5465",
+      "changePct": "-6.270526235393",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-15",
+      "prevDate": "2018-08-14",
+      "value": "6.1471",
+      "prev": "6.5583",
+      "changePct": "-6.269917509111",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-27",
+      "prevDate": "1994-04-26",
+      "value": "0.032542",
+      "prev": "0.034713",
+      "changePct": "-6.254141099876",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-27",
+      "prevDate": "1994-04-26",
+      "value": "0.03247692",
+      "prev": "0.03464357",
+      "changePct": "-6.254118729681",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-05-06",
+      "prevDate": "1994-05-05",
+      "value": "0.05029833",
+      "prev": "0.05364677",
+      "changePct": "-6.241643252707",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-05-06",
+      "prevDate": "1994-05-05",
+      "value": "0.05039913",
+      "prev": "0.05375428",
+      "changePct": "-6.241642525953",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-05-06",
+      "prevDate": "1994-05-05",
+      "value": "0.03361064",
+      "prev": "0.03583618",
+      "changePct": "-6.210315943273",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1994-05-06",
+      "prevDate": "1994-05-05",
+      "value": "0.033678",
+      "prev": "0.035908",
+      "changePct": "-6.210315250084",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-03-14",
+      "prevDate": "2001-03-13",
+      "value": "0.999788",
+      "prev": "0.941519",
+      "changePct": "6.188828903081",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-03-14",
+      "prevDate": "2001-03-13",
+      "value": "1.00461",
+      "prev": "0.94606",
+      "changePct": "6.188825233072",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-30",
+      "prevDate": "2021-12-29",
+      "value": "13.0009",
+      "prev": "12.2439",
+      "changePct": "6.182670554317",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-30",
+      "prevDate": "2021-12-29",
+      "value": "12.9775",
+      "prev": "12.2219",
+      "changePct": "6.182344807272",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-12-20",
+      "prevDate": "2021-12-17",
+      "value": "23.1535",
+      "prev": "21.8177",
+      "changePct": "6.122551873021",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-12-20",
+      "prevDate": "2021-12-17",
+      "value": "23.0334",
+      "prev": "21.7046",
+      "changePct": "6.122204509643",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2008-10-16",
+      "prevDate": "2008-10-15",
+      "value": "1.474",
+      "prev": "1.3897",
+      "changePct": "6.066057422465",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2008-10-16",
+      "prevDate": "2008-10-15",
+      "value": "1.4811",
+      "prev": "1.3964",
+      "changePct": "6.065597250072",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1977-02-28",
+      "prevDate": "1977-02-25",
+      "value": "0.0000175",
+      "prev": "0.0000165",
+      "changePct": "6.060606060606",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1977-02-28",
+      "prevDate": "1977-02-25",
+      "value": "0.00001785",
+      "prev": "0.00001683",
+      "changePct": "6.060606060606",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1991-03-21",
+      "prevDate": "1991-03-20",
+      "value": "0.00717562",
+      "prev": "0.00676643",
+      "changePct": "6.047354365596",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1991-03-21",
+      "prevDate": "1991-03-20",
+      "value": "0.00716127",
+      "prev": "0.0067529",
+      "changePct": "6.047327814717",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-03-14",
+      "prevDate": "2001-03-13",
+      "value": "0.922433",
+      "prev": "0.869997",
+      "changePct": "6.027147220048",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-03-14",
+      "prevDate": "2001-03-13",
+      "value": "0.918005",
+      "prev": "0.865821",
+      "changePct": "6.027111839514",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1972-07-03",
+      "prevDate": "1972-06-30",
+      "value": "0.0000350231",
+      "prev": "0.0000372641",
+      "changePct": "-6.01383100625",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1972-07-03",
+      "prevDate": "1972-06-30",
+      "value": "0.000034286",
+      "prev": "0.0000364798",
+      "changePct": "-6.013739110412",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1979-04-09",
+      "prevDate": "1979-04-06",
+      "value": "0.0000265",
+      "prev": "0.000025",
+      "changePct": "6",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1979-04-09",
+      "prevDate": "1979-04-06",
+      "value": "0.00002703",
+      "prev": "0.0000255",
+      "changePct": "6",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-03-29",
+      "prevDate": "2001-03-28",
+      "value": "0.937003",
+      "prev": "0.884164",
+      "changePct": "5.976153745233",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-03-29",
+      "prevDate": "2001-03-28",
+      "value": "0.932505",
+      "prev": "0.87992",
+      "changePct": "5.976111464679",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-05-23",
+      "prevDate": "2018-05-22",
+      "value": "4.8551",
+      "prev": "4.5863",
+      "changePct": "5.860933650219",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-05-23",
+      "prevDate": "2018-05-22",
+      "value": "4.8464",
+      "prev": "4.5781",
+      "changePct": "5.860509818484",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1980-06-06",
+      "prevDate": "1980-06-05",
+      "value": "0.00007956",
+      "prev": "0.00007517",
+      "changePct": "5.840095782892",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1980-06-06",
+      "prevDate": "1980-06-05",
+      "value": "0.000078",
+      "prev": "0.0000737",
+      "changePct": "5.834464043419",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1986-03-14",
+      "prevDate": "1986-03-13",
+      "value": "0.00094544",
+      "prev": "0.00089337",
+      "changePct": "5.82849211413",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1986-03-14",
+      "prevDate": "1986-03-13",
+      "value": "0.00096435",
+      "prev": "0.00091124",
+      "changePct": "5.828321847153",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1971-12-22",
+      "prevDate": "1971-12-21",
+      "value": "0.000014",
+      "prev": "0.00001485",
+      "changePct": "-5.723905723906",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2023-06-23",
+      "prevDate": "2023-06-22",
+      "value": "27.5073",
+      "prev": "26.0199",
+      "changePct": "5.716393990753",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2023-06-23",
+      "prevDate": "2023-06-22",
+      "value": "27.4579",
+      "prev": "25.9732",
+      "changePct": "5.716276777602",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2008-10-03",
+      "prevDate": "2008-09-26",
+      "value": "1.3075",
+      "prev": "1.2375",
+      "changePct": "5.656565656566",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2008-10-03",
+      "prevDate": "2008-09-26",
+      "value": "1.3012",
+      "prev": "1.2316",
+      "changePct": "5.651185449821",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2016-06-24",
+      "prevDate": "2016-06-23",
+      "value": "4.0395",
+      "prev": "4.2808",
+      "changePct": "-5.6367968604",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2016-06-24",
+      "prevDate": "2016-06-23",
+      "value": "4.0186",
+      "prev": "4.2586",
+      "changePct": "-5.635654910064",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1971-12-22",
+      "prevDate": "1971-12-21",
+      "value": "0.000014301",
+      "prev": "0.00001515",
+      "changePct": "-5.60396039604",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2002-06-26",
+      "prevDate": "2002-06-25",
+      "value": "1.620398",
+      "prev": "1.534431",
+      "changePct": "5.602532795544",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2002-06-26",
+      "prevDate": "2002-06-25",
+      "value": "1.61262",
+      "prev": "1.527066",
+      "changePct": "5.602508339522",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1984-01-12",
+      "prevDate": "1984-01-11",
+      "value": "0.00031152",
+      "prev": "0.00029507",
+      "changePct": "5.574948317348",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-08-16",
+      "prevDate": "2018-08-15",
+      "value": "7.3552",
+      "prev": "7.788",
+      "changePct": "-5.557267591166",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-16",
+      "prevDate": "2018-08-15",
+      "value": "7.3936",
+      "prev": "7.8286",
+      "changePct": "-5.55654906369",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-04-09",
+      "prevDate": "2001-04-06",
+      "value": "1.785865",
+      "prev": "1.692293",
+      "changePct": "5.529302549854",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-04-09",
+      "prevDate": "2001-04-06",
+      "value": "1.7952",
+      "prev": "1.701139",
+      "changePct": "5.529295372101",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-08-16",
+      "prevDate": "2018-08-15",
+      "value": "5.7982",
+      "prev": "6.136",
+      "changePct": "-5.505215123859",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-16",
+      "prevDate": "2018-08-15",
+      "value": "5.8087",
+      "prev": "6.1471",
+      "changePct": "-5.505034894503",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-04-27",
+      "prevDate": "2001-04-26",
+      "value": "1.670428",
+      "prev": "1.765951",
+      "changePct": "-5.409153481608",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-04-27",
+      "prevDate": "2001-04-26",
+      "value": "1.67916",
+      "prev": "1.775182",
+      "changePct": "-5.409135513992",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-27",
+      "prevDate": "1994-04-26",
+      "value": "0.04905707",
+      "prev": "0.05186122",
+      "changePct": "-5.407026676195",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1994-04-27",
+      "prevDate": "1994-04-26",
+      "value": "0.04895896",
+      "prev": "0.0517575",
+      "changePct": "-5.407023136743",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-04-09",
+      "prevDate": "2001-04-06",
+      "value": "1.114034",
+      "prev": "1.057606",
+      "changePct": "5.335446281507",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-04-09",
+      "prevDate": "2001-04-06",
+      "value": "1.119407",
+      "prev": "1.062707",
+      "changePct": "5.335431120713",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1980-04-01",
+      "prevDate": "1980-03-31",
+      "value": "0.0000737",
+      "prev": "0.00007",
+      "changePct": "5.285714285714",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-27",
+      "prevDate": "2018-08-17",
+      "value": "7.1875",
+      "prev": "6.8267",
+      "changePct": "5.285130443699",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-27",
+      "prevDate": "2018-08-17",
+      "value": "7.2004",
+      "prev": "6.839",
+      "changePct": "5.284398303846",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1980-04-01",
+      "prevDate": "1980-03-31",
+      "value": "0.00007517",
+      "prev": "0.0000714",
+      "changePct": "5.280112044818",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-06-01",
+      "prevDate": "2001-05-31",
+      "value": "1.627544",
+      "prev": "1.718201",
+      "changePct": "-5.276274428894",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-06-01",
+      "prevDate": "2001-05-31",
+      "value": "1.619081",
+      "prev": "1.709266",
+      "changePct": "-5.276241380803",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-04-27",
+      "prevDate": "2001-04-26",
+      "value": "1.160566",
+      "prev": "1.224807",
+      "changePct": "-5.244989618773",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-04-27",
+      "prevDate": "2001-04-26",
+      "value": "1.166164",
+      "prev": "1.230714",
+      "changePct": "-5.244922865914",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1986-03-14",
+      "prevDate": "1986-03-13",
+      "value": "0.000645",
+      "prev": "0.00061295",
+      "changePct": "5.228811485439",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "1986-03-14",
+      "prevDate": "1986-03-13",
+      "value": "0.0006579",
+      "prev": "0.00062521",
+      "changePct": "5.228643175893",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1984-01-12",
+      "prevDate": "1984-01-11",
+      "value": "0.00043495",
+      "prev": "0.0004134",
+      "changePct": "5.212868892114",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1984-01-12",
+      "prevDate": "1984-01-11",
+      "value": "0.00030722",
+      "prev": "0.00029215",
+      "changePct": "5.158309087797",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2002-06-26",
+      "prevDate": "2002-06-25",
+      "value": "2.481671",
+      "prev": "2.360304",
+      "changePct": "5.142007131285",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2002-06-26",
+      "prevDate": "2002-06-25",
+      "value": "2.494643",
+      "prev": "2.372642",
+      "changePct": "5.141989394102",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-05-23",
+      "prevDate": "2018-05-22",
+      "value": "5.6817",
+      "prev": "5.4043",
+      "changePct": "5.132949688211",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-05-23",
+      "prevDate": "2018-05-22",
+      "value": "5.692",
+      "prev": "5.4141",
+      "changePct": "5.132893740419",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-08-16",
+      "prevDate": "2018-08-15",
+      "value": "6.5935",
+      "prev": "6.9501",
+      "changePct": "-5.130861426454",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2018-08-16",
+      "prevDate": "2018-08-15",
+      "value": "6.6054",
+      "prev": "6.9626",
+      "changePct": "-5.130267428834",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-05-23",
+      "prevDate": "2018-05-22",
+      "value": "6.4975",
+      "prev": "6.1805",
+      "changePct": "5.129034867729",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2018-05-23",
+      "prevDate": "2018-05-22",
+      "value": "6.4638",
+      "prev": "6.1485",
+      "changePct": "5.128080019517",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-08-14",
+      "prevDate": "2001-08-13",
+      "value": "1.465059",
+      "prev": "1.393846",
+      "changePct": "5.10910100542",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-08-14",
+      "prevDate": "2001-08-13",
+      "value": "1.472125",
+      "prev": "1.400569",
+      "changePct": "5.10906638659",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-06-01",
+      "prevDate": "2001-05-31",
+      "value": "1.144768",
+      "prev": "1.206147",
+      "changePct": "-5.088849037472",
+      "currency": "USD",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2001-06-01",
+      "prevDate": "2001-05-31",
+      "value": "1.150289",
+      "prev": "1.211964",
+      "changePct": "-5.088847523524",
+      "currency": "USD",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-11-25",
+      "prevDate": "2021-11-24",
+      "value": "15.9749",
+      "prev": "16.8244",
+      "changePct": "-5.049214236466",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-11-25",
+      "prevDate": "2021-11-24",
+      "value": "16.0582",
+      "prev": "16.9121",
+      "changePct": "-5.049047723228",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-04-27",
+      "prevDate": "2001-04-26",
+      "value": "1.053163",
+      "prev": "1.109119",
+      "changePct": "-5.045085333494",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2001-04-27",
+      "prevDate": "2001-04-26",
+      "value": "1.048108",
+      "prev": "1.103795",
+      "changePct": "-5.04504912597",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-11-29",
+      "prevDate": "2021-11-26",
+      "value": "16.8587",
+      "prev": "16.0528",
+      "changePct": "5.020307983654",
+      "currency": "GBP",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-11-29",
+      "prevDate": "2021-11-26",
+      "value": "16.9466",
+      "prev": "16.1365",
+      "changePct": "5.020295603136",
+      "currency": "GBP",
+      "field": "forexSelling"
+    },
+    {
+      "date": "2021-11-29",
+      "prevDate": "2021-11-26",
+      "value": "14.2793",
+      "prev": "13.5971",
+      "changePct": "5.017246324584",
+      "currency": "EUR",
+      "field": "forexBuying"
+    },
+    {
+      "date": "2021-11-29",
+      "prevDate": "2021-11-26",
+      "value": "14.305",
+      "prev": "13.6216",
+      "changePct": "5.017031773066",
+      "currency": "EUR",
+      "field": "forexSelling"
+    },
+    {
+      "date": "1981-02-26",
+      "prevDate": "1981-02-25",
+      "value": "0.00021384",
+      "prev": "0.0002251",
+      "changePct": "-5.002221235007",
+      "currency": "GBP",
+      "field": "forexBuying"
+    }
+  ]
+}

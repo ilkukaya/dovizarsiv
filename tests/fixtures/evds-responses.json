@@ -1,0 +1,455 @@
+{
+ "_note": "Gerçek EVDS3 yanıtı (2026-09-28 keşfi), yalnızca test fixture'ı. Üretimde mock veri kullanılmaz.",
+ "archive_2004_2005": {
+  "totalCount": 10,
+  "items": [
+   {
+    "Tarih": "27-12-2004",
+    "TP_DK_USD_A": "1364000.00000000",
+    "TP_DK_USD_S": "1370600.00000000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "1845500.00000000",
+    "TP_DK_EUR_S": "1854400.00000000",
+    "TP_DK_EUR_C": "1.35300000",
+    "UNIXTIME": {
+     "$numberLong": "1104102000"
+    }
+   },
+   {
+    "Tarih": "28-12-2004",
+    "TP_DK_USD_A": "1352700.00000000",
+    "TP_DK_USD_S": "1359200.00000000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "1830300.00000000",
+    "TP_DK_EUR_S": "1839100.00000000",
+    "TP_DK_EUR_C": "1.35310000",
+    "UNIXTIME": {
+     "$numberLong": "1104188400"
+    }
+   },
+   {
+    "Tarih": "29-12-2004",
+    "TP_DK_USD_A": "1342500.00000000",
+    "TP_DK_USD_S": "1349000.00000000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "1830300.00000000",
+    "TP_DK_EUR_S": "1839100.00000000",
+    "TP_DK_EUR_C": "1.36330000",
+    "UNIXTIME": {
+     "$numberLong": "1104274800"
+    }
+   },
+   {
+    "Tarih": "30-12-2004",
+    "TP_DK_USD_A": "1352500.00000000",
+    "TP_DK_USD_S": "1359000.00000000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "1842700.00000000",
+    "TP_DK_EUR_S": "1851600.00000000",
+    "TP_DK_EUR_C": "1.36250000",
+    "UNIXTIME": {
+     "$numberLong": "1104361200"
+    }
+   },
+   {
+    "Tarih": "31-12-2004",
+    "TP_DK_USD_A": "1342100.00000000",
+    "TP_DK_USD_S": "1348600.00000000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "1826800.00000000",
+    "TP_DK_EUR_S": "1835600.00000000",
+    "TP_DK_EUR_C": "1.36110000",
+    "UNIXTIME": {
+     "$numberLong": "1104447600"
+    }
+   },
+   {
+    "Tarih": "01-01-2005",
+    "TP_DK_USD_A": null,
+    "TP_DK_USD_S": null,
+    "TP_DK_USD_C": null,
+    "TP_DK_EUR_A": null,
+    "TP_DK_EUR_S": null,
+    "TP_DK_EUR_C": null,
+    "UNIXTIME": {
+     "$numberLong": "1104534000"
+    }
+   },
+   {
+    "Tarih": "02-01-2005",
+    "TP_DK_USD_A": null,
+    "TP_DK_USD_S": null,
+    "TP_DK_USD_C": null,
+    "TP_DK_EUR_A": null,
+    "TP_DK_EUR_S": null,
+    "TP_DK_EUR_C": null,
+    "UNIXTIME": {
+     "$numberLong": "1104620400"
+    }
+   },
+   {
+    "Tarih": "03-01-2005",
+    "TP_DK_USD_A": "1.33630000",
+    "TP_DK_USD_S": "1.34270000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "1.82330000",
+    "TP_DK_EUR_S": "1.83210000",
+    "TP_DK_EUR_C": "1.36450000",
+    "UNIXTIME": {
+     "$numberLong": "1104706800"
+    }
+   },
+   {
+    "Tarih": "04-01-2005",
+    "TP_DK_USD_A": "1.33830000",
+    "TP_DK_USD_S": "1.34480000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "1.81050000",
+    "TP_DK_EUR_S": "1.81920000",
+    "TP_DK_EUR_C": "1.35280000",
+    "UNIXTIME": {
+     "$numberLong": "1104793200"
+    }
+   },
+   {
+    "Tarih": "05-01-2005",
+    "TP_DK_USD_A": "1.34270000",
+    "TP_DK_USD_S": "1.34920000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "1.79760000",
+    "TP_DK_EUR_S": "1.80630000",
+    "TP_DK_EUR_C": "1.33880000",
+    "UNIXTIME": {
+     "$numberLong": "1104879600"
+    }
+   }
+  ]
+ },
+ "archive_2020_01": {
+  "totalCount": 8,
+  "items": [
+   {
+    "Tarih": "10-01-2020",
+    "TP_DK_USD_A": "5.88100000",
+    "TP_DK_USD_S": "5.89160000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "6.53360000",
+    "TP_DK_EUR_S": "6.54540000",
+    "TP_DK_EUR_C": "1.11100000",
+    "UNIXTIME": {
+     "$numberLong": "1578610800"
+    }
+   },
+   {
+    "Tarih": "11-01-2020",
+    "TP_DK_USD_A": null,
+    "TP_DK_USD_S": null,
+    "TP_DK_USD_C": null,
+    "TP_DK_EUR_A": null,
+    "TP_DK_EUR_S": null,
+    "TP_DK_EUR_C": null,
+    "UNIXTIME": {
+     "$numberLong": "1578697200"
+    }
+   },
+   {
+    "Tarih": "12-01-2020",
+    "TP_DK_USD_A": null,
+    "TP_DK_USD_S": null,
+    "TP_DK_USD_C": null,
+    "TP_DK_EUR_A": null,
+    "TP_DK_EUR_S": null,
+    "TP_DK_EUR_C": null,
+    "UNIXTIME": {
+     "$numberLong": "1578783600"
+    }
+   },
+   {
+    "Tarih": "13-01-2020",
+    "TP_DK_USD_A": "5.87130000",
+    "TP_DK_USD_S": "5.88190000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "6.51700000",
+    "TP_DK_EUR_S": "6.52880000",
+    "TP_DK_EUR_C": "1.11000000",
+    "UNIXTIME": {
+     "$numberLong": "1578870000"
+    }
+   },
+   {
+    "Tarih": "14-01-2020",
+    "TP_DK_USD_A": "5.85290000",
+    "TP_DK_USD_S": "5.86350000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "6.50960000",
+    "TP_DK_EUR_S": "6.52130000",
+    "TP_DK_EUR_C": "1.11220000",
+    "UNIXTIME": {
+     "$numberLong": "1578956400"
+    }
+   },
+   {
+    "Tarih": "15-01-2020",
+    "TP_DK_USD_A": "5.88110000",
+    "TP_DK_USD_S": "5.89170000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "6.54950000",
+    "TP_DK_EUR_S": "6.56130000",
+    "TP_DK_EUR_C": "1.11360000",
+    "UNIXTIME": {
+     "$numberLong": "1579042800"
+    }
+   },
+   {
+    "Tarih": "16-01-2020",
+    "TP_DK_USD_A": "5.88270000",
+    "TP_DK_USD_S": "5.89330000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "6.55040000",
+    "TP_DK_EUR_S": "6.56220000",
+    "TP_DK_EUR_C": "1.11350000",
+    "UNIXTIME": {
+     "$numberLong": "1579129200"
+    }
+   },
+   {
+    "Tarih": "17-01-2020",
+    "TP_DK_USD_A": "5.86840000",
+    "TP_DK_USD_S": "5.87900000",
+    "TP_DK_USD_C": "1.00000000",
+    "TP_DK_EUR_A": "6.54580000",
+    "TP_DK_EUR_S": "6.55760000",
+    "TP_DK_EUR_C": "1.11540000",
+    "UNIXTIME": {
+     "$numberLong": "1579215600"
+    }
+   }
+  ]
+ },
+ "ytl_2004_2005": {
+  "totalCount": 10,
+  "items": [
+   {
+    "Tarih": "27-12-2004",
+    "TP_DK_USD_A_YTL": "1.36400000",
+    "TP_DK_USD_S_YTL": "1.37060000",
+    "TP_DK_EUR_A_YTL": "1.84550000",
+    "TP_DK_EUR_S_YTL": "1.85440000",
+    "TP_DK_EUR_C_YTL": "1.35300000",
+    "TP_DK_GBP_A_YTL": "2.62550000",
+    "UNIXTIME": {
+     "$numberLong": "1104102000"
+    }
+   },
+   {
+    "Tarih": "28-12-2004",
+    "TP_DK_USD_A_YTL": "1.35270000",
+    "TP_DK_USD_S_YTL": "1.35920000",
+    "TP_DK_EUR_A_YTL": "1.83030000",
+    "TP_DK_EUR_S_YTL": "1.83910000",
+    "TP_DK_EUR_C_YTL": "1.35310000",
+    "TP_DK_GBP_A_YTL": "2.60120000",
+    "UNIXTIME": {
+     "$numberLong": "1104188400"
+    }
+   },
+   {
+    "Tarih": "29-12-2004",
+    "TP_DK_USD_A_YTL": "1.34250000",
+    "TP_DK_USD_S_YTL": "1.34900000",
+    "TP_DK_EUR_A_YTL": "1.83030000",
+    "TP_DK_EUR_S_YTL": "1.83910000",
+    "TP_DK_EUR_C_YTL": "1.36330000",
+    "TP_DK_GBP_A_YTL": "2.60090000",
+    "UNIXTIME": {
+     "$numberLong": "1104274800"
+    }
+   },
+   {
+    "Tarih": "30-12-2004",
+    "TP_DK_USD_A_YTL": "1.35250000",
+    "TP_DK_USD_S_YTL": "1.35900000",
+    "TP_DK_EUR_A_YTL": "1.84270000",
+    "TP_DK_EUR_S_YTL": "1.85160000",
+    "TP_DK_EUR_C_YTL": "1.36250000",
+    "TP_DK_GBP_A_YTL": "2.60300000",
+    "UNIXTIME": {
+     "$numberLong": "1104361200"
+    }
+   },
+   {
+    "Tarih": "31-12-2004",
+    "TP_DK_USD_A_YTL": "1.34210000",
+    "TP_DK_USD_S_YTL": "1.34860000",
+    "TP_DK_EUR_A_YTL": "1.82680000",
+    "TP_DK_EUR_S_YTL": "1.83560000",
+    "TP_DK_EUR_C_YTL": "1.36110000",
+    "TP_DK_GBP_A_YTL": "2.57650000",
+    "UNIXTIME": {
+     "$numberLong": "1104447600"
+    }
+   },
+   {
+    "Tarih": "01-01-2005",
+    "TP_DK_USD_A_YTL": null,
+    "TP_DK_USD_S_YTL": null,
+    "TP_DK_EUR_A_YTL": null,
+    "TP_DK_EUR_S_YTL": null,
+    "TP_DK_EUR_C_YTL": null,
+    "TP_DK_GBP_A_YTL": null,
+    "UNIXTIME": {
+     "$numberLong": "1104534000"
+    }
+   },
+   {
+    "Tarih": "02-01-2005",
+    "TP_DK_USD_A_YTL": null,
+    "TP_DK_USD_S_YTL": null,
+    "TP_DK_EUR_A_YTL": null,
+    "TP_DK_EUR_S_YTL": null,
+    "TP_DK_EUR_C_YTL": null,
+    "TP_DK_GBP_A_YTL": null,
+    "UNIXTIME": {
+     "$numberLong": "1104620400"
+    }
+   },
+   {
+    "Tarih": "03-01-2005",
+    "TP_DK_USD_A_YTL": "1.33630000",
+    "TP_DK_USD_S_YTL": "1.34270000",
+    "TP_DK_EUR_A_YTL": "1.82330000",
+    "TP_DK_EUR_S_YTL": "1.83210000",
+    "TP_DK_EUR_C_YTL": "1.36450000",
+    "TP_DK_GBP_A_YTL": "2.57930000",
+    "UNIXTIME": {
+     "$numberLong": "1104706800"
+    }
+   },
+   {
+    "Tarih": "04-01-2005",
+    "TP_DK_USD_A_YTL": "1.33830000",
+    "TP_DK_USD_S_YTL": "1.34480000",
+    "TP_DK_EUR_A_YTL": "1.81050000",
+    "TP_DK_EUR_S_YTL": "1.81920000",
+    "TP_DK_EUR_C_YTL": "1.35280000",
+    "TP_DK_GBP_A_YTL": "2.55610000",
+    "UNIXTIME": {
+     "$numberLong": "1104793200"
+    }
+   },
+   {
+    "Tarih": "05-01-2005",
+    "TP_DK_USD_A_YTL": "1.34270000",
+    "TP_DK_USD_S_YTL": "1.34920000",
+    "TP_DK_EUR_A_YTL": "1.79760000",
+    "TP_DK_EUR_S_YTL": "1.80630000",
+    "TP_DK_EUR_C_YTL": "1.33880000",
+    "TP_DK_GBP_A_YTL": "2.54530000",
+    "UNIXTIME": {
+     "$numberLong": "1104879600"
+    }
+   }
+  ]
+ },
+ "archive_cash_2020_01": {
+  "totalCount": 8,
+  "items": [
+   {
+    "Tarih": "10-01-2020",
+    "TP_DK_USD_A_EF": "5.87680000",
+    "TP_DK_USD_S_EF": "5.90040000",
+    "TP_DK_EUR_A_EF": "6.52910000",
+    "TP_DK_EUR_S_EF": "6.55520000",
+    "TP_DK_GBP_A_EF": "7.66650000",
+    "TP_DK_GBP_S_EF": "7.72350000",
+    "UNIXTIME": {
+     "$numberLong": "1578610800"
+    }
+   },
+   {
+    "Tarih": "11-01-2020",
+    "TP_DK_USD_A_EF": null,
+    "TP_DK_USD_S_EF": null,
+    "TP_DK_EUR_A_EF": null,
+    "TP_DK_EUR_S_EF": null,
+    "TP_DK_GBP_A_EF": null,
+    "TP_DK_GBP_S_EF": null,
+    "UNIXTIME": {
+     "$numberLong": "1578697200"
+    }
+   },
+   {
+    "Tarih": "12-01-2020",
+    "TP_DK_USD_A_EF": null,
+    "TP_DK_USD_S_EF": null,
+    "TP_DK_EUR_A_EF": null,
+    "TP_DK_EUR_S_EF": null,
+    "TP_DK_GBP_A_EF": null,
+    "TP_DK_GBP_S_EF": null,
+    "UNIXTIME": {
+     "$numberLong": "1578783600"
+    }
+   },
+   {
+    "Tarih": "13-01-2020",
+    "TP_DK_USD_A_EF": "5.86720000",
+    "TP_DK_USD_S_EF": "5.89070000",
+    "TP_DK_EUR_A_EF": "6.51250000",
+    "TP_DK_EUR_S_EF": "6.53860000",
+    "TP_DK_GBP_A_EF": "7.65410000",
+    "TP_DK_GBP_S_EF": "7.71100000",
+    "UNIXTIME": {
+     "$numberLong": "1578870000"
+    }
+   },
+   {
+    "Tarih": "14-01-2020",
+    "TP_DK_USD_A_EF": "5.84880000",
+    "TP_DK_USD_S_EF": "5.87230000",
+    "TP_DK_EUR_A_EF": "6.50500000",
+    "TP_DK_EUR_S_EF": "6.53110000",
+    "TP_DK_GBP_A_EF": "7.58600000",
+    "TP_DK_GBP_S_EF": "7.64230000",
+    "UNIXTIME": {
+     "$numberLong": "1578956400"
+    }
+   },
+   {
+    "Tarih": "15-01-2020",
+    "TP_DK_USD_A_EF": "5.87700000",
+    "TP_DK_USD_S_EF": "5.90050000",
+    "TP_DK_EUR_A_EF": "6.54490000",
+    "TP_DK_EUR_S_EF": "6.57110000",
+    "TP_DK_GBP_A_EF": "7.61690000",
+    "TP_DK_GBP_S_EF": "7.67340000",
+    "UNIXTIME": {
+     "$numberLong": "1579042800"
+    }
+   },
+   {
+    "Tarih": "16-01-2020",
+    "TP_DK_USD_A_EF": "5.87860000",
+    "TP_DK_USD_S_EF": "5.90210000",
+    "TP_DK_EUR_A_EF": "6.54580000",
+    "TP_DK_EUR_S_EF": "6.57210000",
+    "TP_DK_GBP_A_EF": "7.63750000",
+    "TP_DK_GBP_S_EF": "7.69420000",
+    "UNIXTIME": {
+     "$numberLong": "1579129200"
+    }
+   },
+   {
+    "Tarih": "17-01-2020",
+    "TP_DK_USD_A_EF": "5.86430000",
+    "TP_DK_USD_S_EF": "5.88780000",
+    "TP_DK_EUR_A_EF": "6.54120000",
+    "TP_DK_EUR_S_EF": "6.56740000",
+    "TP_DK_GBP_A_EF": "7.64040000",
+    "TP_DK_GBP_S_EF": "7.69720000",
+    "UNIXTIME": {
+     "$numberLong": "1579215600"
+    }
+   }
+  ]
+ }
+}

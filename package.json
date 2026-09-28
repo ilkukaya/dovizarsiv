@@ -1,28 +1,42 @@
 {
   "name": "dovizarsiv",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "private": true,
   "engines": {
     "node": ">=22.12.0"
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "tsx scripts/validation/build-guard.ts --pre && astro build && tsx scripts/ads/apply-csp.ts && tsx scripts/validation/build-guard.ts --post && npm run seo:validate && npm run links:check",
     "preview": "astro preview",
-    "astro": "astro"
+    "check": "astro check",
+    "typecheck": "astro sync && tsc --noEmit",
+    "test": "vitest run",
+    "data:discover": "tsx scripts/data/discover.ts",
+    "data:update": "tsx scripts/data/update.ts",
+    "data:validate": "tsx scripts/data/validate.ts",
+    "data:stats": "tsx scripts/data/stats.ts",
+    "verify:bulletins": "tsx scripts/validation/verify-bulletins.ts",
+    "verify:evds-spot": "tsx scripts/validation/spot-check-evds.ts",
+    "build:site": "astro build",
+    "seo:validate": "tsx scripts/seo/validate.ts",
+    "links:check": "tsx scripts/seo/links-check.ts",
+    "qa:layout": "tsx scripts/qa/layout-check.ts",
+    "qa:smoke": "tsx scripts/qa/smoke.ts",
+    "qa:lighthouse": "node scripts/qa/lighthouse.mjs",
+    "assets:images": "tsx scripts/assets/generate-images.ts"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.8",
-    "@astrojs/react": "^5.0.2",
-    "@tailwindcss/vite": "^4.2.2",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "astro": "^6.1.3",
-    "date-fns": "^4.1.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "recharts": "^3.8.1",
-    "tailwindcss": "^4.2.2",
-    "typescript": "^5.9.3"
+    "astro": "^7.3.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^22.19.0",
+    "lighthouse": "^13.5.0",
+    "playwright": "^1.63.0",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.2"
   }
 }

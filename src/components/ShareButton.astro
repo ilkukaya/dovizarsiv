@@ -1,0 +1,45 @@
+---
+/**
+ * Paylaş (SPEC §9): Web Share API varsa onunla, yoksa canonical adresi panoya kopyalar. Her zaman canonical URL paylaşılır
+ * (`?istenen=` gibi parametreler değil). JS yoksa düğme hiç görünmez; baskıda adres satırı görünür.
+ */
+import { canonicalUrl } from '../lib/seo/urls.ts';
+
+const url = canonicalUrl(Astro.url.pathname);
+---
+
+<div class="share" data-share data-url={url}>
+  <button class="button button--secondary share__button" type="button" hidden>Paylaş</button>
+  <span class="share__status small muted" role="status" aria-live="polite" data-share-status></span>
+  <p class="print-only small">Adres: {url}</p>
+</div>
+
+<script>
+  for (const box of document.querySelectorAll<HTMLElement>('[data-share]')) {
+    const button = box.querySelector<HTMLButtonElement>('.share__button')!;
+    const status = box.querySelector<HTMLElement>('[data-share-status]')!;
+    const url = box.dataset.url!;
+    const canShare = typeof navigator.share === 'function';
+    button.textContent = canShare ? 'Paylaş' : 'Bağlantıyı kopyala';
+    button.hidden = false;
+
+    button.addEventListener('click', async () => {
+      status.textContent = '';
+      if (canShare) {
+        try {
+          await navigator.share({ title: document.title, url });
+        } catch (error) {
+          // Kullanıcı paylaşımı kapattıysa (AbortError) mesaj gösterilmez.
+          if (!(error instanceof DOMException && error.name === 'AbortError')) status.textContent = `Paylaşılamadı. Adres: ${url}`;
+        }
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+        status.textContent = 'Bağlantı kopyalandı.';
+      } catch {
+        status.textContent = `Kopyalanamadı. Adres: ${url}`;
+      }
+    });
+  }
+</script>

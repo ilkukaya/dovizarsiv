@@ -1,0 +1,83 @@
+name: Veri güncelleme
+
+# Akış (SPEC §3.3): data:discover → data:update → data:validate → data:stats → test → (yalnızca veri değiştiyse) commit.
+# Commit, Cloudflare Pages build'ini tetikler.
+# Zamanlama (DECISIONS D-013): TCMB kuru 15.30 TSİ'de belirler; kur EVDS'ye ~16.00 TSİ'de (13:00 UTC) düşer.
+on:
+  schedule:
+    # Hafta içi, UTC (D-013). Ana çalışma 16.40 TSİ; yedek 19.40 TSİ (EVDS gecikmesine karşı);
+    # ertesi sabah 07.15 TSİ telafi çalışması (önceki gün kaçan kur için; Pazartesi sabahı Cuma'yı yakalar).
+    # Yeni veri yoksa commit atılmaz, build tetiklenmez.
+    - cron: '40 13 * * 1-5'
+    - cron: '40 16 * * 1-5'
+    - cron: '15 4 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      full:
+        description: 'Tam yenileme (1950 → bugün)'
+        type: boolean
+        default: false
+  push:
+    branches: ['claude/**']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-update-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    # Geliştirme dallarında yalnızca commit mesajında [data-update] / [data-full] varsa çalışır.
+    if: >-
+      github.event_name != 'push' ||
+      contains(github.event.head_commit.message, '[data-update]') ||
+      contains(github.event.head_commit.message, '[data-full]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      EVDS_API_KEY: ${{ secrets.EVDS_API_KEY }}
+      FULL: ${{ (github.event_name == 'workflow_dispatch' && inputs.full) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[data-full]')) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Seri metadata doğrulaması
+        run: npm run data:discover
+      - name: EVDS'den güncelle
+        run: npm run data:update -- ${{ env.FULL == 'true' && '--full' || '' }}
+      - name: Doğrula
+        run: npm run data:validate
+      - name: İstatistikler ve anomali raporu
+        run: npm run data:stats
+      - name: Testler
+        run: npm test
+      - name: Değiştiyse commit
+        run: |
+          if git diff --quiet -- data && [ -z "$(git ls-files --others --exclude-standard data)" ]; then
+            echo "Veri değişmedi; commit yok."
+            exit 0
+          fi
+          LAST=$(node -e "console.log(require('./data/metadata/coverage.json').lastDate)")
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          git commit -m "veri: TCMB EVDS, son belirlenme günü ${LAST}"
+          for i in 1 2 3 4; do
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((2 ** i))
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+          done
+          exit 1
+      - name: Çapraz kontrol uyuşmazlığı varsa kırmızı işaretle
+        run: |
+          node -e "
+            const c = require('./data/metadata/crosscheck.json');
+            const n = c.counts?.mismatches ?? 0;
+            console.log('Arşiv ↔ .YTL: ' + c.comparisons + ' karşılaştırma, ' + c.exact + ' tam eşleşme, yuvarlama ' + (c.counts?.roundingOnly ?? 0) + ', uyuşmazlık ' + n);
+            process.exit(n > 0 ? 1 : 0);
+          "

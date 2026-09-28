@@ -1,0 +1,72 @@
+---
+/** Masaüstü: Dolar, Euro, Sterlin, Tarih Arşivi, (Hesaplama), (Rehber). Mobil: JS gerektirmeyen <details> menü. */
+import { FEATURES, SITE } from '../config/site.ts';
+import { paths } from '../lib/seo/urls.ts';
+
+interface Props {
+  current?: string;
+}
+const { current } = Astro.props;
+const items = [
+  { label: 'Dolar', href: paths.hub('USD') },
+  { label: 'Euro', href: paths.hub('EUR') },
+  { label: 'Sterlin', href: paths.hub('GBP') },
+  { label: 'Tarih Arşivi', href: paths.archive() },
+  ...(FEATURES.tools ? [{ label: 'Hesaplama', href: paths.historicalCalculator() }] : []),
+  ...(FEATURES.guides ? [{ label: 'Rehber', href: paths.guides() }] : []),
+];
+---
+
+<header class="site-header">
+  <div class="container">
+    <div class="site-header__bar">
+      <a class="logo" href="/">
+        <span class="logo__mark" aria-hidden="true">TL</span>
+        <span>{SITE.name}</span>
+      </a>
+      <nav class="nav" aria-label="Ana menü">
+        <ul>
+          {items.map((i) => <li><a href={i.href} aria-current={current === i.href ? 'page' : undefined}>{i.label}</a></li>)}
+        </ul>
+      </nav>
+      <details class="mobile-menu">
+        <summary class="menu-toggle">Menü</summary>
+        <nav class="mobile-nav" aria-label="Mobil menü">
+          <ul>
+            {items.map((i) => <li><a href={i.href} aria-current={current === i.href ? 'page' : undefined}>{i.label}</a></li>)}
+          </ul>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<style>
+  .mobile-menu > summary {
+    list-style: none;
+  }
+  .mobile-menu > summary::-webkit-details-marker {
+    display: none;
+  }
+  .mobile-menu[open] {
+    position: static;
+  }
+  .mobile-menu[open] .mobile-nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    z-index: 5;
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.08);
+  }
+  .site-header {
+    position: relative;
+  }
+  @media (min-width: 900px) {
+    .mobile-menu {
+      display: none;
+    }
+  }
+</style>

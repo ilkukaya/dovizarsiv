@@ -1,0 +1,76 @@
+---
+/** Yıl takvimi (SPEC §6.8): 12 ay takvim ızgarası; yalnızca kur belirlenen günler linklidir. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SourceDisclosure from '../../components/SourceDisclosure.astro';
+import { CURRENCY_INFO, CURRENCY_ORDER } from '../../config/currencies.ts';
+import { addDays, weekday } from '../../lib/data/dates.ts';
+import { dayPageDates } from '../../lib/data/store.ts';
+import { formatDate, MONTHS_TR } from '../../lib/formatting/format.ts';
+import { paths } from '../../lib/seo/urls.ts';
+
+export function getStaticPaths() {
+  return [...new Set(dayPageDates().map((d) => d.slice(0, 4)))].map((year) => ({ params: { year } }));
+}
+
+const { year } = Astro.params as { year: string };
+const all = dayPageDates();
+const set = new Set(all.filter((d) => d.startsWith(`${year}-`)));
+const years = [...new Set(all.map((d) => d.slice(0, 4)))];
+const i = years.indexOf(year);
+const prevYear = years[i - 1];
+const nextYear = years[i + 1];
+const HEAD = ['Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct', 'Pz'];
+const months = Array.from({ length: 12 }, (_, m) => {
+  const first = `${year}-${String(m + 1).padStart(2, '0')}-01`;
+  const offset = (weekday(first) + 6) % 7; // Pazartesi başlangıçlı
+  const days: string[] = [];
+  for (let d = first; d.slice(5, 7) === first.slice(5, 7); d = addDays(d, 1)) days.push(d);
+  return { m, first, offset, days, count: days.filter((d) => set.has(d)).length };
+}).filter((mo) => mo.count > 0);
+const description = `${year} yılında TCMB'nin kur belirlediği ${set.size} günün takvimi. Her güne tıklayarak o gün belirlenen dolar, euro ve sterlin kurlarına ulaşın.`;
+---
+
+<BaseLayout title={`${year} Tarih Arşivi`} description={description} path={paths.archiveYear(year)} page={{ kind: 'archive-year' }} crumbs={[{ name: 'Tarih Arşivi', path: paths.archive() }, { name: year, path: paths.archiveYear(year) }]} navCurrent={paths.archive()}>
+  <h1>{year} Tarih Arşivi</h1>
+  <p class="lead">{year} yılında TCMB {set.size} günde gösterge kur belirledi. Linkli günler kurun belirlendiği günlerdir; diğer günlerde (hafta sonu, resmî tatil, arife) kur belirlenmedi.</p>
+
+  <div class="months-grid">
+    {
+      months.map((mo) => (
+        <section aria-labelledby={`m-${mo.m}`}>
+          <h2 id={`m-${mo.m}`}>
+            {MONTHS_TR[mo.m]} {year} <span class="muted small">({mo.count} gün)</span>
+          </h2>
+          <div class="calendar" aria-label={`${MONTHS_TR[mo.m]} ${year} takvimi`}>
+            {HEAD.map((h) => <span class="calendar__head" aria-hidden="true">{h}</span>)}
+            {Array.from({ length: mo.offset }, () => <span aria-hidden="true" />)}
+            {mo.days.map((d) =>
+              set.has(d) ? (
+                <a class="calendar__day" href={paths.day(d)} aria-label={formatDate(d)}>
+                  {Number(d.slice(8))}
+                </a>
+              ) : (
+                <span class="calendar__day" aria-label={`${formatDate(d)}: kur belirlenmedi`}>{Number(d.slice(8))}</span>
+              ),
+            )}
+          </div>
+          <p class="small">
+            {CURRENCY_ORDER.map((c, k) => (
+              <>
+                {k > 0 && ' · '}
+                <a href={paths.month(c, `${year}-${String(mo.m + 1).padStart(2, '0')}`)}>{CURRENCY_INFO[c].short}</a>
+              </>
+            ))}
+          </p>
+        </section>
+      ))
+    }
+  </div>
+
+  <nav class="pager" aria-label="Önceki ve sonraki yıl">
+    {prevYear ? <a href={paths.archiveYear(prevYear)} rel="prev">← {prevYear}</a> : <span />}
+    {nextYear ? <a href={paths.archiveYear(nextYear)} rel="next">{nextYear} →</a> : <span />}
+  </nav>
+
+  <SourceDisclosure calculated={false} dataDate={[...set].sort().pop()} preRedenomination={Number(year) < 2005} />
+</BaseLayout>

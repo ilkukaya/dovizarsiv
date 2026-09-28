@@ -1,0 +1,178 @@
+---
+/**
+ * Ay sayfası (SPEC §6.6): /dolar/2020/01/. Kurun belirlenmediği günler tabloda açıkça görünür (hafta sonu aramalarının cevabı).
+ * Sabit kurlu ve tek gözlemli aylar noindex,follow (isIndexablePage).
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import AdSlot from '../../../components/AdSlot.astro';
+import ShareButton from '../../../components/ShareButton.astro';
+import SourceDisclosure from '../../../components/SourceDisclosure.astro';
+import RateStatGrid from '../../../components/RateStatGrid.astro';
+import HistoricalChart from '../../../components/HistoricalChart.astro';
+import Move from '../../../components/Move.astro';
+import { CURRENCY_INFO, CURRENCY_ORDER, FIELD_LABELS } from '../../../config/currencies.ts';
+import { DAY_PAGES_START, REDENOMINATION } from '../../../config/evds-series.ts';
+import { Decimal, percentChange } from '../../../lib/calculations/decimal.ts';
+import { addDays, monthKey, weekday } from '../../../lib/data/dates.ts';
+import { hasDayPage, isFlatPeriod, lastDate, monthsOf, periodObservations, periodSummary, previousObservation } from '../../../lib/data/store.ts';
+import { formatChange, formatDate, formatMonth, formatRate, WEEKDAYS_TR } from '../../../lib/formatting/format.ts';
+import { SITE } from '../../../config/site.ts';
+import { periodIntro } from '../../../lib/text/engine.ts';
+import { paths } from '../../../lib/seo/urls.ts';
+
+export function getStaticPaths() {
+  return CURRENCY_ORDER.flatMap((code) =>
+    monthsOf(code).map((ym) => ({
+      params: { currency: CURRENCY_INFO[code].slug, year: ym.slice(0, 4), month: ym.slice(5, 7) },
+      props: { code },
+    })),
+  );
+}
+
+const { code } = Astro.props as { code: 'USD' | 'EUR' | 'GBP' };
+const { year, month } = Astro.params as { year: string; month: string };
+const info = CURRENCY_INFO[code];
+const ym = `${year}-${month}`;
+const obs = periodObservations(code, ym);
+const summary = periodSummary(code, ym);
+const selling = summary.forexSelling!;
+const buying = summary.forexBuying ?? null;
+const flat = isFlatPeriod(code, ym);
+const complete = ym < monthKey(lastDate());
+const months = monthsOf(code);
+const idx = months.indexOf(ym);
+const prevMonth = months[idx - 1];
+const nextMonth = months[idx + 1];
+const prevMean = prevMonth ? periodSummary(code, prevMonth).forexSelling?.mean : undefined;
+const intro = periodIntro({
+  currency: code,
+  period: ym,
+  selling,
+  buying,
+  complete,
+  prevMean: prevMonth && prevMean ? { period: prevMonth, value: prevMean } : null,
+  endsAtAllTimeHigh: false,
+  flat,
+});
+const title = `${formatMonth(ym)} ${info.short} Kuru`;
+const description = `${formatMonth(ym)} TCMB ${info.lower} kuru: ${selling.count} gözlem, döviz satış ortalaması ${formatRate(selling.mean.round(4))} TL, en düşük ${formatRate(selling.min.value)} TL, en yüksek ${formatRate(selling.max.value)} TL. Günlük tablo ve grafik.`;
+const pre2005 = `${ym}-01` < REDENOMINATION.effectiveSourceDate;
+
+// Ayın tüm takvim günleri (içinde bulunulan ayda son veri gününe kadar).
+const byDate = new Map(obs.map((o) => [o.date, o]));
+const days: string[] = [];
+const lastData = lastDate();
+for (let d = `${ym}-01`; d.startsWith(ym) && (complete || d <= lastData); d = addDays(d, 1)) days.push(d);
+const prevObs = previousObservation(code, `${ym}-01`);
+let prevSell = prevObs?.forexSelling ? Decimal.parse(prevObs.forexSelling) : null;
+const rows = days.map((d) => {
+  const o = byDate.get(d);
+  if (!o) return { date: d, obs: null, change: null };
+  const s = o.forexSelling ? Decimal.parse(o.forexSelling) : null;
+  const change = s && prevSell ? percentChange(prevSell, s) : null;
+  if (s) prevSell = s;
+  return { date: d, obs: o, change };
+});
+const crumbs = [
+  { name: `${info.short} Kuru Arşivi`, path: paths.hub(code) },
+  { name: `${year}`, path: paths.year(code, year) },
+  { name: formatMonth(ym), path: paths.month(code, ym) },
+];
+---
+
+<BaseLayout title={title} description={description} path={paths.month(code, ym)} page={{ kind: 'month', observationCount: obs.length, flat, hasSourceDisclosure: true }} crumbs={crumbs} navCurrent={paths.hub(code)}>
+  <h1>{title}</h1>
+  <ShareButton />
+  <div class="lead">{intro.map((s) => <p>{s}</p>)}</div>
+
+  <RateStatGrid
+    label={`${formatMonth(ym)} özeti`}
+    stats={[
+      { label: 'İlk gözlem (satış)', value: `${formatRate(selling.first.value)} TL`, meta: formatDate(selling.first.date) },
+      { label: 'Son gözlem (satış)', value: `${formatRate(selling.last.value)} TL`, meta: formatDate(selling.last.date) },
+      { label: 'Ortalama (satış)', value: `${formatRate(selling.mean.round(4))} TL`, meta: 'Döviz Arşiv hesaplaması' },
+      { label: 'Değişim (ilk → son)', value: formatChange(selling.changePct), meta: 'Döviz Arşiv hesaplaması' },
+      { label: 'En düşük (satış)', value: `${formatRate(selling.min.value)} TL`, meta: formatDate(selling.min.date) },
+      { label: 'En yüksek (satış)', value: `${formatRate(selling.max.value)} TL`, meta: formatDate(selling.max.date) },
+      ...(buying ? [{ label: 'Ortalama (alış)', value: `${formatRate(buying.mean.round(4))} TL`, meta: 'Döviz Arşiv hesaplaması' }] : []),
+      { label: 'Kur belirlenen gün', value: String(selling.count), meta: complete ? 'ay tamamlandı' : 'ay devam ediyor' },
+    ]}
+  />
+
+  <HistoricalChart
+    id="ay-grafik"
+    title={`${formatMonth(ym)} ${info.lower} döviz satış kuru`}
+    summary={`${formatDate(selling.first.date)} ile ${formatDate(selling.last.date)} arası; en düşük ${formatRate(selling.min.value)} TL, en yüksek ${formatRate(selling.max.value)} TL.`}
+    points={obs.filter((o) => o.forexSelling).map((o) => ({ date: o.date, value: Number(o.forexSelling) }))}
+    xLabel={(d) => String(Number(d.slice(8, 10)))}
+    tableNote="Günlük değerler aşağıdaki tabloda."
+  />
+
+  <AdSlot placement="primary" />
+
+  <div class="table-scroll" tabindex="0" role="region" aria-label={`${formatMonth(ym)} günlük ${info.lower} kuru`}>
+    <table class="data-table">
+      <caption>{formatMonth(ym)} günlük TCMB {info.lower} kuru (TL, belirlendiği güne göre)</caption>
+      <thead>
+        <tr>
+          <th scope="col">Tarih</th>
+          <th scope="col" class="num">{FIELD_LABELS.forexBuying}</th>
+          <th scope="col" class="num">{FIELD_LABELS.forexSelling}</th>
+          <th scope="col" class="num">Günlük değişim (satış)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((r) =>
+            r.obs ? (
+              <tr>
+                <th scope="row">
+                  {r.obs.date >= DAY_PAGES_START && hasDayPage(r.obs.date) ? (
+                    <a href={paths.day(r.date)}><time datetime={r.date}>{formatDate(r.date)}</time></a>
+                  ) : (
+                    <time datetime={r.date}>{formatDate(r.date)}</time>
+                  )}
+                  <br />
+                  <span class="muted small">{WEEKDAYS_TR[weekday(r.date)]}</span>
+                </th>
+                <td class="num">{r.obs.forexBuying ? formatRate(r.obs.forexBuying) : '—'}</td>
+                <td class="num">{r.obs.forexSelling ? formatRate(r.obs.forexSelling) : '—'}</td>
+                <td class="num"><Move pct={r.change} /></td>
+              </tr>
+            ) : (
+              <tr class="is-empty">
+                <th scope="row">
+                  <time datetime={r.date}>{formatDate(r.date)}</time>
+                  <br />
+                  <span class="small">{WEEKDAYS_TR[weekday(r.date)]}</span>
+                </th>
+                <td colspan="3">TCMB kur belirlemedi (hafta sonu, resmî tatil ya da arife)</td>
+              </tr>
+            ),
+          )
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="small muted">Tablodaki tarih, TCMB'nin kuru belirlediği gündür; kur ertesi iş günü geçerlidir. Gözlem olmayan günler sıfır sayılmaz ve ortalamaya katılmaz.</p>
+
+  {pre2005 && <div class="note"><p>Değerler 2005 para reformuna göre yeni TL'ye {SITE.name} tarafından çevrilmiştir (1 YTL = 1.000.000 TL). Eski TL için değeri 1.000.000 ile çarpın; gün sayfalarında orijinal değer ayrıca gösterilir. <a href={paths.methodology() + '#para-reformu-2005'}>Metodoloji</a></p></div>}
+
+  <nav class="pager" aria-label="Önceki ve sonraki ay">
+    {prevMonth ? <a href={paths.month(code, prevMonth)} rel="prev">← {formatMonth(prevMonth)}</a> : <span />}
+    <a href={paths.year(code, year)}>{year} {info.lower} kuru arşivi</a>
+    {nextMonth ? <a href={paths.month(code, nextMonth)} rel="next">{formatMonth(nextMonth)} →</a> : <span />}
+  </nav>
+
+  <AdSlot placement="secondary" />
+
+  <section aria-labelledby="diger-para">
+    <h2 id="diger-para">{formatMonth(ym)} Diğer Kurlar</h2>
+    <ul class="link-list">
+      {CURRENCY_ORDER.filter((c) => c !== code && monthsOf(c).includes(ym)).map((c) => <li><a href={paths.month(c, ym)}>{formatMonth(ym)} {CURRENCY_INFO[c].short} Kuru</a></li>)}
+      <li><a href={paths.hub(code)}>{info.short} Kuru Arşivi</a></li>
+    </ul>
+  </section>
+
+  <SourceDisclosure dataDate={selling.last.date} preRedenomination={pre2005} />
+</BaseLayout>

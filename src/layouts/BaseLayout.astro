@@ -1,0 +1,84 @@
+---
+/**
+ * MERKEZİ SEO LAYOUT'U (SPEC §8). DOKUNULMAZ (HANDOFF.md).
+ * title, description, canonical, robots, OG ve JSON-LD yalnızca burada üretilir; sayfalar metadata'yı elle yazmaz.
+ * İndekslenebilirlik kararı `isIndexablePage()` ile verilir ve <html data-indexable> olarak seo:validate'e bildirilir.
+ */
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/components.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { SITE } from '../config/site.ts';
+import { canonicalUrl, absoluteUrl } from '../lib/seo/urls.ts';
+import { isIndexablePage, type IndexabilityInput } from '../lib/seo/indexable.ts';
+import { breadcrumbList, jsonLdText, type Crumb, type JsonLd } from '../lib/seo/schema.ts';
+
+export interface Props {
+  /** Marka eki olmadan başlık: "15 Ocak 2020 Döviz Kurları". Ana sayfada tam başlık verilir. */
+  title: string;
+  description: string;
+  /** Canonical yol, ör. "/tarih/2020-01-15/". */
+  path: string;
+  page: Omit<IndexabilityInput, 'isCanonical'> & { isCanonical?: boolean };
+  crumbs?: Crumb[];
+  schema?: Array<JsonLd | null>;
+  /** OG görseli: sayfa türü başına statik görsel. */
+  ogImage?: string;
+  /** Ana sayfa gibi marka ekinin istenmediği durumlar. */
+  rawTitle?: boolean;
+  navCurrent?: string;
+}
+
+const { title, description, path, page, crumbs = [], schema = [], ogImage, rawTitle = false, navCurrent } = Astro.props;
+const fullTitle = rawTitle ? title : `${title} | ${SITE.name}`;
+const canonical = canonicalUrl(path);
+const decision = isIndexablePage({ isCanonical: true, ...page });
+const robots = decision.indexable ? 'index,follow' : 'noindex,follow';
+const og = absoluteUrl(ogImage ?? `/og/${page.kind === 'day' ? 'gun' : page.kind === 'home' ? 'ana-sayfa' : 'arsiv'}.png`);
+const allCrumbs: Crumb[] = crumbs.length ? [{ name: 'Ana Sayfa', path: '/' }, ...crumbs] : [];
+const ld = [...(allCrumbs.length ? [breadcrumbList(allCrumbs)] : []), ...schema.filter((s): s is JsonLd => s !== null)];
+if (description.length < 50 || description.length > 170) {
+  throw new Error(`Description uzunluğu uygun değil (${description.length}): ${path}`);
+}
+---
+
+<!doctype html>
+<html lang="tr" data-page-kind={page.kind} data-indexable={decision.indexable ? 'true' : 'false'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content={robots} />
+    {!decision.indexable && <meta name="dovizarsiv:noindex-reason" content={decision.reasons.join('; ')} />}
+    <meta property="og:type" content={page.kind === 'home' ? 'website' : 'article'} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={og} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#fbfaf7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#12161c" media="(prefers-color-scheme: dark)" />
+    {ld.map((item) => <script type="application/ld+json" set:html={jsonLdText(item)} />)}
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#icerik">İçeriğe geç</a>
+    <SiteHeader current={navCurrent} />
+    <div class="container">
+      {allCrumbs.length > 0 && <Breadcrumbs crumbs={allCrumbs} />}
+    </div>
+    <main id="icerik" class="container">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

@@ -1,0 +1,31 @@
+---
+/**
+ * Kaynak kutusu (SPEC §4.2, §7.2): veri kaynağı, veri türü, hesaplama notu, metodoloji linki.
+ * Her veri sayfasında ZORUNLU. seo:validate `data-source-disclosure` işaretini arar.
+ */
+import { SOURCE_ATTRIBUTION, SITE } from '../config/site.ts';
+import { formatDate } from '../lib/formatting/format.ts';
+import { paths } from '../lib/seo/urls.ts';
+
+interface Props {
+  dataType?: string;
+  /** Sayfadaki verinin en son kaynak (belirlenme) tarihi. */
+  dataDate?: string;
+  calculated?: boolean;
+  preRedenomination?: boolean;
+}
+const {
+  dataType = 'Günlük gösterge döviz kurları (döviz alış/satış, efektif alış/satış)',
+  dataDate,
+  calculated = true,
+  preRedenomination = false,
+} = Astro.props;
+---
+
+<aside class="source-box" data-source-disclosure aria-label="Kaynak ve yöntem">
+  <p><strong>{SOURCE_ATTRIBUTION}</strong></p>
+  <p>Veri türü: {dataType}.{dataDate && <> Veri tarihi: <time datetime={dataDate}>{formatDate(dataDate)}</time> (TCMB'nin kuru belirlediği gün).</>}</p>
+  {calculated && <p>Ortalama, değişim, yüzde ve hazır hesaplar {SITE.name} hesaplamasıdır; TCMB tarafından yayımlanmamıştır.</p>}
+  {preRedenomination && <p>2005 öncesi değerler, 1 YTL = 1.000.000 TL dönüşümüyle {SITE.name} tarafından yeni TL'ye çevrilmiştir; eski TL değerleri ayrıca gösterilir.</p>}
+  <p>TCMB kurları gösterge niteliğindedir; banka, döviz bürosu veya kart işlemlerindeki kurlar farklı olabilir. Yatırım tavsiyesi değildir. <a href={paths.methodology()}>Metodoloji</a> · <a href={paths.sources()}>Veri kaynakları</a></p>
+</aside>

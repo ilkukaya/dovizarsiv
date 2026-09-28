@@ -1,0 +1,55 @@
+---
+/**
+ * Rehber yazısı (SPEC §6.10). Metin src/content/guides/{slug}.md. Article JSON-LD, kaynak listesi ve ilgili sayfa linkleri şemadan gelir.
+ * Yazar/uzman/editör uydurulmaz; "tazelik" yalnızca frontmatter'daki `updated` tarihidir.
+ */
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import ShareButton from '../../components/ShareButton.astro';
+import { formatDate } from '../../lib/formatting/format.ts';
+import { article } from '../../lib/seo/schema.ts';
+import { paths } from '../../lib/seo/urls.ts';
+
+export const getStaticPaths = (async () => {
+  const guides = await getCollection('guides');
+  return guides.map((guide) => ({ params: { slug: guide.id }, props: { guide } }));
+}) satisfies GetStaticPaths;
+
+const { guide } = Astro.props;
+const { Content } = await render(guide);
+const d = guide.data;
+const path = paths.guide(guide.id);
+---
+
+<BaseLayout
+  title={d.title}
+  description={d.description}
+  path={path}
+  page={{ kind: 'guide' }}
+  crumbs={[{ name: 'Rehber', path: paths.guides() }, { name: d.title, path }]}
+  schema={[article({ headline: d.title, description: d.description, path, datePublished: d.updated, dateModified: d.updated })]}
+  navCurrent={paths.guides()}
+>
+  <article class="prose guide">
+    <h1>{d.title}</h1>
+    <ShareButton />
+    <p class="muted small">Son güncelleme: <time datetime={d.updated}>{formatDate(d.updated)}</time></p>
+    <Content />
+
+    <AdSlot placement="primary" />
+
+    <h2 id="ilgili-sayfalar">İlgili sayfalar</h2>
+    <ul class="link-list">
+      {d.related.map((r) => <li><a href={r.href}>{r.label}</a></li>)}
+      <li><a href={paths.guides()}>Tüm rehber yazıları</a></li>
+    </ul>
+
+    <h2 id="kaynaklar">Kaynaklar</h2>
+    <ul>
+      {d.sources.map((s) => <li><a href={s.url} rel="noopener">{s.label}</a></li>)}
+    </ul>
+    <p class="small muted">Yazıdaki örnek kurlar TCMB EVDS verisidir; oran, fark ve dönüşüm değerleri Döviz Arşiv hesaplamasıdır ve TCMB tarafından yayımlanmamıştır. Yatırım tavsiyesi değildir.</p>
+  </article>
+</BaseLayout>

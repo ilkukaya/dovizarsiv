@@ -1,0 +1,21 @@
+---
+/** 404 (SPEC §6.12): tarih seçici ve arşiv linkleri. Reklam yok. noindex. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DateFinder from '../components/DateFinder.astro';
+import { CURRENCY_INFO, CURRENCY_ORDER } from '../config/currencies.ts';
+import { paths } from '../lib/seo/urls.ts';
+---
+
+<BaseLayout title="Sayfa Bulunamadı" description="Aradığınız sayfa bulunamadı. Tarih seçiciyle o günün TCMB döviz kurlarına ulaşabilir ya da arşivlere göz atabilirsiniz." path="/404/" page={{ kind: 'notfound', isCanonical: false }}>
+  <h1>Sayfa Bulunamadı</h1>
+  <p class="lead">Bu adreste bir sayfa yok. Geçersiz bir tarih (ör. 31 Şubat) ya da TCMB'nin kur belirlemediği bir gün (hafta sonu, resmî tatil) olabilir.</p>
+  <div class="card">
+    <DateFinder id="bulunamadi-tarih" />
+  </div>
+  <h2>Arşivler</h2>
+  <ul class="link-list">
+    {CURRENCY_ORDER.map((c) => <li><a href={paths.hub(c)}>{CURRENCY_INFO[c].short} Kuru Arşivi</a></li>)}
+    <li><a href={paths.archive()}>Tarih Arşivi</a></li>
+    <li><a href="/">Ana Sayfa</a></li>
+  </ul>
+</BaseLayout>

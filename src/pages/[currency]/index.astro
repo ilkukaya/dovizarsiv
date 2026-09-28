@@ -1,0 +1,190 @@
+---
+/**
+ * Para birimi hub'ı (SPEC §6.4): /dolar/, /euro/, /sterlin/. Sitenin en güçlü sayfalarından biri.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import ShareButton from '../../components/ShareButton.astro';
+import SourceDisclosure from '../../components/SourceDisclosure.astro';
+import RateStatGrid from '../../components/RateStatGrid.astro';
+import HistoricalChart from '../../components/HistoricalChart.astro';
+import DateFinder from '../../components/DateFinder.astro';
+import ArchiveNavigator from '../../components/ArchiveNavigator.astro';
+import ExchangeRateTable from '../../components/ExchangeRateTable.astro';
+import Move from '../../components/Move.astro';
+import { CURRENCY_INFO, CURRENCY_ORDER, FIELD_LABELS } from '../../config/currencies.ts';
+import { FEATURES, SITE } from '../../config/site.ts';
+import { percentChange } from '../../lib/calculations/decimal.ts';
+import { allTimeHigh, coverageOf, hasDayPage, observationsOf, periodSummary, sharpestMoves, yearsOf, isFlatPeriod, previousObservation } from '../../lib/data/store.ts';
+import { formatDate, formatRate } from '../../lib/formatting/format.ts';
+import { dataset } from '../../lib/seo/schema.ts';
+import { paths } from '../../lib/seo/urls.ts';
+import { Decimal } from '../../lib/calculations/decimal.ts';
+
+export function getStaticPaths() {
+  return CURRENCY_ORDER.map((code) => ({ params: { currency: CURRENCY_INFO[code].slug }, props: { code } }));
+}
+
+const { code } = Astro.props as { code: 'USD' | 'EUR' | 'GBP' };
+const info = CURRENCY_INFO[code];
+const obs = observationsOf(code);
+const latest = obs[obs.length - 1]!;
+const prev = previousObservation(code, latest.date);
+const coverage = coverageOf(code)!;
+const cashCoverage = coverageOf(code, 'cashBuying');
+const years = yearsOf(code);
+const ath = allTimeHigh(code)!;
+const movesAll = sharpestMoves(code, '', 400);
+const recent = { rises: movesAll.rises.filter((m) => m.date >= '2000').slice(0, 5), falls: movesAll.falls.filter((m) => m.date >= '2000').slice(0, 5) };
+const last30 = obs.slice(-30).reverse();
+const yearRows = [...years].reverse().map((y) => {
+  const s = periodSummary(code, String(y)).forexSelling!;
+  const prevS = periodSummary(code, String(y - 1)).forexSelling;
+  return { y, s, change: prevS ? percentChange(prevS.last.value, s.last.value) : null, flat: isFlatPeriod(code, String(y)) };
+});
+const dayLink = (d: string) => (hasDayPage(d) ? paths.day(d) : paths.month(code, d.slice(0, 7)));
+const title = `${info.short} Kuru Arşivi`;
+const firstYear = coverage.first.slice(0, 4);
+const lastYear = coverage.last.slice(0, 4);
+const description = `TCMB ${info.lower} kuru arşivi (${firstYear}–${lastYear}): son belirlenen kur ${formatRate(latest.forexSelling!)} TL (${formatDate(latest.date)}), yıllık özetler, grafik ve CSV indirme.`;
+const schema = dataset({
+  name: `TCMB ${info.name} (${code}) günlük döviz kurları arşivi ${firstYear}–${lastYear}`,
+  description: `TCMB'nin ${formatDate(coverage.first)} ile ${formatDate(coverage.last)} arasında belirlediği günlük ${info.name} döviz alış ve döviz satış kurları${cashCoverage ? ` ile ${cashCoverage.first.slice(0, 4)} sonrası efektif kurlar` : ''}. Kaynak: TCMB EVDS; ${SITE.name} tarafından yeniden düzenlenmiştir.`,
+  path: paths.hub(code),
+  temporalCoverage: `${coverage.first}/${coverage.last}`,
+  csvPath: paths.csv(code),
+  keywords: [`${info.lower} kuru arşivi`, `geçmiş ${info.lower} kuru`, 'TCMB', 'EVDS', code],
+});
+---
+
+<BaseLayout title={title} description={description} path={paths.hub(code)} page={{ kind: 'hub', observationCount: obs.length, hasSourceDisclosure: true }} crumbs={[{ name: title, path: paths.hub(code) }]} schema={[schema]} navCurrent={paths.hub(code)}>
+  <h1>{title}</h1>
+  <ShareButton />
+  <p class="lead">TCMB'nin belirlediği günlük {info.name} ({code}) gösterge kurları. Arşiv kapsamı: {firstYear}–{lastYear} ({coverage.count.toLocaleString('tr-TR')} gözlem).</p>
+
+  <h2>Son Belirlenen Kur</h2>
+  <ExchangeRateTable
+    caption={`TCMB'nin ${formatDate(latest.date)} tarihinde belirlediği ${info.lower} kuru (TL)`}
+    firstHeader="Kur türü"
+    valueHeaders={['Değer']}
+    showChange
+    changeHeader={prev ? `${formatDate(prev.date)} gözlemine göre` : 'Değişim'}
+    rows={(['forexBuying', 'forexSelling', 'cashBuying', 'cashSelling'] as const)
+      .filter((f) => latest[f])
+      .map((f) => ({
+        label: FIELD_LABELS[f],
+        values: [latest[f] ?? null],
+        changePct: prev?.[f] ? percentChange(Decimal.parse(prev[f]!), Decimal.parse(latest[f]!)) : null,
+      }))}
+  />
+  <p class="small muted">Veri tarihi: <a href={dayLink(latest.date)}><time datetime={latest.date}>{formatDate(latest.date)}</time></a> (kurun belirlendiği gün; ertesi iş günü geçerlidir). Bu bir canlı kur değildir.</p>
+
+  <h2>Tarihe Göre Bul</h2>
+  <DateFinder id={`bul-${code}`} />
+
+  <h2>Yıllar</h2>
+  <ArchiveNavigator years={years} hrefFor={(y) => paths.year(code, y)} title={`${info.short} kuru yılları`} />
+
+  <HistoricalChart
+    id="uzun-vade"
+    title={`${firstYear}–${lastYear} ${info.lower} döviz satış kuru`}
+    summary={`Uzun vadeli seyir. İlk gözlem ${formatRate(obs[0]!.forexSelling!, 8)} TL (${formatDate(obs[0]!.date)}), son gözlem ${formatRate(latest.forexSelling!)} TL (${formatDate(latest.date)}); 2005 öncesi değerler yeni TL'dir.`}
+    points={obs.filter((o) => o.forexSelling).map((o) => ({ date: o.date, value: Number(o.forexSelling) }))}
+    scale="log"
+    tableNote="Yıllık özet aşağıdaki tabloda."
+  />
+
+  <AdSlot placement="primary" />
+
+  <h2>Yıllık Özet</h2>
+  <div class="table-scroll" tabindex="0" role="region" aria-label={`${info.short} kuru yıllık özet`}>
+    <table class="data-table">
+      <caption>Yıllık TCMB {info.lower} döviz satış kuru özeti (TL; ortalama ve değişim Döviz Arşiv hesaplamasıdır)</caption>
+      <thead>
+        <tr>
+          <th scope="col">Yıl</th>
+          <th scope="col" class="num">Ortalama</th>
+          <th scope="col" class="num">En Düşük</th>
+          <th scope="col" class="num">En Yüksek</th>
+          <th scope="col" class="num">Yıl Sonu</th>
+          <th scope="col" class="num">Yıllık Değişim</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          yearRows.map((r) => (
+            <tr>
+              <th scope="row"><a href={paths.year(code, r.y)}>{r.y}</a></th>
+              <td class="num">{formatRate(r.s.mean.round(r.y < 2005 ? 10 : 4), r.y < 1990 ? 8 : r.y < 2005 ? 6 : 4)}</td>
+              <td class="num">{formatRate(r.s.min.value, r.y < 1990 ? 8 : r.y < 2005 ? 6 : 4)}</td>
+              <td class="num">{formatRate(r.s.max.value, r.y < 1990 ? 8 : r.y < 2005 ? 6 : 4)}</td>
+              <td class="num">{formatRate(r.s.last.value, r.y < 1990 ? 8 : r.y < 2005 ? 6 : 4)}</td>
+              <td class="num"><Move pct={r.change} /></td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="small muted">2005 öncesi değerler 1 YTL = 1.000.000 TL dönüşümüyle yeni TL'dir; küçük değerler bu yüzden çok basamaklıdır. Yıllık değişim: yıl sonu değerinin bir önceki yıl sonuna göre değişimi.</p>
+
+  <h2>Son 30 Gözlem</h2>
+  <ExchangeRateTable
+    caption={`Son 30 belirlenme günü — ${info.lower} (TL)`}
+    firstHeader="Tarih"
+    valueHeaders={[FIELD_LABELS.forexBuying, FIELD_LABELS.forexSelling]}
+    rows={last30.map((o) => ({ label: formatDate(o.date), href: dayLink(o.date), values: [o.forexBuying ?? null, o.forexSelling ?? null] }))}
+  />
+
+  <section aria-labelledby="rekorlar">
+    <h2 id="rekorlar">Rekorlar ve En Sert Hareketler</h2>
+    <p>Tüm zamanların en yüksek döviz satış kuru: <strong class="num">{formatRate(ath.value)} TL</strong> (<a href={dayLink(ath.date)}>{formatDate(ath.date)}</a>). <span class="muted">Döviz Arşiv hesaplaması.</span></p>
+    <div class="grid grid--2">
+      {[
+        { label: '2000 sonrası en sert 5 günlük yükseliş', list: recent.rises },
+        { label: '2000 sonrası en sert 5 günlük düşüş', list: recent.falls },
+      ].map(({ label, list }) => (
+        <div class="table-scroll" tabindex="0" role="region" aria-label={label}>
+          <table class="data-table">
+            <caption>{label} (döviz satış, önceki gözleme göre)</caption>
+            <thead>
+              <tr>
+                <th scope="col">Tarih</th>
+                <th scope="col" class="num">Değer</th>
+                <th scope="col" class="num">Değişim</th>
+              </tr>
+            </thead>
+            <tbody>
+              {list.map((m) => (
+                <tr>
+                  <th scope="row"><a href={dayLink(m.date)}>{formatDate(m.date)}</a></th>
+                  <td class="num">{formatRate(m.value)}</td>
+                  <td class="num"><Move pct={m.changePct} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+    </div>
+    <p class="small muted">Değişimler Döviz Arşiv hesaplamasıdır; sebep yorumu yapılmaz.</p>
+  </section>
+
+  <section aria-labelledby="indir">
+    <h2 id="indir">Veriyi İndir ve Kullan</h2>
+    <p><a class="button button--secondary" href={paths.csv(code)} download>{info.short} kuru arşivi (CSV)</a></p>
+    <p class="small muted">CSV dosyası kaynak gösterimini içerir. Veriyi kullanırken kaynak olarak TCMB EVDS'yi belirtin. {FEATURES.tools && <a href={paths.historicalCalculator()}>Geçmiş döviz hesaplama aracı</a>} <a href={paths.methodology()}>Metodoloji</a></p>
+  </section>
+
+  <AdSlot placement="secondary" />
+
+  <section aria-labelledby="diger-hub">
+    <h2 id="diger-hub">Diğer Arşivler</h2>
+    <ul class="link-list">
+      {CURRENCY_ORDER.filter((c) => c !== code).map((c) => <li><a href={paths.hub(c)}>{CURRENCY_INFO[c].short} Kuru Arşivi</a></li>)}
+      <li><a href={paths.archive()}>Tarih Arşivi</a></li>
+    </ul>
+  </section>
+
+  <SourceDisclosure dataDate={latest.date} preRedenomination />
+</BaseLayout>

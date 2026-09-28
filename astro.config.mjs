@@ -1,13 +1,15 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
-import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  output: 'static',
   site: 'https://dovizarsiv.net',
-  integrations: [react()],
+  output: 'static',
+  trailingSlash: 'always',
+  build: { format: 'directory' },
   vite: {
-    plugins: [tailwindcss()],
+    build: {
+      // Script'ler satır içine gömülmez: CSP `script-src 'self'` (public/_headers) 'unsafe-inline' gerektirmez.
+      assetsInlineLimit: 0,
+    },
   },
 });

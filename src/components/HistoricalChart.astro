@@ -1,0 +1,50 @@
+---
+/**
+ * Build-time SVG grafik (SPEC §9). Her grafiğin başlığı ve metin özeti vardır; verisi sayfadaki tabloda da bulunur.
+ * İstemci JS yok.
+ */
+import { buildChart, CHART_PADDING, type ChartPoint } from '../lib/charts/svg.ts';
+import type { IsoDate } from '../lib/data/dates.ts';
+
+interface Props {
+  title: string;
+  summary: string;
+  points: ChartPoint[];
+  scale?: 'linear' | 'log';
+  xLabel?: (date: IsoDate) => string;
+  tableNote?: string;
+  id: string;
+}
+const { title, summary, points, scale = 'linear', xLabel, tableNote, id } = Astro.props;
+const g = buildChart(points, { scale, xLabel });
+---
+
+{
+  g && (
+    <figure class="chart" aria-labelledby={`${id}-title`}>
+      <svg viewBox={`0 0 ${g.width} ${g.height}`} role="img" aria-labelledby={`${id}-title ${id}-desc`}>
+        <title id={`${id}-title`}>{title}</title>
+        <desc id={`${id}-desc`}>{summary}</desc>
+        {g.yTicks.map((t) => (
+          <>
+            <line class="chart__axis" x1={CHART_PADDING.left} x2={g.width - CHART_PADDING.right} y1={t.y} y2={t.y} />
+            <text class="chart__label" x={CHART_PADDING.left - 6} y={t.y + 4} text-anchor="end">
+              {t.label}
+            </text>
+          </>
+        ))}
+        {g.xTicks.map((t) => (
+          <text class="chart__label" x={t.x} y={g.height - 8} text-anchor="middle">
+            {t.label}
+          </text>
+        ))}
+        <path class="chart__line" d={g.path} />
+      </svg>
+      <figcaption>
+        <strong>{title}.</strong> {summary}
+        {scale === 'log' && ' Dikey eksen logaritmiktir (on kat değişimler eşit aralıklıdır).'}
+        {tableNote && ` ${tableNote}`}
+      </figcaption>
+    </figure>
+  )
+}

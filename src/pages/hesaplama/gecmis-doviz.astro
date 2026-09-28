@@ -1,0 +1,63 @@
+---
+/**
+ * Geçmiş döviz kuru hesaplama (SPEC §6.9). Canonical niyet: "geçmiş döviz kuru hesaplama" (docs/seo-intent-map.md).
+ * Hesaplayıcı istemcide çalışır; sayfadaki açıklama ve örnek build'de gerçek veriden üretilir.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HistoricalCalculator from '../../components/tools/HistoricalCalculator.astro';
+import SourceDisclosure from '../../components/SourceDisclosure.astro';
+import { Decimal } from '../../lib/calculations/decimal.ts';
+import { convert } from '../../lib/calculations/convert.ts';
+import { firstDate, lastDate, observation } from '../../lib/data/store.ts';
+import { formatDate, formatNumber, formatRate } from '../../lib/formatting/format.ts';
+import { paths } from '../../lib/seo/urls.ts';
+
+const eurFirst = firstDate('EUR');
+const usdFirst = firstDate('USD');
+const example = observation('USD', '2020-01-15')!;
+const exampleRate = Decimal.parse(example.forexBuying!);
+const exampleResult = convert('foreignToTry', Decimal.parse('100'), exampleRate).result;
+const weekendExample = observation('USD', '2020-01-10')!;
+---
+
+<BaseLayout
+  title="Geçmiş Döviz Kuru Hesaplama"
+  description="Bir tarihteki dolar, euro veya sterlin tutarının TL karşılığını TCMB kuruyla hesaplayın. 1950'den bugüne; alış, satış ve efektif kur seçenekleriyle."
+  path={paths.historicalCalculator()}
+  page={{ kind: 'tool' }}
+  crumbs={[{ name: 'Geçmiş Döviz Kuru Hesaplama', path: paths.historicalCalculator() }]}
+  navCurrent={paths.historicalCalculator()}
+>
+  <article class="prose">
+    <h1>Geçmiş Döviz Kuru Hesaplama</h1>
+    <p class="lead">Bir tarihte belirli tutardaki dövizin TL karşılığını ya da TL tutarın döviz karşılığını, TCMB'nin o gün belirlediği kurla hesaplayın. Dolar ve sterlin {formatDate(usdFirst)} tarihinden, euro {formatDate(eurFirst)} tarihinden itibaren desteklenir.</p>
+  </article>
+
+  <HistoricalCalculator />
+  <noscript>
+    <p class="note">Hesaplayıcı JavaScript ile çalışır. JavaScript kapalıyken kurlara <a href={paths.archive()}>tarih arşivinden</a> ya da <a href={paths.hub('USD')}>dolar</a>, <a href={paths.hub('EUR')}>euro</a> ve <a href={paths.hub('GBP')}>sterlin</a> arşivlerinden ulaşabilirsiniz.</p>
+  </noscript>
+
+  <article class="prose">
+    <h2>Nasıl hesaplanır</h2>
+    <ul>
+      <li><strong>Kur günü:</strong> Seçtiğiniz günde TCMB'nin saat 15.30'da belirlediği kur kullanılır. TCMB hafta sonları, resmî tatillerde ve arife günlerinde kur belirlemez; bu durumda <strong>en yakın önceki belirlenme günü</strong> kullanılır ve sonuçta hangi günün kullanıldığı yazılır. Kur interpolasyonla doldurulmaz. Ayrıntı için <a href={paths.methodology() + '#tarih-konvansiyonu'}>metodoloji</a>.</li>
+      <li><strong>Kur türü:</strong> Döviz → TL hesabında varsayılan <em>döviz alış</em>, TL → döviz hesabında <em>döviz satış</em> kurudur. İsterseniz efektif (nakit) kurlardan birini seçebilirsiniz. Döviz → döviz hesabında kaynak para birimi alış, hedef para birimi satış kuruyla TL üzerinden çevrilir.</li>
+      <li><strong>Formül:</strong> döviz → TL için tutar × kur; TL → döviz için tutar ÷ kur. Hesap tam ondalık aritmetiğiyle yapılır; yuvarlama yalnızca gösterimde olur.</li>
+      <li><strong>2005 öncesi:</strong> 1 Ocak 2005'te 1 yeni Türk lirası (YTL) = 1.000.000 eski TL oldu. 2005 öncesi bir tarih seçtiğinizde TL tutarın eski mi yeni TL mi olduğunu seçersiniz; sonuç iki birimde de gösterilir. Ayrıntı için <a href={paths.methodology() + '#para-reformu-2005'}>metodoloji</a>.</li>
+      <li><strong>Son gün:</strong> Arşivdeki son kur belirlenme günü {formatDate(lastDate())}.</li>
+    </ul>
+
+    <h2>Örnek</h2>
+    <p>15 Ocak 2020 tarihinde TCMB'nin belirlediği USD döviz alış kuru {formatRate(exampleRate)} TL'dir. Bu kurla 100 USD, 100 × {formatRate(exampleRate)} = {formatNumber(exampleResult, 2, 2)} TL eder. Aynı gün için tüm kurlar <a href={paths.day('2020-01-15')}>15 Ocak 2020 sayfasındadır</a>. 12 Ocak 2020 Pazar günü seçilirse, TCMB o gün kur belirlemediği için 10 Ocak 2020 Cuma günü belirlenen kur ({formatRate(weekendExample.forexBuying!)} TL) kullanılır.</p>
+
+    <h2>İlgili sayfalar</h2>
+    <ul>
+      <li><a href={paths.changeCalculator()}>Kur değişimi hesaplama</a>: iki tarih arasında kur ne kadar değişti?</li>
+      <li><a href={paths.compare()}>Yıllara göre karşılaştırma</a></li>
+      <li><a href={paths.archive()}>Tarih arşivi</a> · <a href={paths.hub('USD')}>Dolar kuru arşivi</a></li>
+    </ul>
+  </article>
+
+  <SourceDisclosure dataDate={lastDate()} preRedenomination />
+</BaseLayout>

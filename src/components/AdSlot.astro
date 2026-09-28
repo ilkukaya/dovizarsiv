@@ -1,0 +1,35 @@
+---
+/**
+ * Reklam alanı (SPEC §10). Kapalıyken HİÇBİR ŞEY basmaz: kutu, yer tutucu, script yok.
+ * - test kipi: sabit yükseklikli "Reklam alanı (test modu)" kutusu (yalnızca QA/CLS ölçümü; harici script yok).
+ * - canlı kip: AdSense birimi + /ads/runtime.js (onay varsayılanı, CMP, AdSense). Sabit yükseklik rezerve edilir (CLS olmaz).
+ * Yerleşim kuralları (SPEC §10): tarih seçici, hesapla düğmesi, önceki/sonraki gezinme ve tablo kontrollerinin yakınına konmaz;
+ * 404, boş durumlar ve yönlendirme ekranlarında kullanılmaz. `secondary` yalnızca geniş ekranda (≥ 900 px) gösterilir.
+ */
+import { ADS } from '../config/ads.ts';
+
+interface Props {
+  /** Not: `slot` adı Astro'da özel (üst bileşenin adlandırılmış yuvası); bu yüzden `placement`. */
+  placement: 'primary' | 'secondary';
+}
+const { placement } = Astro.props;
+const slotId = ADS.slots[placement];
+const show = ADS.mode === 'test' || (ADS.mode === 'live' && slotId !== '');
+---
+
+{
+  show && (
+    <aside class={`ad-slot ad-slot--${placement}`} aria-label="Reklam" data-ad-placement={placement}>
+      <p class="ad-slot__label">Reklam</p>
+      <div class="ad-slot__box">
+        {ADS.mode === 'test' ? (
+          <p class="ad-slot__test">Reklam alanı (test modu)</p>
+        ) : (
+          <ins class="adsbygoogle" style="display:block" data-ad-client={ADS.clientId} data-ad-slot={slotId} data-ad-format="auto" data-full-width-responsive="true" />
+        )}
+      </div>
+    </aside>
+  )
+}
+{/* Çalışma zamanı sayfada bir kez yüklenir (birincil slot her canlı sayfada vardır) ve görünür tüm birimleri başlatır. */}
+{ADS.mode === 'live' && show && placement === 'primary' && <script is:inline src="/ads/runtime.js" defer />}

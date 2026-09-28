@@ -1,0 +1,46 @@
+---
+/** Kur değişimi hesaplama (SPEC §6.9). "Yatırım getirisi" değil "kur değişimi" dili. Canonical niyet: docs/seo-intent-map.md. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ChangeCalculator from '../../components/tools/ChangeCalculator.astro';
+import SourceDisclosure from '../../components/SourceDisclosure.astro';
+import { lastDate } from '../../lib/data/store.ts';
+import { paths } from '../../lib/seo/urls.ts';
+---
+
+<BaseLayout
+  title="Kur Değişimi Hesaplama"
+  description="İki tarih arasında dolar, euro veya sterlin kurunun ne kadar değiştiğini hesaplayın: fark, yüzde değişim, gün sayısı ve grafik. Kaynak: TCMB EVDS."
+  path={paths.changeCalculator()}
+  page={{ kind: 'tool' }}
+  crumbs={[{ name: 'Kur Değişimi Hesaplama', path: paths.changeCalculator() }]}
+  navCurrent={paths.historicalCalculator()}
+>
+  <article class="prose">
+    <h1>Kur Değişimi Hesaplama</h1>
+    <p class="lead">Bir para biriminin TCMB kuru iki tarih arasında ne kadar değişti? Başlangıç ve bitiş tarihini seçin; fark, yüzde değişim, aradaki gün sayısı ve grafik gösterilir.</p>
+  </article>
+
+  <ChangeCalculator />
+  <noscript>
+    <p class="note">Hesaplayıcı JavaScript ile çalışır. JavaScript kapalıyken yıllık özetler için <a href={paths.hub('USD')}>dolar</a>, <a href={paths.hub('EUR')}>euro</a> ve <a href={paths.hub('GBP')}>sterlin</a> arşivlerine bakabilirsiniz.</p>
+  </noscript>
+
+  <article class="prose">
+    <h2>Nasıl hesaplanır</h2>
+    <ul>
+      <li><strong>Yüzde değişim:</strong> ((bitiş kuru − başlangıç kuru) ÷ başlangıç kuru) × 100. Fark, bitiş kurundan başlangıç kurunun çıkarılmasıdır.</li>
+      <li><strong>Kur günü:</strong> Seçtiğiniz günde TCMB kur belirlemediyse (hafta sonu, resmî tatil, arife) en yakın önceki belirlenme günü kullanılır ve sonuçta yazılır. <a href={paths.methodology() + '#tarih-konvansiyonu'}>Metodoloji</a></li>
+      <li><strong>Takvim günü:</strong> seçtiğiniz iki tarih arasındaki gün sayısıdır; aradaki gözlem sayısı ayrıca gösterilir.</li>
+      <li><strong>Grafik:</strong> aralıktaki her belirlenme gününü içerir. Çok uzun aralıklarda uç değerler korunarak seyreltilir. Kur olmayan günler çizgiye doldurulmaz.</li>
+      <li>Bu araç yalnızca <em>kur değişimini</em> gösterir; yatırım getirisi hesaplamaz ve yatırım tavsiyesi değildir. Değişimin nedeni hakkında yorum yapılmaz.</li>
+    </ul>
+    <h2>İlgili sayfalar</h2>
+    <ul>
+      <li><a href={paths.historicalCalculator()}>Geçmiş döviz kuru hesaplama</a></li>
+      <li><a href={paths.compare()}>Yıllara göre karşılaştırma</a></li>
+      <li><a href={paths.archive()}>Tarih arşivi</a></li>
+    </ul>
+  </article>
+
+  <SourceDisclosure dataDate={lastDate()} preRedenomination />
+</BaseLayout>

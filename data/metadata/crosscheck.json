@@ -1,0 +1,23 @@
+{
+  "mode": "incremental",
+  "range": {
+    "start": "2026-09-07",
+    "end": "2026-09-29"
+  },
+  "comparisons": 204,
+  "exact": 204,
+  "roundingOnly": [],
+  "mismatches": [],
+  "missingInCrosscheck": [],
+  "missingInRaw": [],
+  "ytlOnlyRows": {
+    "notes": [],
+    "errors": []
+  },
+  "counts": {
+    "roundingOnly": 0,
+    "mismatches": 0,
+    "missingInCrosscheck": 0,
+    "missingInRaw": 0
+  }
+}
