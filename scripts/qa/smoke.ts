@@ -152,6 +152,20 @@ await page.click('[data-tool=mini] button[type=submit]');
 await page.waitForFunction(() => document.querySelector('[data-tool=mini] [data-result]')?.textContent?.includes('1.637,6'));
 check(true, 'gün sayfası mini hesaplayıcı: 250 EUR × 6,5504 = 1.637,60 TL');
 
+// ---- Rehber ve yasal sayfalar (SPEC §11.4) ----
+await page.goto(`${BASE}/rehber/`);
+check((await page.locator('.guide-list li').count()) === 10, 'rehber dizini: 10 yazı listelenir');
+await page.goto(`${BASE}/rehber/doviz-alis-satis-kuru-farki/`);
+const ldTypes = await page.$$eval('script[type="application/ld+json"]', (nodes) => nodes.map((n) => (JSON.parse(n.textContent ?? '{}') as { '@type'?: string })['@type']));
+check(ldTypes.includes('Article') && ldTypes.includes('BreadcrumbList'), 'rehber yazısı: Article ve BreadcrumbList JSON-LD');
+check((await page.locator('h1').count()) === 1 && (await page.locator('#kaynaklar + ul li').count()) >= 1, 'rehber yazısı: tek H1 ve kaynak listesi');
+for (const path of ['/hakkimizda/', '/iletisim/', '/gizlilik/', '/cerez-politikasi/', '/kullanim-kosullari/', '/reklam-politikasi/']) {
+  const r = await page.goto(`${BASE}${path}`);
+  check(r?.status() === 200 && (await page.locator('h1').count()) === 1, `yasal sayfa açılır: ${path}`);
+}
+await page.goto(`${BASE}/`);
+check((await page.locator('footer a[href="/gizlilik/"]').count()) === 1 && (await page.locator('footer a[href="/rehber/"]').count()) === 1, 'footer: yasal sayfa ve rehber linkleri');
+
 await browser.close();
 server.close();
 if (failures.length) {

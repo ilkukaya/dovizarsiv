@@ -1,0 +1,40 @@
+---
+/** Hakkımızda (SPEC §6.11). Site gerçekte ne yapıyorsa o anlatılır; isim, uzman, editör kurulu, ödül UYDURULMAZ. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config/site.ts';
+import { allDates, firstDate, lastDate } from '../lib/data/store.ts';
+import { formatDate, formatNumber } from '../lib/formatting/format.ts';
+import { paths } from '../lib/seo/urls.ts';
+
+const days = allDates().length;
+---
+
+<BaseLayout
+  title="Hakkımızda"
+  description="Döviz Arşiv, TCMB'nin 1950'den bugüne belirlediği dolar, euro ve sterlin kurlarını kaynak göstererek sunan bağımsız ve ücretsiz bir bilgi sitesidir."
+  path="/hakkimizda/"
+  page={{ kind: 'legal' }}
+  crumbs={[{ name: 'Hakkımızda', path: '/hakkimizda/' }]}
+>
+  <article class="prose">
+    <h1>Hakkımızda</h1>
+    <p class="lead">{SITE.name}, Türkiye Cumhuriyet Merkez Bankası'nın (TCMB) belirlediği geçmiş döviz kurlarını tek yerde, kaynağı belli ve kolay aranır biçimde sunan bağımsız bir bilgi sitesidir.</p>
+
+    <h2>Ne yapar</h2>
+    <p>Sitede ABD doları, euro ve İngiliz sterlini için TCMB'nin döviz alış, döviz satış ve efektif alış, efektif satış kurları bulunur. Kayıtlar {formatDate(firstDate())} tarihinden {formatDate(lastDate())} tarihine kadar, TCMB'nin kur belirlediği {formatNumber(String(days), 0, 0)} gün için tutulur. Her kur için o günün sayfası, ay ve yıl tabloları, grafikler, CSV indirme ve hesaplama araçları vardır.</p>
+    <p>Veriler yalnızca TCMB EVDS'den alınır. Hesaplanan değerler (ortalama, en düşük, en yüksek, yüzde değişim, dönüşümler) {SITE.name} tarafından yapılır ve TCMB tarafından yayımlanmamıştır. Yöntem <a href={paths.methodology()}>metodoloji</a>, kaynaklar <a href={paths.sources()}>veri kaynakları</a> sayfasındadır.</p>
+
+    <h2>Ne olmadığımız</h2>
+    <ul>
+      <li>{SITE.name}, TCMB'nin bir birimi değildir; TCMB ile bağlantılı değildir ve TCMB tarafından onaylanmamıştır.</li>
+      <li>Banka, döviz bürosu, aracı kurum ya da yatırım danışmanlığı kuruluşu değiliz. Sitedeki hiçbir bilgi yatırım tavsiyesi değildir.</li>
+      <li>Canlı kur sunmayız. Sitedeki en yeni değer, TCMB'nin son belirlediği kurdur ve tarihiyle birlikte yazılır.</li>
+      <li>Kurların neden değiştiğini yorumlamaz, gelecek için tahmin yapmayız.</li>
+    </ul>
+
+    <h2>Nasıl çalışır</h2>
+    <p>Kurlar her iş günü TCMB'nin belirlemesinden sonra EVDS'den çekilir, kontrol edilir ve arşive eklenir. Bir değer kaynakta sonradan değişirse değişiklik kayıt altına alınır; arşivden sessizce silinmez. Sayfalar önceden üretilir; ziyaretçi sayfayı açtığında EVDS'ye istek gönderilmez.</p>
+    {SITE.publisherName && <p>Yayıncı: {SITE.publisherName}.</p>}
+    <p>Hata bildirimi ve iletişim için <a href="/iletisim/">iletişim</a> sayfasına bakın.</p>
+  </article>
+</BaseLayout>

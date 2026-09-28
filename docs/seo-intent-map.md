@@ -35,9 +35,9 @@ Durum: ✅ yayında (Opus) · ⏳ Sonnet görevi (docs/HANDOFF.md §D) · — ü
 |---|---|---|
 | "TCMB kur nasıl belirlenir", "tarih konvansiyonu", "2005 dönüşümü nasıl hesaplanır" | `/metodoloji/` | ✅ |
 | "TCMB EVDS kur serileri", "veri kaynağı" | `/veri-kaynaklari/` | ✅ |
-| Rehber konuları 1–10 (SPEC §6.10) | `/rehber/<slug>/` (her konu tek yazı) | ⏳ |
-| "2005 para reformu eski TL" | `/rehber/2005-para-reformu-eski-tl/` (kavram) ↔ `/metodoloji/#para-reformu-2005` (hesap yöntemi) | ⏳ / ✅ |
-| "hafta sonu dolar kuru neden yok" | `/rehber/hafta-sonu-tcmb-kuru/` | ⏳ |
+| Rehber konuları 1–10 (SPEC §6.10) | `/rehber/<slug>/` (her konu tek yazı; slug'lar `src/content/guides/`) | ✅ |
+| "2005 para reformu eski TL" | `/rehber/2005-para-reformu-eski-tl/` (kavram) ↔ `/metodoloji/#para-reformu-2005` (hesap yöntemi) | ✅ |
+| "hafta sonu dolar kuru neden yok" | `/rehber/hafta-sonu-tcmb-kuru/` | ✅ |
 
 Rehber ile metodoloji aynı soruyu cevaplarsa rehber **kavramı**, metodoloji **Döviz Arşiv'in uyguladığı yöntemi** anlatır ve
 birbirine linkler. İçerik kopyalanmaz.

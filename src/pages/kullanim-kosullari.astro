@@ -1,0 +1,37 @@
+---
+/** Kullanım koşulları (SPEC §6.11). Kısa ve sitenin gerçek işleyişine dayalı; hukuki danışmanlık yerine geçmez (docs/guides-review.md'de hukuki inceleme önerilir). */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { EVDS_URL, SITE, SOURCE_ATTRIBUTION } from '../config/site.ts';
+import { paths } from '../lib/seo/urls.ts';
+---
+
+<BaseLayout
+  title="Kullanım Koşulları"
+  description="Döviz Arşiv'deki kurların bilgi amaçlı olduğu, TCMB kurlarının gösterge niteliği taşıdığı, verilerin kaynak gösterilerek kullanılması ve sorumluluk sınırları."
+  path="/kullanim-kosullari/"
+  page={{ kind: 'legal' }}
+  crumbs={[{ name: 'Kullanım Koşulları', path: '/kullanim-kosullari/' }]}
+>
+  <article class="prose">
+    <h1>Kullanım Koşulları</h1>
+    <p class="lead">{SITE.name}'i kullanarak aşağıdaki koşulları kabul etmiş olursunuz.</p>
+
+    <h2>Bilgi amaçlıdır</h2>
+    <p>Sitedeki kurlar, istatistikler ve hesaplamalar bilgi amaçlıdır. Yatırım, vergi, muhasebe, hukuk ya da başka bir alanda tavsiye değildir. Bir işlem yapmadan önce ilgili kurumdan veya uzmandan bilgi alın.</p>
+
+    <h2>TCMB kurları gösterge niteliğindedir</h2>
+    <p>Sitedeki kurlar TCMB'nin gösterge niteliğinde belirlediği kurlardır. Bankaların, döviz bürolarının ve kart işlemlerinin uyguladığı kurlar farklı olabilir. Muhasebe, vergi, gümrük veya sözleşme işlemlerinde hangi günün hangi kurunun kullanılacağı ilgili mevzuata ve sözleşmeye göre değişir; bu konuda bir belirleme yapmayız. Ayrıntı: <a href={paths.methodology()}>metodoloji</a>.</p>
+
+    <h2>Veri kaynağı ve doğruluk</h2>
+    <p>{SOURCE_ATTRIBUTION} Verileri özenle aktarır ve kontrol ederiz, ancak kaynaktaki bir değişiklik ya da hata sitemize yansıyabilir. Bir hata görürseniz <a href="/iletisim/">iletişim</a> sayfasındaki yolla bildirebilirsiniz. Ortalama, değişim ve dönüşüm gibi hesaplanan değerler {SITE.name} hesaplamasıdır; TCMB tarafından yayımlanmamıştır. Sitenin kesintisiz ya da hatasız çalışacağı garanti edilmez.</p>
+
+    <h2>Verileri kullanma</h2>
+    <p>Sitedeki değerleri, kaynağı belirterek kullanabilirsiniz: "Kaynak: TCMB EVDS". Hesaplanan değerleri kullanırken bunların Döviz Arşiv hesaplaması olduğunu belirtin. Verilerin asıl kaynağı olan EVDS'nin kendi kullanım şartları da geçerlidir (<a href={EVDS_URL} rel="noopener">EVDS</a>). Siteye aşırı yüklenerek hizmeti aksatacak otomatik istekler göndermeyin.</p>
+
+    <h2>Sorumluluk</h2>
+    <p>Sitedeki bilgilerin kullanılmasından doğan doğrudan ya da dolaylı zararlardan, hukukun izin verdiği ölçüde, yayıncı sorumlu tutulamaz. Harici sitelere verilen bağlantıların içeriğinden o sitelerin sahipleri sorumludur.</p>
+
+    <h2>Değişiklikler</h2>
+    <p>Bu koşullar ve site içeriği zaman içinde değişebilir. Güncel hâli bu sayfada yayımlanır.</p>
+  </article>
+</BaseLayout>

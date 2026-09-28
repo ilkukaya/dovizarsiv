@@ -25,6 +25,7 @@ export const paths = {
   changeCalculator: () => '/hesaplama/kur-degisimi/',
   compare: () => '/karsilastir/',
   guides: () => '/rehber/',
+  guide: (slug: string) => `/rehber/${slug}/`,
 } as const;
 
 export function absoluteUrl(path: string): string {

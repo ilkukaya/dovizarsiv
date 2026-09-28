@@ -1,0 +1,39 @@
+---
+/** İletişim (SPEC §6.11). E-posta yalnızca site.ts'den gelir; boşsa satır basılmaz (yer tutucu yok). Sunucu olmadığı için form yoktur. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config/site.ts';
+import { paths } from '../lib/seo/urls.ts';
+---
+
+<BaseLayout
+  title="İletişim"
+  description="Döviz Arşiv'de bir veri hatası, eksik kur ya da başka bir sorun görürseniz nasıl bildirebileceğinizi ve hangi bilgileri eklemeniz gerektiğini öğrenin."
+  path="/iletisim/"
+  page={{ kind: 'legal' }}
+  crumbs={[{ name: 'İletişim', path: '/iletisim/' }]}
+>
+  <article class="prose">
+    <h1>İletişim</h1>
+    {SITE.publisherName && <p>Yayıncı: {SITE.publisherName}.</p>}
+    {SITE.contactEmail && <p>E-posta: <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a></p>}
+
+    <h2>Veri hatası bildirimi</h2>
+    <p>Bir kurun TCMB'nin yayımladığından farklı olduğunu düşünüyorsanız aşağıdaki bilgileri ekleyin; böylece değeri hızlıca kaynakla karşılaştırabiliriz:</p>
+    <ul>
+      <li>Sayfanın adresi (ör. <code>/tarih/2020-01-15/</code>).</li>
+      <li>Para birimi ve kur türü (döviz alış, döviz satış, efektif alış ya da efektif satış).</li>
+      <li>Sitede gördüğünüz değer ve olması gerektiğini düşündüğünüz değer.</li>
+      <li>Kaynağınız (ör. TCMB bülteni ya da EVDS tarihi ve seri).</li>
+    </ul>
+    <p>Kurun hangi tarihe bağlandığı sık karışan bir konudur: TCMB kuru bir günde belirler, EVDS ise bir sonraki iş günü tarihiyle listeler. Bildirimden önce <a href={paths.methodology() + '#tarih-konvansiyonu'}>metodolojideki tarih açıklamasına</a> bakmanız gereksiz yazışmayı önler.</p>
+
+    <h2>Neler için yazabilirsiniz</h2>
+    <ul>
+      <li>Veri hatası ya da eksik gün bildirimi.</li>
+      <li>Sayfalarda yanlış ya da eksik bir açıklama.</li>
+      <li>Erişilebilirlik sorunu (ekran okuyucu, klavye, kontrast).</li>
+      <li>Kişisel veriler hakkında talepler (bkz. <a href="/gizlilik/">Gizlilik</a>).</li>
+    </ul>
+    <p>Yanıt süresi garanti edilmez. Yatırım, vergi ya da hukuki danışmanlık verilmez.</p>
+  </article>
+</BaseLayout>

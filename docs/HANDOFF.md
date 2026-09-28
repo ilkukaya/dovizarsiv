@@ -17,7 +17,8 @@ Bu belge, Opus'un bitirdiği temeli (Faz 0–2) ve Sonnet'in yapacağı işleri 
 | Kalite kapıları (SPEC §11.1, 11.2, 11.3, 11.7) | ✅ seo:validate, links:check, build-guard, 71 birim testi |
 | QA (SPEC §9, §11.5) | ✅ 360–1440 px taşma yok; Lighthouse 7 sayfa × 2 profil = 100/100/100/100 (D-015) |
 | Araçlar (D-1…D-4) | ✅ Faz A: 3 araç + gün sayfası mini hesaplayıcı; mantık `src/lib/tools/`, 21 birim testi, smoke senaryoları |
-| Rehber, yasal sayfalar, reklam, E2E | ⏳ **Sonnet — §D (D-5…D-10)** |
+| Rehber (10 yazı) ve yasal sayfalar (D-5, D-6) | ✅ Faz B: `src/content/guides/`, 6 yasal sayfa; insan incelemesi: `docs/guides-review.md` |
+| Reklam, paylaş/baskı/localStorage, E2E, README, lansman listesi | ⏳ **Sonnet — §D (D-7…D-10)** |
 
 ### Komutlar
 
@@ -174,7 +175,7 @@ Commit başına bir görev. Veri, SEO çekirdeği ve metin motoru değişmez (§
 - Statik "Hazır hesaplar" tablosu yerinde kalır; island yalnızca özel tutar içindir. CLS 0 kalmalı (yer ayrılmış kutu).
 - **Kabul:** Lighthouse `/tarih/2020-01-15/` mobil CLS < 0,05, TBT < 50 ms.
 
-### D-5 Rehber `/rehber/` + 10 yazı (SPEC §6.10, §7)
+### D-5 Rehber `/rehber/` + 10 yazı (SPEC §6.10, §7) ✅ TAMAMLANDI (Faz B; insan incelemesi bekliyor: docs/guides-review.md)
 - `src/content/` altında content collection. Her yazı Article JSON-LD (yeni tipli yardımcı `schema.ts`'e **eklenebilir**;
   mevcut yardımcılar değişmez), BreadcrumbList, ilgili arşiv/araç linkleri.
 - Doğrulanamayan olgu yok. Olgular resmi kaynaklara linklenir (TCMB, Resmî Gazete). Yazar/uzman/editör uydurulmaz.
@@ -183,7 +184,7 @@ Commit başına bir görev. Veri, SEO çekirdeği ve metin motoru değişmez (§
   `#hafta-sonu-tatil` bölümüne linkler. Tarih konvansiyonu anlatımı D-012 ile birebir tutarlıdır.
 - **Kabul:** `STATIC_ROUTES` `sitemap: 'guides'`, `FEATURES.guides = true`, seo:validate temiz.
 
-### D-6 Güven ve yasal sayfalar (SPEC §6.11)
+### D-6 Güven ve yasal sayfalar (SPEC §6.11) ✅ TAMAMLANDI (Faz B)
 - `/hakkimizda/`, `/iletisim/`, `/gizlilik/` (KVKK), `/cerez-politikasi/`, `/kullanim-kosullari/`, `/reklam-politikasi/`.
 - Yayıncı ve e-posta **yalnızca** `SITE.publisherName` / `SITE.contactEmail`'den gelir. Boşsa alan hiç basılmaz (yer tutucu yok).
   İletişim formu yok (sunucu yok); e-posta linki.

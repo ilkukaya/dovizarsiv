@@ -1,0 +1,58 @@
+---
+/**
+ * Gizlilik ve KVKK aydınlatması (SPEC §6.11). Sitenin BUGÜN gerçekte yaptığını anlatır: çerez yok, analitik ve reklam kapalı,
+ * tarayıcıda yalnızca kullanıcı tercihi (localStorage). Reklam/ölçüm açıldığında bu sayfa ve çerez politikası güncellenmelidir
+ * (docs/HANDOFF.md, docs/LAUNCH-CHECKLIST.md). Veri sorumlusu bilgisi yalnızca site.ts'den gelir.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config/site.ts';
+---
+
+<BaseLayout
+  title="Gizlilik Politikası ve KVKK Aydınlatma Metni"
+  description="Döviz Arşiv'i ziyaret ettiğinizde hangi verilerin işlendiği, çerez kullanılmadığı, tarayıcıda neyin saklandığı ve KVKK kapsamındaki haklarınız."
+  path="/gizlilik/"
+  page={{ kind: 'legal' }}
+  crumbs={[{ name: 'Gizlilik', path: '/gizlilik/' }]}
+>
+  <article class="prose">
+    <h1>Gizlilik Politikası ve KVKK Aydınlatma Metni</h1>
+    <p class="lead">{SITE.name}'i kullanmak için üye olmanız, ad, e-posta ya da başka kişisel bilgi vermeniz gerekmez. Bu sayfa, siteyi ziyaret ettiğinizde hangi verilerin işlendiğini açıklar.</p>
+
+    {
+      (SITE.publisherName || SITE.contactEmail) && (
+        <>
+          <h2>Veri sorumlusu</h2>
+          <p>
+            {SITE.publisherName && <>{SITE.publisherName}</>}
+            {SITE.publisherName && SITE.contactEmail && <> · </>}
+            {SITE.contactEmail && <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>}
+          </p>
+        </>
+      )
+    }
+
+    <h2>Sitenin topladığı veriler</h2>
+    <ul>
+      <li><strong>Hesap, form ve yorum yoktur.</strong> Sitede kullanıcı hesabı, iletişim formu veya yorum alanı bulunmaz; bu yolla kişisel veri toplanmaz.</li>
+      <li><strong>Çerez kullanılmaz.</strong> Site bugün çerez (cookie) ayarlamaz. Ayrıntı için <a href="/cerez-politikasi/">çerez politikası</a>.</li>
+      <li><strong>Analitik ve reklam kapalıdır.</strong> Sitede şu anda ziyaretçi ölçümü, profil çıkarma veya reklam bulunmaz.</li>
+      <li><strong>Hesaplamalarınız sunucuya gönderilmez.</strong> Hesaplama araçlarında yazdığınız tutar ve tarihler tarayıcınızda hesaplanır; yalnızca gerekli yıllık kur dosyaları sunucudan indirilir.</li>
+    </ul>
+
+    <h2>Tarayıcınızda saklananlar</h2>
+    <p>Araçlarda seçtiğiniz para birimi, kur türü ve son bakılan tarihler, bir sonraki ziyaretinizde işinizi kolaylaştırmak için tarayıcınızın yerel depolama alanında (localStorage) saklanabilir. Bu bilgi yalnızca cihazınızda kalır, sunucuya gönderilmez ve sizi tanımlamaz. Tarayıcı ayarlarından site verilerini silerek kaldırabilirsiniz; depolama kapalıysa site aynı şekilde çalışır.</p>
+
+    <h2>Barındırma sağlayıcısı kayıtları</h2>
+    <p>Sayfalar Cloudflare Pages üzerinden sunulur. Her web sitesinde olduğu gibi, sayfa istekleriyle ilgili teknik kayıtlar (IP adresi, tarayıcı bilgisi, istek zamanı) barındırma ve içerik dağıtım sağlayıcısı tarafından güvenlik ve işletim amacıyla kendi politikasına göre tutulabilir. {SITE.name} bu kayıtlardan ziyaretçi profili oluşturmaz.</p>
+
+    <h2>Üçüncü taraflar</h2>
+    <p>Sayfalar harici yazı tipi, harita, sosyal medya eklentisi ya da izleyici yüklemez. Reklam gösterimi ileride başlarsa reklam ve onay yönetimi sağlayıcıları bu sayfada ve <a href="/cerez-politikasi/">çerez politikasında</a> ayrıca belirtilir ve çerez onayınız istenir.</p>
+
+    <h2>KVKK kapsamındaki haklarınız</h2>
+    <p>6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında ilgili kişi olarak, kişisel verilerinizin işlenip işlenmediğini öğrenme, işlenmişse buna ilişkin bilgi talep etme, düzeltilmesini ya da silinmesini isteme gibi haklara sahipsiniz. Sitenin doğrudan topladığı bir kişisel veri bulunmadığından bu talepler çoğunlukla barındırma sağlayıcısı kayıtları için geçerli olur. Taleplerinizi <a href="/iletisim/">iletişim</a> sayfasındaki adrese iletebilirsiniz.</p>
+
+    <h2>Değişiklikler</h2>
+    <p>Sitenin veri işleme biçimi değişirse (ör. analitik ya da reklam eklenirse) bu sayfa güncellenir ve değişiklik yayımlanmadan önce çerez onayı düzeni devreye alınır.</p>
+  </article>
+</BaseLayout>

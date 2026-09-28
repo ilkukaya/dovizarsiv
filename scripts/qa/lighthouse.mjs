@@ -11,7 +11,7 @@ import lighthouse from 'lighthouse';
 import * as chromeLauncher from 'chrome-launcher';
 
 const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png' };
-const PAGES = ['/', '/dolar/', '/dolar/2020/', '/dolar/2020/01/', '/tarih/2020-01-15/', '/tarih-arsivi/2020/', '/metodoloji/', '/hesaplama/gecmis-doviz/', '/hesaplama/kur-degisimi/', '/karsilastir/'];
+const PAGES = ['/', '/dolar/', '/dolar/2020/', '/dolar/2020/01/', '/tarih/2020-01-15/', '/tarih-arsivi/2020/', '/metodoloji/', '/hesaplama/gecmis-doviz/', '/hesaplama/kur-degisimi/', '/karsilastir/', '/rehber/', '/rehber/doviz-alis-satis-kuru-farki/', '/cerez-politikasi/'];
 
 const server = createServer((req, res) => {
   let file = join('dist', decodeURIComponent(req.url.split('?')[0]));

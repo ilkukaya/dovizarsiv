@@ -28,8 +28,8 @@ export const EVDS_TERMS_NOTE = 'EVDS Kullanım Şartları';
  */
 export const FEATURES = {
   tools: true, // /hesaplama/gecmis-doviz/, /hesaplama/kur-degisimi/, /karsilastir/
-  guides: false, // /rehber/
-  legalPages: false, // /hakkimizda/, /iletisim/, /gizlilik/, /cerez-politikasi/, /kullanim-kosullari/, /reklam-politikasi/
+  guides: true, // /rehber/
+  legalPages: true, // /hakkimizda/, /iletisim/, /gizlilik/, /cerez-politikasi/, /kullanim-kosullari/, /reklam-politikasi/
 } as const;
 
 /**

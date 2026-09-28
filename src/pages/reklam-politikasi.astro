@@ -1,0 +1,32 @@
+---
+/** Reklam politikası (SPEC §10). Bugün reklam yok; ilkeler AdSlot davranışıyla birebir uyumlu tutulur (src/components/AdSlot.astro). */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config/site.ts';
+---
+
+<BaseLayout
+  title="Reklam Politikası"
+  description="Döviz Arşiv şu anda reklam göstermez. Reklam eklenirse içeriğin reklamdan baskın kalması, veri sonuçlarının etkilenmemesi ve onay alınması ilkeleri geçerlidir."
+  path="/reklam-politikasi/"
+  page={{ kind: 'legal' }}
+  crumbs={[{ name: 'Reklam Politikası', path: '/reklam-politikasi/' }]}
+>
+  <article class="prose">
+    <h1>Reklam Politikası</h1>
+    <p class="lead">{SITE.name} bugün reklam göstermez. Bu sayfa, reklam eklenmesi hâlinde uygulanacak ilkeleri açıklar.</p>
+
+    <h2>Bugünkü durum</h2>
+    <p>Sitede reklam, sponsorlu içerik ve bağlantı yoluyla kazanç sağlayan yönlendirme bulunmaz. Sitedeki tüm özellikler ücretsizdir ve ücretsiz kalır. Hiçbir veri, hesaplayıcı ya da indirme ücrete bağlı değildir.</p>
+
+    <h2>Reklam eklenirse</h2>
+    <ul>
+      <li>İçerik her zaman reklamdan baskın olur. Reklamlar veri tablolarının ve sonuçların önüne geçmez, sayfa düzenini kaydırmaz.</li>
+      <li>Reklamlar reklam olarak ayırt edilebilir olur; gezinme ya da içerik düğmesi gibi görünmez.</li>
+      <li>Tarih seçici, hesapla düğmesi, önceki/sonraki gezinme ve tablo kontrollerinin yakınına reklam konmaz. 404 sayfasında ve boş durumlarda reklam gösterilmez.</li>
+      <li>Reklam verenler kur verisini, hesap sonuçlarını ya da sıralamayı etkileyemez.</li>
+      <li>Zorunlu olmayan çerezler, siz onay vermeden ayarlanmaz (bkz. <a href="/cerez-politikasi/">çerez politikası</a>).</li>
+      <li>Zorla yenileme, slayt sayfalama, sahte indirme düğmesi, geri sayım ya da bildirim istekleri gibi yanıltıcı düzenler kullanılmaz.</li>
+    </ul>
+    <p>Reklam yayınlanmaya başlarsa hangi sağlayıcının kullanıldığı bu sayfada ve <a href="/gizlilik/">gizlilik</a> sayfasında belirtilir.</p>
+  </article>
+</BaseLayout>

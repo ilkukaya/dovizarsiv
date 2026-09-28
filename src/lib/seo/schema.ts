@@ -78,6 +78,31 @@ export function dataset(input: DatasetInput): JsonLd {
   };
 }
 
+export interface ArticleInput {
+  headline: string;
+  description: string;
+  path: string;
+  datePublished: string;
+  dateModified: string;
+}
+
+/** Rehber yazıları için Article. Yazar/uzman UYDURULMAZ: yayıncı olarak yalnızca site (ya da site.ts'deki yayıncı adı) yazılır. */
+export function article(input: ArticleInput): JsonLd {
+  const org = { '@type': 'Organization', name: SITE.publisherName || SITE.name, url: SITE.url + '/' };
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: input.headline,
+    description: input.description,
+    inLanguage: SITE.language,
+    mainEntityOfPage: absoluteUrl(input.path),
+    datePublished: input.datePublished,
+    dateModified: input.dateModified,
+    author: org,
+    publisher: org,
+  };
+}
+
 /** `</script>` kaçışı ile güvenli JSON-LD metni. */
 export function jsonLdText(data: JsonLd): string {
   return JSON.stringify(data).replace(/</g, '\\u003c');

@@ -1,0 +1,45 @@
+---
+/** Çerez politikası (SPEC §6.11, §10). Bugün: çerez yok. Reklam/analitik açıldığında Google sertifikalı CMP ve bu sayfanın güncellenmesi zorunludur. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config/site.ts';
+---
+
+<BaseLayout
+  title="Çerez Politikası"
+  description="Döviz Arşiv çerez ayarlamaz. Tarayıcıda yalnızca tercihleriniz saklanabilir; reklam ya da ölçüm eklenirse çerez onayı istenecek ve bu sayfa güncellenecektir."
+  path="/cerez-politikasi/"
+  page={{ kind: 'legal' }}
+  crumbs={[{ name: 'Çerez Politikası', path: '/cerez-politikasi/' }]}
+>
+  <article class="prose">
+    <h1>Çerez Politikası</h1>
+    <p class="lead">{SITE.name} bugün çerez (cookie) ayarlamaz ve çerez onayı istemez.</p>
+
+    <h2>Bugünkü durum</h2>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Kullanılan teknolojiler">
+    <table class="data-table">
+      <caption class="visually-hidden">Sitede kullanılan çerez ve benzeri teknolojiler</caption>
+      <thead>
+        <tr><th scope="col">Teknoloji</th><th scope="col">Kullanılıyor mu</th><th scope="col">Amaç</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Çerez (cookie)</th><td>Hayır</td><td>—</td></tr>
+        <tr><th scope="row">Ziyaretçi ölçümü / analitik</th><td>Hayır</td><td>—</td></tr>
+        <tr><th scope="row">Reklam</th><td>Hayır</td><td>—</td></tr>
+        <tr><th scope="row">Yerel depolama (localStorage)</th><td>Yalnızca tercih</td><td>Araçlarda son seçilen para birimi, kur türü ve son bakılan tarihler. Cihazınızda kalır, sunucuya gönderilmez.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h2>localStorage'ı silmek</h2>
+    <p>Tarayıcınızın ayarlarından bu siteye ait verileri silebilirsiniz. Silindiğinde ya da tarayıcı depolamayı engellediğinde site aynı şekilde çalışır; yalnızca son seçimleriniz hatırlanmaz.</p>
+
+    <h2>İleride</h2>
+    <p>Sitede reklam gösterimi ya da ziyaretçi ölçümü başlarsa çerezler kullanılabilir. Bu durumda:</p>
+    <ul>
+      <li>Kullanılacak çerezler, sağlayıcıları ve amaçları bu sayfada tablo halinde listelenir.</li>
+      <li>Zorunlu olmayan çerezler, siz onay vermeden ayarlanmaz. Onay yönetimi için Google sertifikalı bir onay yönetim platformu kullanılır; onayınızı istediğiniz zaman değiştirebilirsiniz.</li>
+      <li>Gizlilik bilgileri <a href="/gizlilik/">gizlilik sayfasında</a> güncellenir.</li>
+    </ul>
+  </article>
+</BaseLayout>

@@ -463,6 +463,14 @@ büyüklüğüne göre değil); 2004-12-31 gün sayfasında eski TL karşılığ
 - **Düzen:** 16 sayfa × 7 genişlik, araç sonuçları açıkken de yatay taşma yok.
 - **Lighthouse (mobil / masaüstü):** araç sayfaları 100/100/100/100, CLS 0,000, TBT 0; LCP mobil 1,10–1,35 sn. Gün sayfası mini hesaplayıcıyla 31 → 51 KB, LCP mobil 1,05 → 1,40 sn (hedef < 2,0 sn).
 
+## D-017 Faz B: rehber ve yasal sayfalar (Sonnet, 2026-09-28)
+
+- **Rehber:** Markdown content collection (`src/content.config.ts`); şema build'de zorunlu (title, description 50–170, `updated`, ≥1 kaynak, ≥1 ilgili link). 10 yazı SPEC §6.10 sırasıyla; Article JSON-LD (yazar/uzman uydurulmaz: yayıncı olarak site adı ya da `site.ts` yayıncısı), BreadcrumbList, kaynak listesi, ilgili sayfalar.
+- **Olgu kuralı:** ortam resmî sitelere erişemediğinden yazılar yalnızca DECISIONS'ta doğrulanmış bilgilere ve sitenin kendi verisine dayanır; kalan olgular `docs/guides-review.md`'de "bilerek yazılmadı" listesindedir (TCMB'nin kur hesaplama yöntemi, 2005 reformunun yasal ayrıntısı, resmî işlemlerde hangi günün kurunun kullanılacağı vb.).
+- **Test kapısı (`tests/guides.test.ts`):** 10 yazı, sıra, description uzunluğu, kaynak, yasak kalıplar ("günümüzde", "bu yazımızda", sebep/tahmin dili…), iç link biçimi, `STATIC_ROUTES` tutarlılığı.
+- **Yasal sayfalar (6):** bugünkü gerçek durumu anlatır: çerez yok, analitik ve reklam kapalı, tarayıcıda yalnızca tercih (localStorage), barındırma sağlayıcısı kayıtları. Yayıncı/e-posta yalnızca `site.ts`'den; boşsa satır basılmaz. Reklam/analitik açıldığında gizlilik, çerez ve reklam politikası sayfalarının güncellenmesi zorunlu (LAUNCH-CHECKLIST).
+- **Menü/footer:** `FEATURES.guides` ve `FEATURES.legalPages` açıldı; 17 yeni rota `STATIC_ROUTES` ile sitemap'te (`guides` grubu ayrı).
+
 ## Owner kararları (Faz 0 sonrası, 2026-09-28)
 
 Faz 0'daki açık soruların hepsi cevaplandı:
