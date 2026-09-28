@@ -1,0 +1,43 @@
+---
+/** Yıllara göre karşılaştırma (SPEC §6.9). Etkileşim durumu indekslenebilir URL üretmez. Canonical niyet: docs/seo-intent-map.md. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import YearComparison from '../components/tools/YearComparison.astro';
+import SourceDisclosure from '../components/SourceDisclosure.astro';
+import { MAX_COMPARE_YEARS } from '../lib/tools/compare.ts';
+import { lastDate } from '../lib/data/store.ts';
+import { paths } from '../lib/seo/urls.ts';
+---
+
+<BaseLayout
+  title="Yıllara Göre Kur Karşılaştırma"
+  description="Seçtiğiniz yıllar için dolar, euro ve sterlin kurunun ortalama, en düşük, en yüksek ve yıl sonu değerlerini tabloda karşılaştırın. Kaynak: TCMB EVDS."
+  path={paths.compare()}
+  page={{ kind: 'tool' }}
+  crumbs={[{ name: 'Yıllara Göre Kur Karşılaştırma', path: paths.compare() }]}
+  navCurrent={paths.historicalCalculator()}
+>
+  <article class="prose">
+    <h1>Yıllara Göre Kur Karşılaştırma</h1>
+    <p class="lead">Yıllar arasında dolar, euro ve sterlin kurunun ortalama, en düşük, en yüksek ve yıl sonu değerlerini tek tabloda görün. En fazla {MAX_COMPARE_YEARS} yıl seçilebilir.</p>
+  </article>
+
+  <YearComparison />
+  <noscript>
+    <p class="note">Karşılaştırma aracı JavaScript ile çalışır. JavaScript kapalıyken her yılın özeti için <a href={paths.hub('USD')}>dolar</a>, <a href={paths.hub('EUR')}>euro</a> ve <a href={paths.hub('GBP')}>sterlin</a> arşivlerindeki yıl sayfalarını kullanabilirsiniz.</p>
+  </noscript>
+
+  <article class="prose">
+    <h2>Değerler nasıl hesaplanır</h2>
+    <ul>
+      <li><strong>Ortalama:</strong> yılda TCMB'nin kur belirlediği günlerin aritmetik ortalamasıdır. Hafta sonu ve tatiller sıfır sayılmaz, doldurulmaz.</li>
+      <li><strong>En düşük / en yüksek:</strong> yıl içindeki en küçük ve en büyük değer; eşitlikte en erken tarih gösterilir.</li>
+      <li><strong>Yıl sonu:</strong> yılın son kur belirlenme gününün kuru.</li>
+      <li><strong>İlk → son:</strong> yılın ilk ve son gözlemi arasındaki yüzde değişim.</li>
+      <li>Aynı tanımlar yıl sayfalarında da kullanılır; bu tablodaki değerler ilgili yıl sayfasıyla birebir aynıdır. Yıl bağlantısına tıklayarak aylık dökümü görebilirsiniz.</li>
+      <li>Yıllar artan sırayla listelenir. Verisi olmayan yıllar (ör. euro için 1998 öncesi) ayrıca belirtilir.</li>
+    </ul>
+    <p>Yıllar arasında iki tarihi doğrudan karşılaştırmak için <a href={paths.changeCalculator()}>kur değişimi hesaplama</a> aracını, belirli bir günün karşılığı için <a href={paths.historicalCalculator()}>geçmiş döviz kuru hesaplama</a> aracını kullanın.</p>
+  </article>
+
+  <SourceDisclosure dataDate={lastDate()} preRedenomination />
+</BaseLayout>

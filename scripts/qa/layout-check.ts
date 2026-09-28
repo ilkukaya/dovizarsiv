@@ -23,10 +23,15 @@ export const PAGES = [
   '/tarih/2004-12-31/',
   '/tarih-arsivi/',
   '/tarih-arsivi/2020/',
+  '/hesaplama/gecmis-doviz/',
+  '/hesaplama/kur-degisimi/',
+  '/karsilastir/',
   '/metodoloji/',
   '/veri-kaynaklari/',
   '/bu-sayfa-yok/',
 ];
+/** Araç sayfalarında sonuç durumunu da ölçmek için varsayılan değerlerle formu gönderir. */
+const TOOL_PATHS = new Set(['/hesaplama/gecmis-doviz/', '/hesaplama/kur-degisimi/', '/karsilastir/', '/tarih/2020-01-15/', '/tarih/2004-12-31/']);
 const TYPES: Record<string, string> = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.xml': 'application/xml' };
 
 function serve(port: number) {
@@ -55,6 +60,10 @@ async function main(): Promise<void> {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     for (const path of PAGES) {
       await page.goto(`http://localhost:${port}${path}`, { waitUntil: 'load' });
+      if (TOOL_PATHS.has(path)) {
+        await page.click('.tool button[type=submit]');
+        await page.waitForSelector('[data-result] .tool-result__body', { timeout: 15000 });
+      }
       const r = await page.evaluate(() => ({
         scroll: document.documentElement.scrollWidth,
         inner: window.innerWidth,

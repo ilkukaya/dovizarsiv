@@ -17,4 +17,8 @@ export interface StaticRoute {
   updated: string;
 }
 
-export const STATIC_ROUTES: readonly StaticRoute[] = [];
+export const STATIC_ROUTES: readonly StaticRoute[] = [
+  { path: '/hesaplama/gecmis-doviz/', kind: 'tool', sitemap: 'pages', updated: '2026-09-28' },
+  { path: '/hesaplama/kur-degisimi/', kind: 'tool', sitemap: 'pages', updated: '2026-09-28' },
+  { path: '/karsilastir/', kind: 'tool', sitemap: 'pages', updated: '2026-09-28' },
+];

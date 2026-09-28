@@ -24,10 +24,10 @@ Durum: ✅ yayında (Opus) · ⏳ Sonnet görevi (docs/HANDOFF.md §D) · — ü
 
 | Niyet | Canonical sayfa | Title | Durum |
 |---|---|---|---|
-| "geçmiş döviz kuru hesaplama", "2015'te 100 dolar kaç TL" | `/hesaplama/gecmis-doviz/` | "Geçmiş Döviz Kuru Hesaplama \| Döviz Arşiv" | ⏳ |
-| "iki tarih arası kur değişimi", "dolar ne kadar arttı" | `/hesaplama/kur-degisimi/` | "Kur Değişimi Hesaplama \| Döviz Arşiv" | ⏳ |
-| "yıllara göre dolar euro karşılaştırma" | `/karsilastir/` | "Yıllara Göre Kur Karşılaştırma \| Döviz Arşiv" | ⏳ (etkileşim durumu URL üretmez) |
-| Belirli gün için özel tutar çevirme | Gün sayfasındaki mini hesaplayıcı (ayrı sayfa değil) | — | ⏳ |
+| "geçmiş döviz kuru hesaplama", "2015'te 100 dolar kaç TL" | `/hesaplama/gecmis-doviz/` | "Geçmiş Döviz Kuru Hesaplama \| Döviz Arşiv" | ✅ |
+| "iki tarih arası kur değişimi", "dolar ne kadar arttı" | `/hesaplama/kur-degisimi/` | "Kur Değişimi Hesaplama \| Döviz Arşiv" | ✅ |
+| "yıllara göre dolar euro karşılaştırma" | `/karsilastir/` | "Yıllara Göre Kur Karşılaştırma \| Döviz Arşiv" | ✅ (etkileşim durumu URL üretmez) |
+| Belirli gün için özel tutar çevirme | Gün sayfasındaki mini hesaplayıcı (ayrı sayfa değil) | — | ✅ |
 
 ## Rehber ve güven (Sonnet, SPEC §6.10–6.11)
 

@@ -16,7 +16,8 @@ Bu belge, Opus'un bitirdiği temeli (Faz 0–2) ve Sonnet'in yapacağı işleri 
 | Teknik SEO (SPEC §8) | ✅ merkezi layout, isIndexablePage, sitemap index + gruplar, robots, `_headers`, `_redirects`, JSON-LD |
 | Kalite kapıları (SPEC §11.1, 11.2, 11.3, 11.7) | ✅ seo:validate, links:check, build-guard, 71 birim testi |
 | QA (SPEC §9, §11.5) | ✅ 360–1440 px taşma yok; Lighthouse 7 sayfa × 2 profil = 100/100/100/100 (D-015) |
-| Araçlar, rehber, yasal sayfalar, reklam, E2E | ⏳ **Sonnet — §D** |
+| Araçlar (D-1…D-4) | ✅ Faz A: 3 araç + gün sayfası mini hesaplayıcı; mantık `src/lib/tools/`, 21 birim testi, smoke senaryoları |
+| Rehber, yasal sayfalar, reklam, E2E | ⏳ **Sonnet — §D (D-5…D-10)** |
 
 ### Komutlar
 
@@ -145,7 +146,7 @@ genişletmesi (reklam açılırken, §D-7).
 Her görevin sonunda `npm run typecheck && npm test && npm run build && npm run qa:layout && npm run qa:smoke` temiz olmalı.
 Commit başına bir görev. Veri, SEO çekirdeği ve metin motoru değişmez (§C).
 
-### D-1 Geçmiş döviz hesaplayıcısı `/hesaplama/gecmis-doviz/` (SPEC §6.9, §5, §6.2)
+### D-1 Geçmiş döviz hesaplayıcısı `/hesaplama/gecmis-doviz/` (SPEC §6.9, §5, §6.2) ✅ TAMAMLANDI (Faz A)
 - Island. Veri `/veri/kurlar/{yıl}.json`'dan lazy yüklenir (biçim: `fields` + `rows`, `dateConvention: "determination-date"`).
   Yalnızca seçilen yıl, gerekirse önceki yıl (yılın ilk günleri için) yüklenir.
 - Girdiler: tarih, tutar, kaynak ve hedef para birimi (TL dahil), kur türü (varsayılan `defaultRateField`).
@@ -156,18 +157,18 @@ Commit başına bir görev. Veri, SEO çekirdeği ve metin motoru değişmez (§
 - **Kabul:** 2020-01-15, 100 USD → TL = 100 × 5,8827 (döviz alış) = 588,27 TL. 2020-01-12 (Pazar) → 2020-01-10 gözlemi.
   1999-06-15 → eski TL + yeni TL. `STATIC_ROUTES`'a eklendi, `FEATURES.tools` henüz kapalı (D-3 bitince açılır). Smoke'a senaryo eklendi.
 
-### D-2 Kur değişimi `/hesaplama/kur-degisimi/` (SPEC §6.9)
+### D-2 Kur değişimi `/hesaplama/kur-degisimi/` (SPEC §6.9) ✅ TAMAMLANDI (Faz A)
 - Para birimi, kur türü, başlangıç ve bitiş tarihi. Sonuç: iki gözlem (tarihleriyle), mutlak ve yüzde fark (`percentChange`),
   takvim günü sayısı (`daysBetween`), basit SVG grafik (`src/lib/charts/svg.ts` → `buildChart` tarayıcıda kullanılabilir).
 - "Getiri" değil "kur değişimi" dili. Yıllar arası seçimde yalnızca gereken yıl JSON'ları yüklenir.
 - **Kabul:** yüzde fark yıl sayfasındaki ilk→son değişimle aynı aralıkta birebir tutar (ör. `/dolar/2020/`).
 
-### D-3 Karşılaştırma `/karsilastir/` (SPEC §6.9)
+### D-3 Karşılaştırma `/karsilastir/` (SPEC §6.9) ✅ TAMAMLANDI (Faz A)
 - Seçilen yıllar × para birimleri için ortalama, en düşük, en yüksek, yıl sonu. Değerler yıl sayfalarıyla birebir aynıdır
   (aynı `summarize` mantığı; eşitlikte en erken tarih). Crawl trap yok: parametreli URL indekslenmez, link üretilmez.
 - **Kabul:** 3 araç bitince `FEATURES.tools = true`. Menüde "Hesaplama" görünür, `links:check` temiz, `seo-intent-map` güncel.
 
-### D-4 Gün sayfası mini hesaplayıcı (SPEC §6.7)
+### D-4 Gün sayfası mini hesaplayıcı (SPEC §6.7) ✅ TAMAMLANDI (Faz A)
 - `src/pages/tarih/[date].astro` içindeki `<div data-mini-calculator-slot hidden>` yuvasını doldurun. O günün kurlarını build
   zamanında `data-*` öznitelikleriyle yuvaya yazın (JSON fetch gerekmez). Script harici modül olmalı (CSP).
 - Statik "Hazır hesaplar" tablosu yerinde kalır; island yalnızca özel tutar içindir. CLS 0 kalmalı (yer ayrılmış kutu).

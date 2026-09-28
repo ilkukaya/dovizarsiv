@@ -1,0 +1,110 @@
+---
+/**
+ * Gün sayfası mini hesaplayıcısı (SPEC §6.7). O günün kurları build'de sayfaya gömülür; ek istek yoktur.
+ * Statik "Hazır hesaplar" tablosu yerinde kalır; bu bileşen yalnızca özel tutar içindir. Mantık: src/lib/tools/historical.ts.
+ */
+import { CURRENCY_INFO, FIELD_LABELS } from '../../config/currencies.ts';
+import type { CurrencyCode } from '../../lib/providers/types.ts';
+import type { IsoDate } from '../../lib/data/dates.ts';
+import type { Observation } from '../../lib/data/model.ts';
+
+interface Props {
+  date: IsoDate;
+  observations: Observation[];
+}
+const { date, observations } = Astro.props;
+const rates = observations.map((o) => ({
+  currency: o.currency,
+  sourceDate: o.sourceDate,
+  values: { forexBuying: o.forexBuying ?? null, forexSelling: o.forexSelling ?? null, cashBuying: o.cashBuying ?? null, cashSelling: o.cashSelling ?? null },
+}));
+const pre2005 = date < '2005-01-01';
+---
+
+<div class="tool tool--mini" data-tool="mini" data-date={date} data-rates={JSON.stringify(rates)}>
+  <h3 id={`mini-${date}`}>Özel tutar hesapla</h3>
+  <form class="tool__form" novalidate aria-labelledby={`mini-${date}`}>
+    <div class="field">
+      <label for="mh-tutar">Tutar</label>
+      <input class="input" type="text" inputmode="decimal" id="mh-tutar" name="tutar" value="100" autocomplete="off" required />
+    </div>
+    <div class="field">
+      <label for="mh-yon">Yön</label>
+      <select class="input" id="mh-yon" name="yon">
+        <option value="foreignToTry">Döviz → TL</option>
+        <option value="tryToForeign">TL → döviz</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="mh-para">Para birimi</label>
+      <select class="input" id="mh-para" name="para">
+        {observations.map((o) => <option value={o.currency}>{CURRENCY_INFO[o.currency as CurrencyCode].name} ({o.currency})</option>)}
+      </select>
+    </div>
+    <div class="field">
+      <label for="mh-kur">Kur türü</label>
+      <select class="input" id="mh-kur" name="kur">
+        <option value="">Önerilen</option>
+        <option value="forexBuying">{FIELD_LABELS.forexBuying}</option>
+        <option value="forexSelling">{FIELD_LABELS.forexSelling}</option>
+        <option value="cashBuying">{FIELD_LABELS.cashBuying}</option>
+        <option value="cashSelling">{FIELD_LABELS.cashSelling}</option>
+      </select>
+    </div>
+    {
+      pre2005 && (
+        <div class="field">
+          <label for="mh-tl">TL tutarın birimi</label>
+          <select class="input" id="mh-tl" name="tl">
+            <option value="old">Eski TL (o tarihte geçerli)</option>
+            <option value="new">Yeni TL (1 YTL = 1.000.000 TL)</option>
+          </select>
+        </div>
+      )
+    }
+    <div class="tool__actions">
+      <button class="button" type="submit">Hesapla</button>
+    </div>
+    <p class="small muted tool__help">Kur türü “Önerilen”: döviz → TL için döviz alış, TL → döviz için döviz satış. Hesap bu günün kurlarıyla yapılır.</p>
+  </form>
+  <p class="tool-message" data-message aria-live="polite"></p>
+  <p class="visually-hidden" data-announce aria-live="polite"></p>
+  <div class="tool-result" data-result></div>
+</div>
+
+<script>
+  import { calculateHistorical, type Unit } from '../../lib/tools/historical.ts';
+  import { RateStore, type RatePoint } from '../../lib/tools/rates.ts';
+  import { panelsOf, historicalErrorText, renderHistorical, showError, showResult, describeResult } from '../../lib/tools/ui.ts';
+  import type { CurrencyCode, RateField } from '../../lib/providers/types.ts';
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-tool="mini"]')) {
+    const date = root.dataset.date!;
+    const rates = JSON.parse(root.dataset.rates!) as Array<{ currency: CurrencyCode; sourceDate: string; values: RatePoint['values'] }>;
+    const store = new RateStore();
+    store.addYear(Number(date.slice(0, 4)), rates.map((r) => ({ date, sourceDate: r.sourceDate, currency: r.currency, values: r.values })));
+    const firstDates: Partial<Record<CurrencyCode, string>> = Object.fromEntries(rates.map((r) => [r.currency, date]));
+    const coverage = { firstDates, lastDate: date };
+    const form = root.querySelector('form')!;
+    const panels = panelsOf(root);
+    const field = <T extends HTMLElement>(name: string) => form.elements.namedItem(name) as unknown as T | null;
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const currency = field<HTMLSelectElement>('para')!.value as CurrencyCode;
+      const toTry = field<HTMLSelectElement>('yon')!.value === 'foreignToTry';
+      const input = {
+        amount: field<HTMLInputElement>('tutar')!.value,
+        from: (toTry ? currency : 'TRY') as Unit,
+        to: (toTry ? 'TRY' : currency) as Unit,
+        date,
+        rateField: (field<HTMLSelectElement>('kur')!.value || undefined) as RateField | undefined,
+        tlUnit: (field<HTMLSelectElement>('tl')?.value ?? 'old') as 'old' | 'new',
+      };
+      const result = calculateHistorical(store, input, coverage);
+      if ('code' in result) return showError(panels, historicalErrorText(result));
+      const spoken = `Sonuç: ${describeResult(result)}.`;
+      showResult(panels, renderHistorical(result, { dayStart: date, compact: true }), spoken);
+    });
+  }
+</script>

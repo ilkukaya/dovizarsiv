@@ -448,6 +448,21 @@ büyüklüğüne göre değil); 2004-12-31 gün sayfasında eski TL karşılığ
   (hafta sonu, resmî tatil ya da arife)" kullanıldı. Konvansiyon B'de satırın anlamı "o gün kur belirlenmedi"dir; arife
   günleri de (yarım gün, kur belirlenmez) bu gruba girer.
 
+## D-016 Faz A: araçlar (Sonnet, 2026-09-28)
+
+- **Mimari:** framework yok; her araç `src/components/tools/*.astro` içinde harici modül script'tir (CSP `script-src 'self'`).
+  Hesap mantığı `src/lib/tools/{rates,historical,change,compare}.ts` (DOM'suz, `Decimal` ile, vitest'li), sunum `ui*.ts`.
+  Hesaplayıcı `convert.ts`, `Decimal`, `lookup.ts`, `stats.ts`'i yeniden kullanır; yeni yuvarlama/istatistik mantığı yazılmadı.
+- **Veri:** yalnızca `/veri/kurlar/{yıl}.json` (yıl başında gözlem yoksa bir önceki yıl da). Şema doğrulanır; beklenmeyen biçimde araç hata verir, yanlış veriyle hesap yapmaz. Başarısız istek önbellekten silinir.
+- **Kur günü (konvansiyon B):** seçilen günün belirlenen kuru; gözlemsiz gün → en yakın önceki belirlenme günü ve bu sonuçta açıkça yazılır. Gelecek tarih ve para biriminin ilk gözleminden önceki tarih reddedilir (EUR: 31.12.1998).
+- **Kur türü:** "Önerilen" = döviz→TL alış, TL→döviz satış (`defaultRateField`). Döviz→döviz: kaynak alış, hedef satış (TL üzerinden), tür (döviz/efektif) seçimden gelir. Yayımlanmamış kur türü (ör. EUR efektif 1998) sessizce atlanmaz, hata verir.
+- **2005 öncesi TL:** depodaki değerler yeni TL. Kullanıcı tutarın eski/yeni TL olduğunu seçer (varsayılan: o tarihte geçerli olan eski TL); sonuç iki birimde gösterilir. 1 YTL = 1.000.000 TL kaydırması `Decimal.shiftLeft/Right` ile tam.
+- **Tutar girişi:** tr-TR yazımı (`1.234,56`); virgül yoksa `1.500` binlik, `1234.56` ondalık okunur; negatif, boş, 15 basamaktan uzun reddedilir.
+- **Doğrulama:** 21 birim testi; beklenen değerler kod dışında (Python Decimal) hesaplandı. 6 elle hesaplı örnek (588,27 · 169,684217670914 · 587,13 · 2417,128741111009 · 41.172.800 eski TL · 89,645240925299 · 133.630.000 eski TL). Karşılaştırma tablosu 1999, 2005, 2020 için `periodSummary` ile birebir aynı (test).
+- **Tarayıcı smoke (Playwright):** her araç uçtan uca; hafta sonu, 2005 öncesi, kapsam dışı ve geçersiz tutar hataları; karşılaştırma 2020 ortalaması yıl sayfasıyla aynı; sonuç `aria-live` ile duyuruluyor.
+- **Düzen:** 16 sayfa × 7 genişlik, araç sonuçları açıkken de yatay taşma yok.
+- **Lighthouse (mobil / masaüstü):** araç sayfaları 100/100/100/100, CLS 0,000, TBT 0; LCP mobil 1,10–1,35 sn. Gün sayfası mini hesaplayıcıyla 31 → 51 KB, LCP mobil 1,05 → 1,40 sn (hedef < 2,0 sn).
+
 ## Owner kararları (Faz 0 sonrası, 2026-09-28)
 
 Faz 0'daki açık soruların hepsi cevaplandı:

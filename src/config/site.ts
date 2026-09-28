@@ -27,7 +27,7 @@ export const EVDS_TERMS_NOTE = 'EVDS Kullanım Şartları';
  * böylece kırık link ve boş yer tutucu oluşmaz. Sayfa eklenince ilgili bayrak `true` yapılır.
  */
 export const FEATURES = {
-  tools: false, // /hesaplama/gecmis-doviz/, /hesaplama/kur-degisimi/, /karsilastir/
+  tools: true, // /hesaplama/gecmis-doviz/, /hesaplama/kur-degisimi/, /karsilastir/
   guides: false, // /rehber/
   legalPages: false, // /hakkimizda/, /iletisim/, /gizlilik/, /cerez-politikasi/, /kullanim-kosullari/, /reklam-politikasi/
 } as const;

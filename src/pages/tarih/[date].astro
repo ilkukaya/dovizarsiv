@@ -6,6 +6,7 @@
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ExchangeRateTable from '../../components/ExchangeRateTable.astro';
+import MiniCalculator from '../../components/tools/MiniCalculator.astro';
 import SourceDisclosure from '../../components/SourceDisclosure.astro';
 import RelatedDates from '../../components/RelatedDates.astro';
 import Move from '../../components/Move.astro';
@@ -162,7 +163,9 @@ const validDates = [...new Set(view.currencies.map((c) => c.validRate?.date).fil
         </table>
       </div>
     </div>
-    <div data-mini-calculator-slot hidden></div>
+    <div data-mini-calculator-slot>
+      <MiniCalculator date={date} observations={view.currencies.map((c) => c.obs)} />
+    </div>
   </section>
 
   <RelatedDates date={date} />

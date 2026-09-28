@@ -1,0 +1,90 @@
+---
+/** Yıllara göre karşılaştırma (SPEC §6.9). Etkileşim durumu URL üretmez (crawl trap yok). Mantık: src/lib/tools/compare.ts. */
+import { CURRENCY_INFO, CURRENCY_ORDER, FIELD_LABELS } from '../../config/currencies.ts';
+import { allYears, firstDate } from '../../lib/data/store.ts';
+import { MAX_COMPARE_YEARS } from '../../lib/tools/compare.ts';
+
+const years = allYears();
+const lastYear = years[years.length - 1]!;
+const firstDates = Object.fromEntries(CURRENCY_ORDER.map((c) => [c, firstDate(c)]));
+---
+
+<div class="tool" data-tool="compare" data-max-years={String(MAX_COMPARE_YEARS)}>
+  <form class="tool__form" novalidate>
+    <div class="field">
+      <label for="kc-bas">Başlangıç yılı</label>
+      <select class="input" id="kc-bas" name="baslangic">
+        {[...years].reverse().map((y) => <option value={String(y)} selected={y === lastYear - 4}>{y}</option>)}
+      </select>
+    </div>
+    <div class="field">
+      <label for="kc-bit">Bitiş yılı</label>
+      <select class="input" id="kc-bit" name="bitis">
+        {[...years].reverse().map((y) => <option value={String(y)} selected={y === lastYear}>{y}</option>)}
+      </select>
+    </div>
+    <div class="field">
+      <label for="kc-kur">Kur türü</label>
+      <select class="input" id="kc-kur" name="kur">
+        <option value="forexSelling">{FIELD_LABELS.forexSelling}</option>
+        <option value="forexBuying">{FIELD_LABELS.forexBuying}</option>
+        <option value="cashSelling">{FIELD_LABELS.cashSelling}</option>
+        <option value="cashBuying">{FIELD_LABELS.cashBuying}</option>
+      </select>
+    </div>
+    <fieldset class="field tool__checks">
+      <legend>Para birimleri</legend>
+      {CURRENCY_ORDER.map((c) => (
+        <label class="check">
+          <input type="checkbox" name="para" value={c} checked />
+          <span>{CURRENCY_INFO[c].name} ({c}){firstDates[c] && firstDates[c]!.slice(0, 4) > '1950' ? `, ${firstDates[c]!.slice(0, 4)} sonrası` : ''}</span>
+        </label>
+      ))}
+    </fieldset>
+    <div class="tool__actions">
+      <button class="button" type="submit">Karşılaştır</button>
+    </div>
+    <p class="small muted tool__help">En fazla {MAX_COMPARE_YEARS} yıl karşılaştırılır. Değerler ilgili yıl sayfalarıyla aynı tanımdadır.</p>
+  </form>
+  <p class="tool-message" data-message aria-live="polite"></p>
+  <p class="visually-hidden" data-announce aria-live="polite"></p>
+  <div class="tool-result" data-result></div>
+</div>
+
+<script>
+  import { compareYears, MAX_COMPARE_YEARS } from '../../lib/tools/compare.ts';
+  import { createFetchLoader, ensureYears, isCurrency, RateStore } from '../../lib/tools/rates.ts';
+  import { panelsOf, showBusy, showError, showResult, LOAD_FAILED } from '../../lib/tools/ui.ts';
+  import { renderCompare } from '../../lib/tools/ui-compare.ts';
+  import { FIELD_LABELS } from '../../config/currencies.ts';
+  import type { CurrencyCode, RateField } from '../../lib/providers/types.ts';
+
+  const root = document.querySelector<HTMLElement>('[data-tool="compare"]');
+  if (root) {
+    const form = root.querySelector('form')!;
+    const panels = panelsOf(root);
+    const store = new RateStore();
+    const loader = createFetchLoader();
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const from = Number(data.get('baslangic'));
+      const to = Number(data.get('bitis'));
+      const field = String(data.get('kur')) as RateField;
+      const currencies = data.getAll('para').map(String).filter(isCurrency) as CurrencyCode[];
+      if (!Number.isInteger(from) || !Number.isInteger(to)) return showError(panels, 'Başlangıç ve bitiş yılı seçin.');
+      if (from > to) return showError(panels, 'Başlangıç yılı bitiş yılından sonra olamaz.');
+      if (to - from + 1 > MAX_COMPARE_YEARS) return showError(panels, `En fazla ${MAX_COMPARE_YEARS} yıl karşılaştırılabilir. Aralığı daraltın.`);
+      if (currencies.length === 0) return showError(panels, 'En az bir para birimi seçin.');
+      showBusy(panels, 'Kur verisi yükleniyor…');
+      try {
+        await ensureYears(store, loader, from, to);
+      } catch {
+        return showError(panels, LOAD_FAILED);
+      }
+      const tables = compareYears(store, currencies, from, to, field);
+      showResult(panels, renderCompare(tables, field), `${from} – ${to} yılları için ${FIELD_LABELS[field].toLowerCase()} kuru karşılaştırması hazır.`);
+    });
+  }
+</script>
