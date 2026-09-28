@@ -1,0 +1,10 @@
+# Netlify yayını (önizleme/alternatif host). Planlanan ana host Cloudflare Pages'tir (docs/DECISIONS.md D-001);
+# _headers ve _redirects dosyaları Netlify'da da aynı biçimde çalışır.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Yayıncı adı/e-posta boşsa build bilerek başarısız olur (SPEC §11.7).
+  DOVIZARSIV_ENV = "production"

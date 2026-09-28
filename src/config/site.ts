@@ -10,9 +10,9 @@ export const SITE = {
   locale: 'tr-TR',
   language: 'tr',
   /** Yayıncı (gerçek kişi ya da kurum adı). Owner doldurur. */
-  publisherName: '',
+  publisherName: 'DovizArsiv',
   /** İletişim e-postası. Owner doldurur. */
-  contactEmail: '',
+  contactEmail: 'info@dovizarsiv.net',
 } as const;
 
 /** Veri kaynağı gösterimi (SPEC §4.2). Metin birebir kullanılır. */
