@@ -11,7 +11,7 @@
     "build": "tsx scripts/validation/build-guard.ts --pre && astro build && tsx scripts/ads/apply-csp.ts && tsx scripts/validation/build-guard.ts --post && npm run seo:validate && npm run links:check",
     "preview": "astro preview",
     "check": "astro check",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "astro sync && tsc --noEmit",
     "test": "vitest run",
     "data:discover": "tsx scripts/data/discover.ts",
     "data:update": "tsx scripts/data/update.ts",
