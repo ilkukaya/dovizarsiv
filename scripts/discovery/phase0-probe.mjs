@@ -52,6 +52,27 @@ async function raw(url, max = 3000) {
   return r;
 }
 
+if (MODE === 'r4') {
+  // EVDS kullanım şartları ve gizlilik belgeleri (resmi doküman uç noktası)
+  const base = 'https://evds3.tcmb.gov.tr/igmevdsms-dis';
+  const ua = { 'user-agent': 'Mozilla/5.0 dovizarsiv-phase0-probe' };
+  const keys = await get(`${base}/genel-ayarlar/multiple?keys=DOC_ID_EVDS_KULLANIM_SARTLARI,DOC_ID_EVDS_TERMS_OF_USE`, { headers: ua });
+  section(`DOC KEYS -> ${keys.status}`);
+  out(keys.body.slice(0, 1000));
+  const docs = await get(`${base}/documents?lang=TR`, { headers: ua });
+  section(`DOC LIST -> ${docs.status}`);
+  out(docs.body.slice(0, 6000));
+  const { writeFile } = await import('node:fs/promises');
+  try {
+    for (const k of JSON.parse(keys.body)) {
+      const r = await fetch(`${base}/documents/showDocument?docId=${k.value}`, { headers: ua, signal: AbortSignal.timeout(30000) });
+      const buf = Buffer.from(await r.arrayBuffer());
+      section(`DOC ${k.key} id=${k.value} -> ${r.status} ${r.headers.get('content-type')} ${buf.length}B`);
+      await writeFile(`/tmp/${k.key}.bin`, buf);
+    }
+  } catch (e) { out('DOC ERR ' + e); }
+}
+
 if (MODE === 'r3') {
   // EVDS kullanım şartları: SPA paketinde gömülü metin ve doküman uç noktaları
   const home = await get('https://evds3.tcmb.gov.tr/');
