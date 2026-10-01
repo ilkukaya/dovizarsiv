@@ -1,7 +1,7 @@
 {
   "currency": "GBP",
   "dateConvention": "determination-date",
-  "lastDate": "2026-09-30",
+  "lastDate": "2026-10-01",
   "months": [
     {
       "key": "1950-01",
@@ -68258,6 +68258,102 @@
         "value": "65.1874"
       },
       "closingChangePct": "-0.425108110048"
+    },
+    {
+      "key": "2026-10",
+      "count": 1,
+      "flat": true,
+      "fields": {
+        "forexBuying": {
+          "count": 1,
+          "first": {
+            "date": "2026-10-01",
+            "value": "64.6442"
+          },
+          "last": {
+            "date": "2026-10-01",
+            "value": "64.6442"
+          },
+          "min": {
+            "date": "2026-10-01",
+            "value": "64.6442"
+          },
+          "max": {
+            "date": "2026-10-01",
+            "value": "64.6442"
+          },
+          "mean": "64.6442",
+          "changePct": "0"
+        },
+        "forexSelling": {
+          "count": 1,
+          "first": {
+            "date": "2026-10-01",
+            "value": "64.9812"
+          },
+          "last": {
+            "date": "2026-10-01",
+            "value": "64.9812"
+          },
+          "min": {
+            "date": "2026-10-01",
+            "value": "64.9812"
+          },
+          "max": {
+            "date": "2026-10-01",
+            "value": "64.9812"
+          },
+          "mean": "64.9812",
+          "changePct": "0"
+        },
+        "cashBuying": {
+          "count": 1,
+          "first": {
+            "date": "2026-10-01",
+            "value": "64.5989"
+          },
+          "last": {
+            "date": "2026-10-01",
+            "value": "64.5989"
+          },
+          "min": {
+            "date": "2026-10-01",
+            "value": "64.5989"
+          },
+          "max": {
+            "date": "2026-10-01",
+            "value": "64.5989"
+          },
+          "mean": "64.5989",
+          "changePct": "0"
+        },
+        "cashSelling": {
+          "count": 1,
+          "first": {
+            "date": "2026-10-01",
+            "value": "65.0787"
+          },
+          "last": {
+            "date": "2026-10-01",
+            "value": "65.0787"
+          },
+          "min": {
+            "date": "2026-10-01",
+            "value": "65.0787"
+          },
+          "max": {
+            "date": "2026-10-01",
+            "value": "65.0787"
+          },
+          "mean": "65.0787",
+          "changePct": "0"
+        }
+      },
+      "closingSelling": {
+        "date": "2026-10-01",
+        "value": "64.9812"
+      },
+      "closingChangePct": "-0.316318797804"
     }
   ]
 }
