@@ -1,74 +1,74 @@
 {
   "dateConvention": "determination-date",
   "dayPagesStart": "2000-01-01",
-  "lastDate": "2026-10-01",
-  "lastSourceDate": "2026-10-02",
-  "determinationDays": 19266,
+  "lastDate": "2026-10-02",
+  "lastSourceDate": "2026-10-05",
+  "determinationDays": 19267,
   "currencies": {
     "USD": {
       "forexBuying": {
         "first": "1950-01-02",
-        "last": "2026-10-01",
-        "count": 19266
+        "last": "2026-10-02",
+        "count": 19267
       },
       "forexSelling": {
         "first": "1950-01-02",
-        "last": "2026-10-01",
-        "count": 19266
+        "last": "2026-10-02",
+        "count": 19267
       },
       "cashBuying": {
         "first": "1990-01-02",
-        "last": "2026-10-01",
-        "count": 9164
+        "last": "2026-10-02",
+        "count": 9165
       },
       "cashSelling": {
         "first": "1990-01-02",
-        "last": "2026-10-01",
-        "count": 9164
+        "last": "2026-10-02",
+        "count": 9165
       }
     },
     "EUR": {
       "forexBuying": {
         "first": "1998-12-31",
-        "last": "2026-10-01",
-        "count": 6917
+        "last": "2026-10-02",
+        "count": 6918
       },
       "forexSelling": {
         "first": "1998-12-31",
-        "last": "2026-10-01",
-        "count": 6917
+        "last": "2026-10-02",
+        "count": 6918
       },
       "cashBuying": {
         "first": "2001-12-31",
-        "last": "2026-10-01",
-        "count": 6171
+        "last": "2026-10-02",
+        "count": 6172
       },
       "cashSelling": {
         "first": "2001-12-31",
-        "last": "2026-10-01",
-        "count": 6171
+        "last": "2026-10-02",
+        "count": 6172
       }
     },
     "GBP": {
       "forexBuying": {
         "first": "1950-01-02",
-        "last": "2026-10-01",
-        "count": 19266
+        "last": "2026-10-02",
+        "count": 19267
       },
       "forexSelling": {
         "first": "1950-01-02",
-        "last": "2026-10-01",
-        "count": 19266
+        "last": "2026-10-02",
+        "count": 19267
       },
       "cashBuying": {
         "first": "1990-01-02",
-        "last": "2026-10-01",
-        "count": 9164
+        "last": "2026-10-02",
+        "count": 9165
       },
       "cashSelling": {
         "first": "1990-01-02",
-        "last": "2026-10-01",
-        "count": 9164
+        "last": "2026-10-02",
+        "count": 9165
       }
     }
   }

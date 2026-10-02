@@ -6,7 +6,7 @@
       "frequency": "GÜNLÜK",
       "unit": "",
       "startDate": "1950-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "note": "",
       "lastUpdated": "25-06-2026"
     },
@@ -16,7 +16,7 @@
       "frequency": "GÜNLÜK",
       "unit": "",
       "startDate": "1990-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "note": "",
       "lastUpdated": "28-12-2025"
     },
@@ -26,7 +26,7 @@
       "frequency": "GÜNLÜK",
       "unit": "Türk lirası",
       "startDate": "1950-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "note": "Bir önceki iş günü saat 15:30'da belirlenen gösterge niteliğindeki TCMB Döviz Alış ve Döviz Satış Kurlarıdır. Belirlendiği günden bir sonraki gün Resmi Gazete'de yayımlanmaktadır. ",
       "lastUpdated": "02-03-2026"
     },
@@ -36,7 +36,7 @@
       "frequency": "GÜNLÜK",
       "unit": "Türk lirası",
       "startDate": "1990-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "note": "Bir önceki iş günü saat 15:30'da belirlenen gösterge niteliğindeki TCMB Efektif Alış ve Efektif Satış Kurlarıdır. Belirlendiği günden bir sonraki gün Resmi Gazete'de yayımlanmaktadır. ",
       "lastUpdated": "02-03-2026"
     }
@@ -48,7 +48,7 @@
       "name": "(USD) ABD doları (Döviz Alış) (Arşiv)",
       "frequency": "GÜNLÜK",
       "startDate": "1950-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "raw",
       "currency": "USD",
       "field": "forexBuying"
@@ -59,7 +59,7 @@
       "name": "(USD)  ABD  Doları  (Döviz  Alış)",
       "frequency": "GÜNLÜK",
       "startDate": "1950-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "crosscheck",
       "currency": "USD",
       "field": "forexBuying"
@@ -70,7 +70,7 @@
       "name": "(USD) ABD doları (Döviz Satış) (Arşiv)",
       "frequency": "GÜNLÜK",
       "startDate": "1950-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "raw",
       "currency": "USD",
       "field": "forexSelling"
@@ -81,7 +81,7 @@
       "name": "(USD)  ABD  Doları  (Döviz  Satış)",
       "frequency": "GÜNLÜK",
       "startDate": "1950-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "crosscheck",
       "currency": "USD",
       "field": "forexSelling"
@@ -92,7 +92,7 @@
       "name": "(USD) ABD doları (Efektif Alış) (Arşiv)",
       "frequency": "GÜNLÜK",
       "startDate": "1990-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "raw",
       "currency": "USD",
       "field": "cashBuying"
@@ -103,7 +103,7 @@
       "name": "(USD) ABD Doları (Efektif Alış)",
       "frequency": "GÜNLÜK",
       "startDate": "1990-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "crosscheck",
       "currency": "USD",
       "field": "cashBuying"
@@ -114,7 +114,7 @@
       "name": "(USD) ABD doları (Efektif Satış) (Arşiv)",
       "frequency": "GÜNLÜK",
       "startDate": "1990-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "raw",
       "currency": "USD",
       "field": "cashSelling"
@@ -125,7 +125,7 @@
       "name": "(USD) ABD Doları (Efektif Satış)",
       "frequency": "GÜNLÜK",
       "startDate": "1990-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "crosscheck",
       "currency": "USD",
       "field": "cashSelling"
@@ -136,7 +136,7 @@
       "name": "(EUR) EURO (Döviz Alış) (Arşiv)",
       "frequency": "GÜNLÜK",
       "startDate": "1999-01-04",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "raw",
       "currency": "EUR",
       "field": "forexBuying"
@@ -147,7 +147,7 @@
       "name": "(EUR)  Euro  (Döviz  Alış)",
       "frequency": "GÜNLÜK",
       "startDate": "1999-01-04",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "crosscheck",
       "currency": "EUR",
       "field": "forexBuying"
@@ -158,7 +158,7 @@
       "name": "(EUR) EURO (Döviz Satış) (Arşiv)",
       "frequency": "GÜNLÜK",
       "startDate": "1999-01-04",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "raw",
       "currency": "EUR",
       "field": "forexSelling"
@@ -169,7 +169,7 @@
       "name": "(EUR)  Euro  (Döviz  Satış)",
       "frequency": "GÜNLÜK",
       "startDate": "1999-01-04",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "crosscheck",
       "currency": "EUR",
       "field": "forexSelling"
@@ -180,7 +180,7 @@
       "name": "(EUR) EURO (Efektif Alış) (Arşiv)",
       "frequency": "GÜNLÜK",
       "startDate": "2002-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "raw",
       "currency": "EUR",
       "field": "cashBuying"
@@ -191,7 +191,7 @@
       "name": "(EUR) Euro (Efektif Alış)",
       "frequency": "GÜNLÜK",
       "startDate": "2002-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "crosscheck",
       "currency": "EUR",
       "field": "cashBuying"
@@ -202,7 +202,7 @@
       "name": "(EUR) EURO (Efektif Satış) (Arşiv)",
       "frequency": "GÜNLÜK",
       "startDate": "2002-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "raw",
       "currency": "EUR",
       "field": "cashSelling"
@@ -213,7 +213,7 @@
       "name": "(EUR) Euro (Efektif Satış)",
       "frequency": "GÜNLÜK",
       "startDate": "2002-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "crosscheck",
       "currency": "EUR",
       "field": "cashSelling"
@@ -224,7 +224,7 @@
       "name": "(GBP) İngiliz Sterlini (Döviz Alış) (Arşiv)",
       "frequency": "GÜNLÜK",
       "startDate": "1950-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "raw",
       "currency": "GBP",
       "field": "forexBuying"
@@ -235,7 +235,7 @@
       "name": "(GBP)  İngiliz  Sterlini  (Döviz  Alış)",
       "frequency": "GÜNLÜK",
       "startDate": "1950-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "crosscheck",
       "currency": "GBP",
       "field": "forexBuying"
@@ -246,7 +246,7 @@
       "name": "(GBP) İngiliz Sterlini (Döviz Satış) (Arşiv)",
       "frequency": "GÜNLÜK",
       "startDate": "1950-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "raw",
       "currency": "GBP",
       "field": "forexSelling"
@@ -257,7 +257,7 @@
       "name": "(GBP)  İngiliz  Sterlini  (Döviz  Satış)",
       "frequency": "GÜNLÜK",
       "startDate": "1950-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "crosscheck",
       "currency": "GBP",
       "field": "forexSelling"
@@ -268,7 +268,7 @@
       "name": "(GBP) İngiliz Sterlini (Efektif Alış) (Arşiv)",
       "frequency": "GÜNLÜK",
       "startDate": "1990-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "raw",
       "currency": "GBP",
       "field": "cashBuying"
@@ -279,7 +279,7 @@
       "name": "(GBP) İngiliz Sterlini (Efektif Alış)",
       "frequency": "GÜNLÜK",
       "startDate": "1990-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "crosscheck",
       "currency": "GBP",
       "field": "cashBuying"
@@ -290,7 +290,7 @@
       "name": "(GBP) İngiliz Sterlini (Efektif Satış) (Arşiv)",
       "frequency": "GÜNLÜK",
       "startDate": "1990-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "raw",
       "currency": "GBP",
       "field": "cashSelling"
@@ -301,7 +301,7 @@
       "name": "(GBP) İngiliz Sterlini (Efektif Satış)",
       "frequency": "GÜNLÜK",
       "startDate": "1990-01-02",
-      "endDate": "2026-10-02",
+      "endDate": "2026-10-05",
       "role": "crosscheck",
       "currency": "GBP",
       "field": "cashSelling"
