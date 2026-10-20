@@ -1,12 +1,12 @@
 {
   "currency": "GBP",
   "dateConvention": "determination-date",
-  "lastDate": "2026-10-19",
+  "lastDate": "2026-10-20",
   "allTime": {
     "forexBuying": {
       "max": {
-        "date": "2026-10-19",
-        "value": "65.8058"
+        "date": "2026-10-20",
+        "value": "65.9375"
       },
       "min": {
         "date": "1950-01-02",
@@ -15,8 +15,8 @@
     },
     "forexSelling": {
       "max": {
-        "date": "2026-10-19",
-        "value": "66.1489"
+        "date": "2026-10-20",
+        "value": "66.2813"
       },
       "min": {
         "date": "1950-01-02",
@@ -25,8 +25,8 @@
     },
     "cashBuying": {
       "max": {
-        "date": "2026-10-19",
-        "value": "65.7598"
+        "date": "2026-10-20",
+        "value": "65.8913"
       },
       "min": {
         "date": "1990-01-03",
@@ -35,8 +35,8 @@
     },
     "cashSelling": {
       "max": {
-        "date": "2026-10-19",
-        "value": "66.2481"
+        "date": "2026-10-20",
+        "value": "66.3807"
       },
       "min": {
         "date": "1990-01-03",
